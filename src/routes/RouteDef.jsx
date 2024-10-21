@@ -1,4 +1,5 @@
-import Main from '../pages/Main';
+import Main from '../pages/main';
+import PetSitter from '../pages/petsitter';
 import AnimalInfo from '../pages/main/AnimalInfo';
 
 import LoginPage from '../pages/main/LoginPage';
@@ -21,6 +22,10 @@ const MainScreens = {
   Main: {
     path: '/main',
     element: <Main />,
+  },
+  Petsitter: {
+    path: '/petsitter',
+    element: <PetSitter />,
   },
   AnimalInfo: {
     path: '/animalinfo',
