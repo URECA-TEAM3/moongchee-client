@@ -1,5 +1,5 @@
 import React from 'react';
-import successImage from '../../assets/images/successsignup.png';
+import successImage from '../../assets/images/white-curve.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginSuccessPage = () => {
