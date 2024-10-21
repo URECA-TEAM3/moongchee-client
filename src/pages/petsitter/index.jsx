@@ -6,8 +6,8 @@ import Dropdown from '../../components/DropDown';
 const index = () => {
   const [sitterList, setSitterList] = useState([]);
   const [isPetSitter, setIsPetSitter] = useState(false);
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [startTime, setStartTime] = useState('08:00');
+  const [endTime, setEndTime] = useState('08:00');
   const [dayList, setDayList] = useState([
     {
       name: '월',
@@ -140,9 +140,10 @@ const index = () => {
             ))}
           </div>
           <div className="flex justify-center items-center gap-5 mt-5">
-            <div className="start flex justify-center items-center flex-col">
+            <div>
+              <span>Start Time</span>
               <Dropdown
-                label={'10:00'}
+                label={startTime}
                 options={dropDownTime}
                 title={'Start Time'}
                 onSelect={(option) => {
@@ -152,8 +153,9 @@ const index = () => {
             </div>
             ~
             <div className="end">
+              <span>End Time</span>
               <Dropdown
-                label={'10:00'}
+                label={endTime}
                 options={dropDownTime}
                 title={'End Time'}
                 onSelect={(option) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Dropdown = ({ label, options, title, onSelect }) => {
+const Dropdown = ({ label, options, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -28,7 +28,6 @@ const Dropdown = ({ label, options, title, onSelect }) => {
 
   return (
     <div className="start flex-1 flex justify-center items-center flex-col">
-      <span>{title}</span>
       <div ref={dropdownRef} className="relative text-left inline-block">
         <div>
           <button
