@@ -1,8 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PetSitterInfo = ({ info }) => {
+  const navigate = useNavigate();
+
+  const handleInfoClick = () => {
+    navigate(`/petsitter/detail/${info.name}`, { state: { info: info } });
+  };
   return (
-    <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200">
+    <div
+      className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200"
+      onClick={() => handleInfoClick(info.name)}
+    >
       <div className="profile flex items-center">
         <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
         <div className="personal ml-5">

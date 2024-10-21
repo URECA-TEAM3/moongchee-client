@@ -5,6 +5,9 @@ import Dropdown from '../../components/DropDown';
 
 const index = () => {
   const [sitterList, setSitterList] = useState([]);
+  const [isPetSitter, setIsPetSitter] = useState(false);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [dayList, setDayList] = useState([
     {
       name: '월',
@@ -36,19 +39,6 @@ const index = () => {
     },
   ]);
   const dropDownTime = ['09:00', '08:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -108,9 +98,15 @@ const index = () => {
     navigate('/petsitter/reservation');
   };
 
+  const handleProfileClick = () => {
+    navigate('/petsitter/profile');
+  };
+
   const handleDayClick = (dayName) => {
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
+
+  const handleSearchClick = () => {};
 
   return (
     <div className="container inline-grid px-4 py-5 gap-y-5 h-full overflow-y-scroll">
@@ -122,6 +118,11 @@ const index = () => {
         <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleReservationClick}>
           예약 / 취소 내역
         </button>
+        {isPetSitter && (
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleProfileClick}>
+            나의 펫시터 프로필
+          </button>
+        )}
       </div>
       <div>
         <div className="search">
@@ -140,11 +141,25 @@ const index = () => {
           </div>
           <div className="flex justify-center items-center gap-5 mt-5">
             <div className="start flex justify-center items-center flex-col">
-              <Dropdown label={'10:00'} options={dropDownTime} title={'Start Time'} />
+              <Dropdown
+                label={'10:00'}
+                options={dropDownTime}
+                title={'Start Time'}
+                onSelect={(option) => {
+                  setStartTime(option);
+                }}
+              />
             </div>
             ~
             <div className="end">
-              <Dropdown label={'10:00'} options={dropDownTime} title={'End Time'} />
+              <Dropdown
+                label={'10:00'}
+                options={dropDownTime}
+                title={'End Time'}
+                onSelect={(option) => {
+                  setEndTime(option);
+                }}
+              />
             </div>
           </div>
         </div>

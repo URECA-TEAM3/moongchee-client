@@ -1,10 +1,14 @@
 import Main from '../pages/main';
-import PetSitter from '../pages/petsitter';
-import AnimalInfo from '../pages/main/AnimalInfo';
 
+//Login
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
+import AnimalInfo from '../pages/main/AnimalInfo';
+
+//PetSitter
+import PetSitter from '../pages/petsitter';
+import PetSitterDetail from '../pages/petsitterDetail';
 
 const MainScreens = {
   LoginPage: {
@@ -23,16 +27,24 @@ const MainScreens = {
     path: '/main',
     element: <Main />,
   },
-  Petsitter: {
-    path: '/petsitter',
-    element: <PetSitter />,
-  },
   AnimalInfo: {
     path: '/animalinfo',
     element: <AnimalInfo />,
   },
 };
 
+const PetSitterScreens = {
+  Petsitter: {
+    path: '/petsitter',
+    element: <PetSitter />,
+  },
+  PetSitterDetail: {
+    path: '/petsitter/detail/:name',
+    element: <PetSitterDetail />,
+  },
+};
+
 export const AppRouteDef = {
   ...MainScreens,
+  ...PetSitterScreens,
 };

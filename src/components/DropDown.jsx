@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Dropdown = ({ label, options, title }) => {
+const Dropdown = ({ label, options, title, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleOptionClick = (option) => {
+    onSelect(option);
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -39,7 +44,7 @@ const Dropdown = ({ label, options, title }) => {
           <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <div className="py-1">
               {options.map((option, index) => (
-                <a key={index} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <a key={index} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => handleOptionClick(option)}>
                   {option}
                 </a>
               ))}
