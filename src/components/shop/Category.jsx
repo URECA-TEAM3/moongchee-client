@@ -13,7 +13,6 @@ const Category = ({ selectedCategory, setSelectedCategory }) => {
 
   const handleClick = (id) => {
     setSelectedCategory(id);
-    console.log(id);
   };
 
   return (
