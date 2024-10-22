@@ -6,6 +6,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -17,12 +20,45 @@ const SignUpForm = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [errors, setErrors] = useState({});
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [nickname, setNickname] = useState('');
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
   const userId = location.state?.userId || null;
 
-  console.log('회원가입 폼 유저아이디', userId);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      setSelectedImageFile(file);
+    }
+  };
+
+  const handleProfileClick = () => {
+    document.getElementById('profileImageUpload').click();
+  };
+
+  const handleNicknameCheck = async () => {
+    if (!nickname) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/check-nickname', { nickname });
+      if (response.data.available) {
+        alert('사용 가능한 닉네임입니다.');
+        setIsNicknameChecked(true);
+      } else {
+        alert('이미 사용 중인 닉네임입니다.');
+      }
+    } catch (error) {
+      console.error('닉네임 중복 확인 오류:', error);
+    }
+  };
 
   const handleComplete = (data) => {
     let fullAddress = data.address;
@@ -33,7 +69,7 @@ const SignUpForm = () => {
         extraAddress += data.bname;
       }
       if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+        extraAddress += extraAddress !== '' ? `, ${extraAddress}` : data.buildingName;
       }
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
@@ -115,6 +151,12 @@ const SignUpForm = () => {
       : null;
 
     try {
+      const storageRef = ref(storage, `profiles/${userId}`);
+      console.log('이때의 userid', userId);
+
+      await uploadBytes(storageRef, selectedImageFile);
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log('downloadurl', downloadURL);
       const response = await axios.post('http://localhost:3000/api/signup', {
         name,
         phone,
@@ -122,6 +164,8 @@ const SignUpForm = () => {
         birthDate: formattedBirthDate,
         provider,
         token: userId,
+        nickname,
+        profileImageUrl: downloadURL,
       });
       const newUserId = response.data.userId;
       console.log('받은 userId:', newUserId);
@@ -137,6 +181,41 @@ const SignUpForm = () => {
     <div className="flex flex-col items-center bg-white min-h-screen">
       <h1 className="text-center text-lg font-bold mb-4 mt-6">회원정보</h1>
       <hr className="border-gray-300 w-[450px] mb-6" />
+
+      <div className="w-full max-w-md">
+        <label className="block text-sm font-medium mb-1">프로필 등록(선택)</label>
+
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
+            {selectedImage ? (
+              <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
+            ) : (
+              <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
+            )}
+          </div>
+          <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
+
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">닉네임*</label>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="닉네임 입력"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                className="flex-1 p-2 border border-blue-500 rounded"
+              />
+              <button
+                type="button"
+                onClick={handleNicknameCheck}
+                className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+              >
+                중복확인
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <form className="w-full max-w-md" onSubmit={handleSubmit}>
         <label className="block text-sm font-medium mb-1">이름*</label>
