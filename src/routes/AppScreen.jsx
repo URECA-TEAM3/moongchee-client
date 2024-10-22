@@ -4,7 +4,7 @@ import AppPages from './AppPages';
 const ViewArea = styled.div`
   width: 600px;
   height: 100vh;
-  background: #f9f9f9;
+  background: #f5faff;
 `;
 
 const AppScreen = () => {

@@ -2,9 +2,9 @@ import React from 'react';
 
 function Navbar(props) {
   return (
-    <div class="bg-white border-t border-divider p-5">
-      <div class="flex justify-between items-center text-sm font-medium text-text">
-        <button type="button" href="/" class="inline-flex flex-col items-center justify-center px-5 group">
+    <div className="bg-white border-t border-divider p-5">
+      <div className="flex justify-between items-center text-sm font-medium text-text">
+        <button type="button" href="/" className="inline-flex flex-col items-center justify-center px-5 group">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path
               strokeLinecap="round"
@@ -15,12 +15,12 @@ function Navbar(props) {
           <span>장바구니</span>
         </button>
 
-        <button type="button" class="inline-flex flex-col items-center justify-center px-5 group">
-          <img src="/src/assets/images/petsitting.png" class="w-5" />
+        <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
+          <img src="/src/assets/images/petsitting.png" className="w-5" />
           <span>펫시팅</span>
         </button>
 
-        <button type="button" class="inline-flex flex-col items-center justify-center px-5 group">
+        <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path
               strokeLinecap="round"
@@ -31,7 +31,7 @@ function Navbar(props) {
           <span>홈</span>
         </button>
 
-        <button type="button" class="inline-flex flex-col items-center justify-center px-5 group">
+        <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path
               strokeLinecap="round"
@@ -42,7 +42,7 @@ function Navbar(props) {
           <span>채팅</span>
         </button>
 
-        <button type="button" class="inline-flex flex-col items-center justify-center px-5 group">
+        <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path
               strokeLinecap="round"
