@@ -5,6 +5,7 @@ import AnimalInfo from '../pages/main/AnimalInfo';
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
+import ShopMain from '../pages/shoppingMall/ShopMain';
 
 const MainScreens = {
   LoginPage: {
@@ -30,6 +31,10 @@ const MainScreens = {
   AnimalInfo: {
     path: '/animalinfo',
     element: <AnimalInfo />,
+  },
+  ShopMain: {
+    path: '/shopMain',
+    element: <ShopMain />,
   },
 };
 
