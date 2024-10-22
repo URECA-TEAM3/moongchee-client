@@ -1,16 +1,18 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const index = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { info } = location.state || {};
 
+  const handleReservationClick = () => {
+    navigate('/petsitter/reservation', { state: { name: info.name } });
+  };
+
   return (
-    <div className="container px-4 py-5 h-full overflow-y-scroll flex items-center flex-col">
-      <div
-        className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200 mt-10"
-        onClick={() => handleInfoClick(info.name)}
-      >
+    <div className="flex items-center flex-col">
+      <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200 mt-10">
         <div className="profile flex items-center justify-between">
           <div className="flex items-center">
             <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
@@ -22,7 +24,9 @@ const index = () => {
               </div>
             </div>
           </div>
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal">예약</button>
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleReservationClick}>
+            예약
+          </button>
         </div>
         <div className="personal-history mt-5 flex flex-col gap-3">
           <div>
@@ -35,7 +39,9 @@ const index = () => {
           </div>
         </div>
       </div>
-      <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal mt-10 w-[300px]">예약하기</button>
+      <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal mt-10 w-[300px]" onClick={handleReservationClick}>
+        예약하기
+      </button>
     </div>
   );
 };

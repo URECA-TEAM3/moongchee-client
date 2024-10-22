@@ -27,9 +27,9 @@ const Dropdown = ({ label, options, onSelect }) => {
   }, []);
 
   return (
-    <div className="start flex-1 flex justify-center items-center flex-col">
-      <div ref={dropdownRef} className="relative text-left inline-block">
-        <div>
+    <div className="start flex justify-center items-center flex-col w-full">
+      <div ref={dropdownRef} className="relative text-left inline-block w-full">
+        <div className="w-full">
           <button
             onClick={toggleDropdown}
             type="button"
@@ -40,7 +40,7 @@ const Dropdown = ({ label, options, onSelect }) => {
         </div>
 
         {isOpen && (
-          <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+          <div className="origin-top-right absolute right-0 mt-2 w-full z-10 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <div className="py-1">
               {options.map((option, index) => (
                 <a key={index} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => handleOptionClick(option)}>

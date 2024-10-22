@@ -6,8 +6,8 @@ import Dropdown from '../../components/DropDown';
 const index = () => {
   const [sitterList, setSitterList] = useState([]);
   const [isPetSitter, setIsPetSitter] = useState(false);
-  const [startTime, setStartTime] = useState('08:00');
-  const [endTime, setEndTime] = useState('08:00');
+  const [startTime, setStartTime] = useState('08:00 AM');
+  const [endTime, setEndTime] = useState('08:00 AM');
   const [dayList, setDayList] = useState([
     {
       name: '월',
@@ -38,7 +38,20 @@ const index = () => {
       target: false,
     },
   ]);
-  const dropDownTime = ['09:00', '08:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+  const dropDownTime = [
+    '09:00 AM',
+    '08:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '13:00 PM',
+    '14:00 PM',
+    '15:00 PM',
+    '16:00 PM',
+    '17:00 PM',
+    '18:00 PM',
+    '19:00 PM',
+  ];
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -109,7 +122,7 @@ const index = () => {
   const handleSearchClick = () => {};
 
   return (
-    <div className="container inline-grid px-4 py-5 gap-y-5 h-full overflow-y-scroll">
+    <div className="inline-grid gap-y-5 h-full">
       <h1 className="text-2xl subpixel-antialiased ">펫시터</h1>
       <div className="flex items-center container gap-5">
         <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleApplyClick}>
@@ -140,9 +153,10 @@ const index = () => {
             ))}
           </div>
           <div className="flex justify-center items-center gap-5 mt-5">
-            <div>
+            <div className="flex items-center flex-col w-[150px]">
               <span>Start Time</span>
               <Dropdown
+                width={'150'}
                 label={startTime}
                 options={dropDownTime}
                 title={'Start Time'}
@@ -152,9 +166,10 @@ const index = () => {
               />
             </div>
             ~
-            <div className="end">
+            <div className="flex items-center flex-col w-[150px]">
               <span>End Time</span>
               <Dropdown
+                width={'150'}
                 label={endTime}
                 options={dropDownTime}
                 title={'End Time'}

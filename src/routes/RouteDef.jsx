@@ -9,6 +9,7 @@ import AnimalInfo from '../pages/main/AnimalInfo';
 //PetSitter
 import PetSitter from '../pages/petsitter';
 import PetSitterDetail from '../pages/petsitterDetail';
+import PetSitterReservation from '../pages/petsitterReservation';
 
 const MainScreens = {
   LoginPage: {
@@ -41,6 +42,10 @@ const PetSitterScreens = {
   PetSitterDetail: {
     path: '/petsitter/detail/:name',
     element: <PetSitterDetail />,
+  },
+  PetSitterReservation: {
+    path: '/petsitter/Reservation',
+    element: <PetSitterReservation />,
   },
 };
 

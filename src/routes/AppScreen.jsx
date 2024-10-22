@@ -9,7 +9,7 @@ const ViewArea = styled.div`
 
 const AppScreen = () => {
   return (
-    <ViewArea className="border border-divider">
+    <ViewArea className="border border-divider container px-4 py-5 gap-y-5 h-full overflow-y-scroll">
       <AppPages />
     </ViewArea>
   );
