@@ -12,6 +12,10 @@ const Index = () => {
       link: '/main',
       url: '/src/assets/images/header2.png',
     },
+    {
+      link: '/main',
+      url: '/src/assets/images/header3.png',
+    },
   ];
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -68,7 +72,22 @@ const Index = () => {
         </div>
 
         <div className="p-5">
-          <div>
+          <div className="flex justify-between items-center text-text mx-8">
+            <button class="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/best.png" className="h-14 inline" />
+              <p>BEST</p>
+            </button>
+            <button class="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/category.png" className="h-14 inline" />
+              <p>카테고리</p>
+            </button>
+            <button class="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/petsitting.png" className="h-14 inline" />
+              <p>펫시팅</p>
+            </button>
+          </div>
+
+          <div className="mt-5">
             <img src="/src/assets/images/letter-only.png" className="w-28 opacity-50" />
             <p className="text-text">
               평일 09:00~18:00 | 점심시간 13:00~14:00 <br />

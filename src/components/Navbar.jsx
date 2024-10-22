@@ -16,7 +16,7 @@ function Navbar(props) {
         </button>
 
         <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
-          <img src="/src/assets/images/petsitting.png" className="w-5" />
+          <img src="/src/assets/icons/dog.png" className="w-5" />
           <span>펫시팅</span>
         </button>
 
