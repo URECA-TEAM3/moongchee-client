@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import toast, { Toaster } from 'react-hot-toast';
 import { storage } from '../../../firebase';
 
 const SignUpForm = () => {
@@ -41,21 +42,37 @@ const SignUpForm = () => {
     document.getElementById('profileImageUpload').click();
   };
 
+  const validateNickname = (nickname) => {
+    const validPattern = /^(?![ㄱ-ㅎㅏ-ㅣ])[가-힣a-zA-Z]+$/;
+    return validPattern.test(nickname);
+  };
+
   const handleNicknameCheck = async () => {
     if (!nickname) {
-      alert('닉네임을 입력해주세요.');
+      toast.error('닉네임을 입력해주세요.');
+      return;
+    }
+
+    if (!validateNickname(nickname)) {
+      toast.error('닉네임에 자음이나 모음만 사용할 수 없습니다.');
+      return;
+    }
+
+    if (nickname.length > 8) {
+      toast.error('닉네임은 8자 이하여야 합니다.');
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/check-nickname', { nickname });
+      const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
       if (response.data.available) {
-        alert('사용 가능한 닉네임입니다.');
+        toast.success('사용 가능한 닉네임입니다.');
         setIsNicknameChecked(true);
       } else {
-        alert('이미 사용 중인 닉네임입니다.');
+        toast.error('이미 사용 중인 닉네임입니다.');
       }
     } catch (error) {
+      toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
       console.error('닉네임 중복 확인 오류:', error);
     }
   };
@@ -146,18 +163,24 @@ const SignUpForm = () => {
       return;
     }
 
+    if (!isNicknameChecked) {
+      toast.error('닉네임 중복 확인을 해주세요.');
+      return;
+    }
+
     const formattedBirthDate = birthDate
       ? `${birthDate.getFullYear()}-${(birthDate.getMonth() + 1).toString().padStart(2, '0')}-${birthDate.getDate().toString().padStart(2, '0')}`
       : null;
 
     try {
+      toast.loading('회원가입 진행 중...');
       const storageRef = ref(storage, `profiles/${userId}`);
       console.log('이때의 userid', userId);
 
       await uploadBytes(storageRef, selectedImageFile);
       const downloadURL = await getDownloadURL(storageRef);
       console.log('downloadurl', downloadURL);
-      const response = await axios.post('http://localhost:3000/api/signup', {
+      const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
         phone,
         address: `${roadAddress} ${detailedAddress}`,
@@ -170,15 +193,19 @@ const SignUpForm = () => {
       const newUserId = response.data.userId;
       console.log('받은 userId:', newUserId);
       localStorage.setItem('userId', newUserId);
+      toast.dismiss();
+      toast.success('회원가입 성공!');
 
       navigate('/loginsuccess');
     } catch (error) {
+      toast.dismiss();
+      toast.error('회원가입 실패. 다시 시도해주세요.');
       console.error('회원가입 오류:', error);
     }
   };
-
   return (
     <div className="flex flex-col items-center bg-white min-h-screen">
+      <Toaster />
       <h1 className="text-center text-lg font-bold mb-4 mt-6">회원정보</h1>
       <hr className="border-gray-300 w-[450px] mb-6" />
 
