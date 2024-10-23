@@ -1,78 +1,41 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Header from '../../components/Header';
 import Navbar from '../../components/Navbar';
+import ProductCarousel from './ProductCarousel';
+import MainCarousel from './MainCarousel';
 
 const Index = () => {
-  // temporary dummy data
-  const slides = [
-    {
-      link: '/main',
-      url: '/src/assets/images/header1.png',
-    },
-    {
-      link: '/main',
-      url: '/src/assets/images/header2.png',
-    },
-    {
-      link: '/main',
-      url: '/src/assets/images/header3.png',
-    },
-  ];
   const products = [
     {
       id: 1,
       name: '[잇츄] 오리지널 S 43개입 (4종) 강아지 덴탈껌 대용량 간식 개껌',
       href: '#',
       price: '45,600',
-      imageSrc: 'https://static.fitpetcdn.com/prod/images/product/1000031556/S_43%EA%B0%9C%EC%9E%85_xmrari_PRODUCT_LIST.png',
-      imageAlt: '[잇츄] 오리지널 S 43개입 (4종) 강아지 덴탈껌 대용량 간식 개껌',
+      image: 'https://static.fitpetcdn.com/prod/images/product/1000031556/S_43%EA%B0%9C%EC%9E%85_xmrari_PRODUCT_LIST.png',
     },
     {
       id: 2,
       name: '[잇츄] 오리지널 M 버라이어티팩 (48개입) 강아지 덴탈껌 대용량 간식 개껌',
       href: '#',
       price: '58,900',
-      imageSrc:
+      image:
         'https://static.fitpetcdn.com/prod/images/product/1000035685/%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90_%EB%B2%84%EB%9D%BC%EC%9D%B4%EC%96%B4%ED%8B%B0%ED%8C%A9_M_ddohlm_PRODUCT_LIST.png',
-      imageAlt: '[잇츄] 오리지널 M 버라이어티팩 (48개입) 강아지 덴탈껌 대용량 간식 개껌',
     },
     {
       id: 3,
       name: '[3개 세트] 인섹트업 미니바이트 스킨',
       href: '#',
       price: '14,900',
-      imageSrc: 'https://static.fitpetcdn.com/prod/images/product/1000036174/4967_2_fqdxjn_PRODUCT_LIST.png',
-      imageAlt: '[3개 세트] 인섹트업 미니바이트 스킨',
+      image: 'https://static.fitpetcdn.com/prod/images/product/1000036174/4967_2_fqdxjn_PRODUCT_LIST.png',
     },
     {
       id: 4,
       name: '[플라고] 벌집덴탈껌 스킨앤코트',
       href: '#',
       price: '9,900',
-      imageSrc: 'https://static.fitpetcdn.com/prod/images/product/1000033990/%EC%8A%A4%ED%82%A8%EC%95%A4%EC%BD%94%ED%8A%B8_imolwv.jpg',
-      imageAlt: '[플라고] 벌집덴탈껌 스킨앤코트',
+      image: 'https://static.fitpetcdn.com/prod/images/product/1000033990/%EC%8A%A4%ED%82%A8%EC%95%A4%EC%BD%94%ED%8A%B8_imolwv.jpg',
     },
   ];
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const prevSlide = () => {
-    const isFirstSlide = currentIndex == 0;
-    const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
-    setCurrentIndex(newIndex);
-  };
-
-  const nextSlide = () => {
-    const isLastSlide = currentIndex == slides.length - 1;
-    const newIndex = isLastSlide ? 0 : currentIndex + 1;
-    setCurrentIndex(newIndex);
-  };
-
-  const timerRef = useRef();
-  useEffect(() => {
-    timerRef.current = setInterval(nextSlide, 3000);
-    return () => clearInterval(timerRef.current);
-  });
 
   return (
     <div className="flex flex-col h-screen text-text">
@@ -80,34 +43,8 @@ const Index = () => {
         <Header />
       </header>
 
-      <main className="flex-1 overflow-y-auto">
-        {/* carousel */}
-        <div style={{ backgroundImage: `url(${slides[currentIndex].url})` }} className="w-full h-64 bg-no-repeat ease-in-out duration-500">
-          <div className="flex justify-between top left w-full h-full">
-            <button
-              onClick={prevSlide}
-              className="hover:bg-blue-900/20 text-white w-10 h-full text-center opacity-75 hover:opacity-100 z-10 p-0 m-0 duration-400"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-20 -ml-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={nextSlide}
-              className="hover:bg-blue-900/20 text-white w-10 h-full text-center opacity-75 hover:opacity-100 z-10 p-0 m-0 duration-400"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-20 -ml-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="flex top-4 justify-center py-2">
-            {slides.map((slide, index) => (
-              <div></div>
-            ))}
-          </div>
-        </div>
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <MainCarousel />
 
         {/* 3 buttons */}
         <div className="p-5">
@@ -134,7 +71,7 @@ const Index = () => {
                 {products.map((product) => (
                   <a key={product.id} href={product.href} className="group">
                     <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg">
-                      <img alt={product.imageAlt} src={product.imageSrc} className="h-full w-full object-cover object-center group-hover:opacity-75" />
+                      <img src={product.image} className="h-full w-full object-cover object-center group-hover:opacity-75" />
                     </div>
                     <div className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="size-5 mr-1">
@@ -155,6 +92,16 @@ const Index = () => {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* 새로 들어온 상품 */}
+          <div className="bg-white rounded-lg w-full h-84 mt-5 py-5">
+            <div className="flex items-center">
+              <p className="ml-5 mr-1">새로 들어온 상품</p>
+              <img src="src/assets/icons/new.png" />
+            </div>
+
+            <ProductCarousel />
           </div>
 
           {/* footer */}
