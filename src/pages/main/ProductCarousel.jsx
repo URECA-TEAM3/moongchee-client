@@ -68,8 +68,14 @@ const ProductCarousel = () => {
             {products.map((product) => (
               <div key={product.id} className="flex-shrink-0 w-full flex justify-center">
                 <div className="w-64 justify-center">
-                  <img src={product.image} alt={product.name} className="w-64 object-cover rounded-lg" />
-                  <div className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50">
+                  <a href={product.href}>
+                    <img src={product.image} alt={product.name} className="w-64 object-cover rounded-lg" />
+                  </a>
+
+                  <a
+                    href={product.href}
+                    className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="size-5 mr-1">
                       <path
                         strokeLinecap="round"
@@ -78,9 +84,9 @@ const ProductCarousel = () => {
                       />
                     </svg>
                     담기
-                  </div>
+                  </a>
                   <div className="mt-2">
-                    <p>{product.name}</p>
+                    <a href={product.href}>{product.name}</a>
                     <h3 className="flex items-center mt-1 text-lg font-medium text-gray-900">
                       <img src="src/assets/icons/gum.png" className="w-8 mr-1" /> {product.price} 개
                     </h3>
