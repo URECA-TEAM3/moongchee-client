@@ -5,6 +5,7 @@ import AnimalInfo from '../pages/main/AnimalInfo';
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
+import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
@@ -22,6 +23,10 @@ const MainScreens = {
   LoginSuccess: {
     path: '/loginsuccess',
     element: <LoginSuccessPage />,
+  },
+  AnimalResisterSuccess: {
+    path: '/animalRegisterSuccess',
+    element: <AnimalRegisterSuccessPage />,
   },
   Main: {
     path: '/main',
