@@ -57,10 +57,12 @@ const Index = () => {
               <img src="/src/assets/icons/category.png" className="h-14 inline" />
               <p>카테고리</p>
             </button>
-            <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-              <img src="/src/assets/icons/petsitting.png" className="h-14 inline" />
-              <p>펫시팅</p>
-            </button>
+            <a href="/petsitter">
+              <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+                <img src="/src/assets/icons/petsitting.png" className="h-14 inline" />
+                <p>펫시팅</p>
+              </button>
+            </a>
           </div>
 
           {/* 오늘의 인기상품 */}
