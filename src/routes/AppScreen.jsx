@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import AppPages from './AppPages';
+import { BrowserRouter } from 'react-router-dom';
 
 const ViewArea = styled.div`
   width: 600px;
@@ -10,7 +11,11 @@ const ViewArea = styled.div`
 const AppScreen = () => {
   return (
     <ViewArea>
-      <AppPages />
+      <div className="flex flex-col h-screen border-x border-divider text-text">
+        <BrowserRouter>
+          <AppPages />
+        </BrowserRouter>
+      </div>
     </ViewArea>
   );
 };
