@@ -21,7 +21,7 @@ const MainScreens = {
     element: <LoginSuccessPage />,
   },
   AnimalResisterSuccess: {
-    path: '/animalResiterSuccess',
+    path: '/animalRegisterSuccess',
     element: <AnimalRegisterSuccessPage />,
   },
   Main: {
