@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
+import { toast, Toaster } from 'react-hot-toast';
+
+import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
 
 const AnimalInfo = () => {
   const [name, setName] = useState('');
@@ -10,6 +15,8 @@ const AnimalInfo = () => {
   const [gender, setGender] = useState('');
   const [neutered, setNeutered] = useState('');
   const [userId, setUserId] = useState(null);
+  const [profileImage, setProfileImage] = useState(registerPetProfileImage);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -18,11 +25,33 @@ const AnimalInfo = () => {
     setUserId(storedUserId);
   }, []);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImageFile(file);
+      setProfileImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleProfileClick = () => {
+    document.getElementById('profileImageUpload').click();
+  };
+
   const handleSave = async () => {
     const surgery = neutered === 'yes';
 
+    const toastId = toast.loading('반려동물 정보 저장 중...');
+
     try {
-      const response = await axios.post('http://localhost:3000/api/animal-register', {
+      let animalImageUrl = null;
+
+      if (selectedImageFile) {
+        const storageRef = ref(storage, `animals/${userId}`);
+        await uploadBytes(storageRef, selectedImageFile);
+        animalImageUrl = await getDownloadURL(storageRef);
+      }
+
+      const response = await axios.post('http://localhost:3000/api/pets/animal-register', {
         userId,
         name,
         age,
@@ -30,18 +59,37 @@ const AnimalInfo = () => {
         species,
         gender,
         surgery,
+        animalImageUrl,
       });
+      console.log('애니멀 이미지 경로', animalImageUrl);
+      toast.dismiss(toastId);
+      toast.success('반려동물 정보가 성공적으로 저장되었습니다!');
+
       console.log('반려동물 정보 저장 성공:', response.data);
-      navigate('/main');
+      navigate('/animalRegisterSuccess');
     } catch (error) {
       console.error('반려동물 정보 저장 오류:', error);
+      toast.dismiss(toastId);
+      toast.error('반려동물 정보 저장에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
   return (
     <div className="flex flex-col items-center bg-white min-h-screen p-4">
+      <Toaster position="top-center" reverseOrder={false} />
       <h1 className="text-center text-lg font-bold mb-4">반려동물 정보</h1>
       <hr className="border-gray-300 w-[450px] mb-6" />
+
+      <div className="mb-6">
+        <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
+          {profileImage !== registerPetProfileImage ? (
+            <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
+          ) : (
+            <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+          )}
+        </div>
+        <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
+      </div>
 
       <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">이름</label>
       <input

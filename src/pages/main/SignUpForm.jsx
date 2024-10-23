@@ -6,6 +6,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import toast, { Toaster } from 'react-hot-toast';
+import { storage } from '../../../firebase';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -17,12 +21,61 @@ const SignUpForm = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [errors, setErrors] = useState({});
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [nickname, setNickname] = useState('');
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
   const userId = location.state?.userId || null;
 
-  console.log('회원가입 폼 유저아이디', userId);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      setSelectedImageFile(file);
+    }
+  };
+
+  const handleProfileClick = () => {
+    document.getElementById('profileImageUpload').click();
+  };
+
+  const validateNickname = (nickname) => {
+    const validPattern = /^(?![ㄱ-ㅎㅏ-ㅣ])[가-힣a-zA-Z]+$/;
+    return validPattern.test(nickname);
+  };
+
+  const handleNicknameCheck = async () => {
+    if (!nickname) {
+      toast.error('닉네임을 입력해주세요.');
+      return;
+    }
+
+    if (!validateNickname(nickname)) {
+      toast.error('닉네임에 자음이나 모음만 사용할 수 없습니다.');
+      return;
+    }
+
+    if (nickname.length > 8) {
+      toast.error('닉네임은 8자 이하여야 합니다.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
+      if (response.data.available) {
+        toast.success('사용 가능한 닉네임입니다.');
+        setIsNicknameChecked(true);
+      } else {
+        toast.error('이미 사용 중인 닉네임입니다.');
+      }
+    } catch (error) {
+      toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
+      console.error('닉네임 중복 확인 오류:', error);
+    }
+  };
 
   const handleComplete = (data) => {
     let fullAddress = data.address;
@@ -33,7 +86,7 @@ const SignUpForm = () => {
         extraAddress += data.bname;
       }
       if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+        extraAddress += extraAddress !== '' ? `, ${extraAddress}` : data.buildingName;
       }
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
@@ -110,33 +163,86 @@ const SignUpForm = () => {
       return;
     }
 
+    if (!isNicknameChecked) {
+      toast.error('닉네임 중복 확인을 해주세요.');
+      return;
+    }
+
     const formattedBirthDate = birthDate
       ? `${birthDate.getFullYear()}-${(birthDate.getMonth() + 1).toString().padStart(2, '0')}-${birthDate.getDate().toString().padStart(2, '0')}`
       : null;
 
     try {
-      const response = await axios.post('http://localhost:3000/api/signup', {
+      toast.loading('회원가입 진행 중...');
+      const storageRef = ref(storage, `profiles/${userId}`);
+      console.log('이때의 userid', userId);
+
+      await uploadBytes(storageRef, selectedImageFile);
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log('downloadurl', downloadURL);
+      const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
         phone,
         address: `${roadAddress} ${detailedAddress}`,
         birthDate: formattedBirthDate,
         provider,
         token: userId,
+        nickname,
+        profileImageUrl: downloadURL,
       });
       const newUserId = response.data.userId;
       console.log('받은 userId:', newUserId);
       localStorage.setItem('userId', newUserId);
+      toast.dismiss();
+      toast.success('회원가입 성공!');
 
       navigate('/loginsuccess');
     } catch (error) {
+      toast.dismiss();
+      toast.error('회원가입 실패. 다시 시도해주세요.');
       console.error('회원가입 오류:', error);
     }
   };
-
   return (
     <div className="flex flex-col items-center bg-white min-h-screen">
+      <Toaster />
       <h1 className="text-center text-lg font-bold mb-4 mt-6">회원정보</h1>
       <hr className="border-gray-300 w-[450px] mb-6" />
+
+      <div className="w-full max-w-md">
+        <label className="block text-sm font-medium mb-1">프로필 등록(선택)</label>
+
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
+            {selectedImage ? (
+              <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
+            ) : (
+              <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
+            )}
+          </div>
+          <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
+
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">닉네임*</label>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="닉네임 입력"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                className="flex-1 p-2 border border-blue-500 rounded"
+              />
+              <button
+                type="button"
+                onClick={handleNicknameCheck}
+                className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+              >
+                중복확인
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <form className="w-full max-w-md" onSubmit={handleSubmit}>
         <label className="block text-sm font-medium mb-1">이름*</label>
