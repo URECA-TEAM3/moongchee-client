@@ -6,6 +6,10 @@ import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
 
+import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
+import Chat from '../pages/chat/Chat';
+import Mypage from '../pages/mypage/Mypage';
+
 const MainScreens = {
   LoginPage: {
     path: '/',
@@ -30,6 +34,18 @@ const MainScreens = {
   AnimalInfo: {
     path: '/animalinfo',
     element: <AnimalInfo />,
+  },
+  ShoppingCart: {
+    path: '/shoppingcart',
+    element: <ShoppingCart />,
+  },
+  Chat: {
+    path: '/chat',
+    element: <Chat />,
+  },
+  Mypage: {
+    path: '/mypage',
+    element: <Mypage />,
   },
 };
 

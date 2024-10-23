@@ -45,9 +45,7 @@ const ProductCarousel = () => {
 
   return (
     <div className="relative w-full max-w-lg mx-auto mt-3">
-      {/* Carousel */}
       <div className="relative flex justify-between items-center">
-        {/* Previous Button */}
         <button
           onClick={handlePrevClick}
           className="absolute left-0 z-10 p-2 w-12 h-12 bg-divider/50 hover:bg-paleblue rounded-full"
@@ -97,7 +95,6 @@ const ProductCarousel = () => {
           </div>
         </div>
 
-        {/* Next Button */}
         <button
           onClick={handleNextClick}
           className="absolute right-0 z-10 p-2 w-12 h-12 bg-divider/50 hover:bg-paleblue rounded-full"
