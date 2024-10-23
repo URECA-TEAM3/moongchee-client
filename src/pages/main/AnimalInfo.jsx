@@ -66,7 +66,7 @@ const AnimalInfo = () => {
       toast.success('반려동물 정보가 성공적으로 저장되었습니다!');
 
       console.log('반려동물 정보 저장 성공:', response.data);
-      navigate('/animalResiterSuccess');
+      navigate('/animalRegisterSuccess');
     } catch (error) {
       console.error('반려동물 정보 저장 오류:', error);
       toast.dismiss(toastId);
