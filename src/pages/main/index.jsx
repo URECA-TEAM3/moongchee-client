@@ -83,7 +83,7 @@ const Index = () => {
                       </svg>
                       담기
                     </div>
-                    <h3 className="mt-4 text-sm text-text">{product.name}</h3>
+                    <h3 className="mt-4 text-sm text-text line-clamp-2">{product.name}</h3>
                     <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
                       <img src="src/assets/icons/gum.png" className="w-8 mr-1" />
                       {product.price} 개

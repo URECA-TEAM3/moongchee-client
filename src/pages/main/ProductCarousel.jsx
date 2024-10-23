@@ -81,7 +81,9 @@ const ProductCarousel = () => {
                   </div>
                   <div className="mt-2">
                     <p>{product.name}</p>
-                    <h3 className="text-lg font-semibold">{product.price} 개</h3>
+                    <h3 className="flex items-center mt-1 text-lg font-medium text-gray-900">
+                      <img src="src/assets/icons/gum.png" className="w-8 mr-1" /> {product.price} 개
+                    </h3>
                   </div>
                 </div>
               </div>
