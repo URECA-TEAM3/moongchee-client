@@ -13,7 +13,7 @@ const GoogleLoginBtn = () => {
     console.log('로그인 성공, 받은 토큰:', token);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/google-login', {
+      const response = await axios.post('http://localhost:3000/api/auth/google-login', {
         token,
       });
 

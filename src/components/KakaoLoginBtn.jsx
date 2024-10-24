@@ -17,7 +17,7 @@ const KakaoLoginBtn = () => {
         console.log('로그인 성공:', authObj);
 
         try {
-          const response = await axios.post('http://localhost:3000/api/kakao-login', {
+          const response = await axios.post('http://localhost:3000/api/auth/kakao-login', {
             token: authObj.access_token,
           });
 
