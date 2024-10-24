@@ -4,6 +4,7 @@ import Modal from '../components/Modal';
 const ReservationCard = ({ info }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const [isPetSitter, setIsPetSitter] = useState(true);
 
   const openModal = (value) => {
     setIsModalOpen(true);
@@ -12,26 +13,49 @@ const ReservationCard = ({ info }) => {
 
   const closeModal = () => setIsModalOpen(false);
 
+  const handleStatusCode = () => {
+    if (info.status === 'reserved') return '예약 완료';
+    else if (info.status === 'cancel') return '취소 완료';
+    else if (info.status === 'sitted') return '펫시팅 완료';
+    else return '';
+  };
+
   return (
-    <div className="bg-paleblue rounded-lg shadow-sm p-5">
+    <div className={`bg-paleblue rounded-lg shadow-sm p-5 ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`}>
       <div className="profile flex items-center mt-3">
         <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
         <div className="personal ml-5">
           <span className="text-xl text-slate-900 font-bold">{info.name}</span>
         </div>
+        {isPetSitter && (
+          <span className={`${info.status === 'cancel' ? 'text-white bg-gray-500' : 'text-black bg-secondary'} rounded-md px-2 py-1 text-sm ml-auto`}>
+            {handleStatusCode()}
+          </span>
+        )}
       </div>
-      <div className="flex flex-col mt-3">
-        <span className="text-lg text-slate-900 font-medium">요청한 날짜와 시간</span>
-        <span>{info.scheduled}</span>
-        <span>{`${info.startTime}~${info.endTime}`}</span>
+      <div className="flex mt-3 justify-between items-center">
+        <div className="flex flex-col">
+          <span className="text-lg text-slate-900 font-medium">요청한 날짜와 시간</span>
+          <span>{info.scheduled}</span>
+          <span>{`${info.startTime}~${info.endTime}`}</span>
+        </div>
+        {isPetSitter && info.status === 'reserved' && <span class="text-gray-500 text-2xl cursor-pointer">&gt;</span>}
       </div>
       <div className="flex gap-5 mt-3">
-        <button className="text-white bg-delete px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('reject')}>
-          거절
-        </button>
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('confirm')}>
-          수락
-        </button>
+        {!isPetSitter ? (
+          <div className="flex gap-5 mt-3 w-full">
+            <button className="text-white bg-delete px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('reject')}>
+              거절
+            </button>
+            <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('confirm')}>
+              수락
+            </button>
+          </div>
+        ) : info.status === 'reserved' ? (
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">예약 취소하기</button>
+        ) : (
+          ''
+        )}
       </div>
       <Modal
         isOpen={isModalOpen}
@@ -52,7 +76,9 @@ const ReservationCard = ({ info }) => {
           <span className="text-alert font-bold text-lg">* 승인을 하면 취소 할 수 없습니다.</span>
         </div>
         <div className="flex gap-4 mt-3">
-          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full">취소</button>
+          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
+            취소
+          </button>
           <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">수락</button>
         </div>
       </Modal>

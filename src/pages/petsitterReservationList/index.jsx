@@ -8,18 +8,21 @@ const index = () => {
       scheduled: '2024-11-01',
       startTime: '10:00 AM',
       endTime: '14:00 PM',
+      status: 'reserved',
     },
     {
       name: '박주광',
       scheduled: '2024-11-01',
       startTime: '10:00 AM',
       endTime: '14:00 PM',
+      status: 'cancel',
     },
     {
       name: '박주광',
       scheduled: '2024-11-01',
       startTime: '10:00 AM',
       endTime: '14:00 PM',
+      status: 'sitted',
     },
   ];
   return (
