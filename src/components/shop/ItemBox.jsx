@@ -1,6 +1,8 @@
 import React from 'react';
 
 const ItemBox = ({ item }) => {
+  console.log(item);
+
   return (
     <div className="border-[1px] rounded-2xl p-3">
       <button onClick={() => console.log('아이템 클릭')} className="flex flex-col">
