@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import Modal from '../components/Modal';
+import { useNavigate } from 'react-router-dom';
 
 const ReservationCard = ({ info }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [isPetSitter, setIsPetSitter] = useState(true);
+
+  const navigate = useNavigate();
 
   const openModal = (value) => {
     setIsModalOpen(true);
@@ -19,6 +22,8 @@ const ReservationCard = ({ info }) => {
     else if (info.status === 'sitted') return '펫시팅 완료';
     else return '';
   };
+
+  const handleDetailClick = () => navigate('/petsitter/reservation/detail');
 
   return (
     <div className={`bg-paleblue rounded-lg shadow-sm p-5 ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`}>
@@ -39,7 +44,11 @@ const ReservationCard = ({ info }) => {
           <span>{info.scheduled}</span>
           <span>{`${info.startTime}~${info.endTime}`}</span>
         </div>
-        {isPetSitter && info.status === 'reserved' && <span class="text-gray-500 text-2xl cursor-pointer">&gt;</span>}
+        {isPetSitter && info.status === 'reserved' && (
+          <span className="text-gray-500 text-2xl cursor-pointer" onClick={handleDetailClick}>
+            &gt;
+          </span>
+        )}
       </div>
       <div className="flex gap-5 mt-3">
         {!isPetSitter ? (

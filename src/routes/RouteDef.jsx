@@ -11,6 +11,7 @@ import PetSitter from '../pages/petsitter';
 import PetSitterDetail from '../pages/petsitterDetail';
 import PetSitterReservation from '../pages/petsitterReservation';
 import PetSitterReservationList from '../pages/petsitterReservationList';
+import PetSitterReservDetail from '../pages/petsitterReservDetail';
 
 const MainScreens = {
   LoginPage: {
@@ -49,8 +50,12 @@ const PetSitterScreens = {
     element: <PetSitterReservation />,
   },
   PetSitterReservationList: {
-    path: 'petsitter/reservation/list',
+    path: '/petsitter/reservation/list',
     element: <PetSitterReservationList />,
+  },
+  PetSitterReservDetail: {
+    path: '/petsitter/reservation/detail',
+    element: <PetSitterReservDetail />,
   },
 };
 
