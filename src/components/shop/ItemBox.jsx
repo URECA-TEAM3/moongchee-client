@@ -6,7 +6,7 @@ const ItemBox = ({ item }) => {
 
   return (
     <div className="border-[1px] rounded-2xl p-3 h-[406px]">
-      <button onClick={() => navigate(`/shopMain/${item.id}`)} className="flex flex-col h-[100%]">
+      <button onClick={() => navigate(`/shoppingmall/${item.id}`)} className="flex flex-col h-[100%]">
         <div>
           <img src={item.image} alt="Item Main Image" className="rounded-2xl" />
         </div>

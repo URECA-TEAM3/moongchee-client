@@ -81,7 +81,7 @@ const ShopMain = () => {
 
       {/* 카테고리별 조회 */}
       <div className="p-5 flex justify-end mr-10 text-sm">
-        <select id="sort-dropdown" value={sortOption} onChange={handleSortChange}>
+        <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">
           <option value="latest">최신순</option>
           <option value="popular">인기순</option>
           <option value="high-price">가격 높은순</option>

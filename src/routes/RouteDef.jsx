@@ -81,12 +81,15 @@ const PetSitterScreens = {
     path: '/petsitter/reservation/detail',
     element: <PetSitterReservDetail />,
   },
+};
+
+const ShoppingMallScreens = {
   ShopMain: {
-    path: '/shopMain',
+    path: '/shoppingmall',
     element: <ShopMain />,
   },
   ShopDetail: {
-    path: '/shopMain/:id',
+    path: '/shoppingmall/:id',
     element: <ShopDetail />,
   },
 };
@@ -94,4 +97,5 @@ const PetSitterScreens = {
 export const AppRouteDef = {
   ...MainScreens,
   ...PetSitterScreens,
+  ...ShoppingMallScreens,
 };

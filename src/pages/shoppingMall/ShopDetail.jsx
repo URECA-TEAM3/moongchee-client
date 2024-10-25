@@ -67,7 +67,7 @@ function ShopDetail() {
         </div>
       )}
 
-      <DetailBottom />
+      <DetailBottom id={id} />
     </div>
   );
 }
