@@ -1,41 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import Category from '../../components/shop/Category';
 import ItemBox from '../../components/shop/ItemBox';
-import axios from 'axios';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import firebaseApp from '../../utils/firebaseConfig'; // Firebase 초기화된 앱 불러오기
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
+import API from '../../api/axiosInstance';
 
 const ShopMain = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // 모든 상품 조회
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/products');
+      setLoading(true);
+      const response = await API.get('/api/products');
+
       const productsWithImages = await Promise.all(
         response.data.data.map(async (product) => {
-          const imageUrl = await fetchImgFromFireStorage(product.image); // 이미지 URL 가져오기
-          return {
-            ...product,
-            image: imageUrl, // URL로 업데이트
-          };
+          try {
+            const storageRef = ref(storage, product.image);
+            const imageUrl = await getDownloadURL(storageRef);
+            return {
+              ...product,
+              image: imageUrl, // URL로 업데이트
+            };
+          } catch (error) {
+            console.error('상품 이미지 로드 실패:', error);
+            return {
+              ...product,
+              image: '/default-image.png', // 기본 이미지 경로
+            };
+          }
         })
       );
+
       setProducts(productsWithImages);
     } catch (error) {
       console.error('상품 목록 조회 실패:', error);
-    }
-  };
-
-  const fetchImgFromFireStorage = async (img) => {
-    const storage = getStorage(firebaseApp);
-    try {
-      const url = await getDownloadURL(ref(storage, img)); // 다운로드 URL 얻기
-      return url; // 직접 URL 반환
-    } catch (error) {
-      console.error('Error loading image:', error);
-      throw new Error('이미지 로드 중 오류가 발생했습니다.'); // 사용자에게 에러 메시지 반환
+      alert('상품 목록을 불러오는 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false); // 로딩 상태 해제
     }
   };
 

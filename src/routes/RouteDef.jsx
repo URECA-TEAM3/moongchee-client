@@ -6,6 +6,7 @@ import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
 import ShopMain from '../pages/shoppingMall/ShopMain';
+import ShopDetail from '../pages/shoppingMall/ShopDetail';
 import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 
 const MainScreens = {
@@ -40,6 +41,10 @@ const MainScreens = {
   ShopMain: {
     path: '/shopMain',
     element: <ShopMain />,
+  },
+  ShopDetail: {
+    path: '/shopMain/:id',
+    element: <ShopDetail />,
   },
 };
 

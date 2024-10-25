@@ -1,11 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ItemBox = ({ item }) => {
-  console.log(item);
+  const navigate = useNavigate();
 
   return (
     <div className="border-[1px] rounded-2xl p-3">
-      <button onClick={() => console.log('아이템 클릭')} className="flex flex-col">
+      <button onClick={() => navigate(`/shopMain/${item.id}`)} className="flex flex-col">
         <div>
           <img src={item.image} alt="Item Main Image" className="rounded-2xl" />
         </div>
