@@ -13,6 +13,8 @@ import PetSitterReservation from '../pages/petsitterReservation';
 import PetSitterReservationList from '../pages/petsitterReservationList';
 import PetSitterReservDetail from '../pages/petsitterReservDetail';
 
+import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
+
 const MainScreens = {
   LoginPage: {
     path: '/',
@@ -25,6 +27,10 @@ const MainScreens = {
   LoginSuccess: {
     path: '/loginsuccess',
     element: <LoginSuccessPage />,
+  },
+  AnimalResisterSuccess: {
+    path: '/animalRegisterSuccess',
+    element: <AnimalRegisterSuccessPage />,
   },
   Main: {
     path: '/main',
