@@ -3,6 +3,7 @@ import { ChevronRightIcon, ChevronLeftIcon, ShoppingCartIcon } from '@heroicons/
 import axios from 'axios';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { app } from '../../../firebase';
+import ItemBox from '../../components/shop/ItemBox';
 
 const ProductCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -67,26 +68,10 @@ const ProductCarousel = () => {
               transform: `translateX(-${currentIndex * 100}%)`,
             }}
           >
-            {newProducts.map((product) => (
-              <div key={product.id} className="flex-shrink-0 w-full flex justify-center">
+            {newProducts.map((item) => (
+              <div key={item.id} className="flex-shrink-0 w-full flex justify-center ">
                 <div className="w-64 justify-center">
-                  <a href={product.href}>
-                    <img src={product.image} alt={product.name} className="w-64 object-cover rounded-lg" />
-                  </a>
-
-                  <a
-                    href={product.href}
-                    className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50"
-                  >
-                    <ShoppingCartIcon stroke="currentColor" className="size-5 mr-1" />
-                    담기
-                  </a>
-                  <div className="mt-2">
-                    <a href={product.href}>{product.name}</a>
-                    <h3 className="flex items-center mt-1 text-lg font-medium text-gray-900">
-                      <img src="src/assets/icons/gum.png" className="w-8 mr-1" /> {product.price} 개
-                    </h3>
-                  </div>
+                  <ItemBox item={item} />
                 </div>
               </div>
             ))}

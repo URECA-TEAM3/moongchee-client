@@ -5,6 +5,8 @@ import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { app } from '../../../firebase';
+import { Link } from 'react-router-dom';
+import ItemBox from '../../components/shop/ItemBox';
 
 const Index = () => {
   const [popularProducts, setPopularProducts] = useState([]);
@@ -49,20 +51,24 @@ const Index = () => {
       {/* 3 buttons */}
       <div className="p-5">
         <div className="flex justify-between items-center mx-8 mb-5">
-          <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-            <img src="/src/assets/icons/best.png" className="h-14 inline" />
-            <p>BEST</p>
-          </button>
-          <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-            <img src="/src/assets/icons/category.png" className="h-14 inline" />
-            <p>카테고리</p>
-          </button>
-          <a href="/petsitter">
+          <Link to="/shoppingmall">
+            <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/best.png" className="h-14 inline" />
+              <p>BEST</p>
+            </button>
+          </Link>
+          <Link to="/shoppingmall/category">
+            <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/category.png" className="h-14 inline" />
+              <p>카테고리</p>
+            </button>
+          </Link>
+          <Link to="/petsitter">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
               <img src="/src/assets/icons/petsitting.png" className="h-14 inline" />
               <p>펫시팅</p>
             </button>
-          </a>
+          </Link>
         </div>
 
         {/* 오늘의 인기상품 */}
@@ -70,29 +76,8 @@ const Index = () => {
           <p>오늘의 인기상품</p>
           <div className="mx-auto max-w-2xl pt-5">
             <div className="grid grid-cols-2 gap-x-5 gap-y-5">
-              {popularProducts.map((product) => (
-                <div key={product.id}>
-                  <a href={product.href}>
-                    <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg">
-                      <img src={product.image} className="h-full w-full object-cover object-center hover:opacity-75" />
-                    </div>
-                  </a>
-
-                  <a href={product.href}>
-                    <div className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50">
-                      <ShoppingCartIcon stroke="currentColor" className="size-5 mr-1" />
-                      담기
-                    </div>
-                  </a>
-
-                  <h3 className="mt-4 text-sm text-text line-clamp-2">
-                    <a href={product.href}>{product.name}</a>
-                  </h3>
-                  <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
-                    <img src="src/assets/icons/gum.png" className="w-8 mr-1" />
-                    {product.price} 개
-                  </p>
-                </div>
+              {popularProducts.map((item) => (
+                <ItemBox item={item} key={item.id} />
               ))}
             </div>
           </div>
