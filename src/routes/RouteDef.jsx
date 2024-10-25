@@ -18,6 +18,7 @@ import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
+import ChargePage from '../pages/main/ChargePage';
 
 const MainScreens = {
   LoginPage: {
@@ -56,6 +57,11 @@ const MainScreens = {
     path: '/mypage',
     element: <Mypage />,
   },
+
+  ChargePage: {
+    path: '/chargepage',
+    element: <ChargePage />,
+  },
 };
 
 const PetSitterScreens = {
@@ -78,16 +84,6 @@ const PetSitterScreens = {
   PetSitterReservDetail: {
     path: '/petsitter/reservation/detail',
     element: <PetSitterReservDetail />,
-  },
-
-  ChargePage: {
-    path: '/chargepage',
-    element: <ChargePage />,
-  },
-
-  ChargePage: {
-    path: '/chargepage',
-    element: <ChargePage />,
   },
 };
 

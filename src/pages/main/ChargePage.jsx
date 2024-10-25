@@ -14,7 +14,10 @@ const ChargePage = () => {
     70000: 7,
     100000: 10,
   };
-  const dispatch = useDispatch();
+
+  const handleAmountClick = (amount) => {
+    setSelectedAmount(amount);
+  };
 
   const getButtonClass = (amount) => {
     return selectedAmount === amount
@@ -31,12 +34,6 @@ const ChargePage = () => {
       </div>
 
       <hr className="border-gray-300 mb-6" />
-
-      <div className="mb-4 text-left">
-        <p>
-          현재 로그인된 유저 ID: <strong>{userId}</strong>
-        </p>
-      </div>
 
       <div className="flex justify-between items-center mb-4">
         <button className={getButtonClass(10000)} onClick={() => handleAmountClick(10000)}>
@@ -100,7 +97,6 @@ const ChargePage = () => {
         </span>
       </div>
 
-      {/* 현재 보유한 개껌 */}
       <div className="flex items-center justify-between mb-4 py-2 border-b border-gray-200">
         <span className="text-lg">현재 보유한 개껌:</span>
         <span className="text-lg font-bold flex items-center ml-auto">
@@ -109,7 +105,6 @@ const ChargePage = () => {
         </span>
       </div>
 
-      {/* 충전할 개껌수 */}
       <div className="flex items-center justify-between mb-4 py-2 border-b border-gray-200">
         <span className="text-lg">충전할 개껌수:</span>
         <span className="text-lg font-bold flex items-center ml-auto">
@@ -118,7 +113,6 @@ const ChargePage = () => {
         </span>
       </div>
 
-      {/* 결제 후 개껌 */}
       <div className="flex items-center justify-between mb-4 py-2 border-b border-gray-200">
         <span className="text-lg">결제 후 개껌:</span>
         <span className="text-lg font-bold flex items-center ml-auto">
