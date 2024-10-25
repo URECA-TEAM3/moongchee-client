@@ -4,11 +4,36 @@ import ItemBox from '../../components/shop/ItemBox';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import API from '../../api/axiosInstance';
+import { CgSearchLoading } from 'react-icons/cg';
 
 const ShopMain = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sortOption, setSortOption] = useState('latest'); // 기본값을 최신순으로 설정
+
+  const handleSortChange = (event) => {
+    const option = event.target.value;
+    setSortOption(option);
+    const sortedProducts = sortProducts(products, option);
+    setProducts(sortedProducts);
+  };
+
+  const sortProducts = (products, option) => {
+    const sortedProducts = [...products];
+
+    if (option === 'latest') {
+      sortedProducts.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    } else if (option === 'popular') {
+      sortedProducts.sort((a, b) => b.sales - a.sales);
+    } else if (option === 'high-price') {
+      sortedProducts.sort((a, b) => b.price - a.price);
+    } else {
+      sortedProducts.sort((a, b) => a.price - b.price);
+    }
+
+    return sortedProducts;
+  };
 
   // 모든 상품 조회
   const fetchProducts = async () => {
@@ -27,20 +52,18 @@ const ShopMain = () => {
             };
           } catch (error) {
             console.error('상품 이미지 로드 실패:', error);
-            return {
-              ...product,
-              image: '/default-image.png', // 기본 이미지 경로
-            };
+            return product;
           }
         })
       );
 
       setProducts(productsWithImages);
+      const sortedProducts = sortProducts(productsWithImages, sortOption);
+      setProducts(sortedProducts);
     } catch (error) {
       console.error('상품 목록 조회 실패:', error);
-      alert('상품 목록을 불러오는 중 오류가 발생했습니다.');
     } finally {
-      setLoading(false); // 로딩 상태 해제
+      setLoading(false);
     }
   };
 
@@ -48,20 +71,37 @@ const ShopMain = () => {
     fetchProducts();
   }, []);
 
-  // selectedCategory와 일치하는 아이템만 필터링
   const filteredItems = selectedCategory === 0 ? products : products.filter((product) => product.category_id === selectedCategory);
 
   return (
-    <div>
-      <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-
-      <div className="m-5">정렬구현예정</div>
-
-      <div className="grid grid-cols-2 gap-5 mx-10 max-h-[90vh] overflow-y-scroll">
-        {filteredItems.map((item) => (
-          <ItemBox item={item} key={item.id} />
-        ))}
+    <div className="bg-white">
+      <div className="pt-5">
+        <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
       </div>
+
+      {/* 카테고리별 조회 */}
+      <div className="p-5 flex justify-end mr-10 text-sm">
+        <select id="sort-dropdown" value={sortOption} onChange={handleSortChange}>
+          <option value="latest">최신순</option>
+          <option value="popular">인기순</option>
+          <option value="high-price">가격 높은순</option>
+          <option value="low-price">가격 낮은순</option>
+        </select>
+      </div>
+
+      {/* 전체 상품 목룍 */}
+      {loading ? (
+        <div className="flex justify-center items-center">
+          상품 정보 불러오는 중 ...
+          <CgSearchLoading size={20} />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-5 mx-10 max-h-[71vh] overflow-y-scroll">
+          {filteredItems.map((item) => (
+            <ItemBox item={item} key={item.id} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

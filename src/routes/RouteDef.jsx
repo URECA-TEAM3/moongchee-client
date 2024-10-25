@@ -1,13 +1,25 @@
 import Main from '../pages/main';
-import PetSitter from '../pages/petsitter';
-import AnimalInfo from '../pages/main/AnimalInfo';
 
+//Login
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
 import ShopMain from '../pages/shoppingMall/ShopMain';
 import ShopDetail from '../pages/shoppingMall/ShopDetail';
+import AnimalInfo from '../pages/main/AnimalInfo';
+
+//PetSitter
+import PetSitter from '../pages/petsitter';
+import PetSitterDetail from '../pages/petsitterDetail';
+import PetSitterReservation from '../pages/petsitterReservation';
+import PetSitterReservationList from '../pages/petsitterReservationList';
+import PetSitterReservDetail from '../pages/petsitterReservDetail';
+
 import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
+
+import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
+import Chat from '../pages/chat/Chat';
+import Mypage from '../pages/mypage/Mypage';
 
 const MainScreens = {
   LoginPage: {
@@ -30,13 +42,44 @@ const MainScreens = {
     path: '/main',
     element: <Main />,
   },
+  AnimalInfo: {
+    path: '/animalinfo',
+    element: <AnimalInfo />,
+  },
+  ShoppingCart: {
+    path: '/shoppingcart',
+    element: <ShoppingCart />,
+  },
+  Chat: {
+    path: '/chat',
+    element: <Chat />,
+  },
+  Mypage: {
+    path: '/mypage',
+    element: <Mypage />,
+  },
+};
+
+const PetSitterScreens = {
   Petsitter: {
     path: '/petsitter',
     element: <PetSitter />,
   },
-  AnimalInfo: {
-    path: '/animalinfo',
-    element: <AnimalInfo />,
+  PetSitterDetail: {
+    path: '/petsitter/detail/:name',
+    element: <PetSitterDetail />,
+  },
+  PetSitterReservation: {
+    path: '/petsitter/reservation',
+    element: <PetSitterReservation />,
+  },
+  PetSitterReservationList: {
+    path: '/petsitter/reservation/list',
+    element: <PetSitterReservationList />,
+  },
+  PetSitterReservDetail: {
+    path: '/petsitter/reservation/detail',
+    element: <PetSitterReservDetail />,
   },
   ShopMain: {
     path: '/shopMain',
@@ -50,4 +93,5 @@ const MainScreens = {
 
 export const AppRouteDef = {
   ...MainScreens,
+  ...PetSitterScreens,
 };

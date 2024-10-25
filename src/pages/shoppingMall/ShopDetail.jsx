@@ -41,18 +41,8 @@ function ShopDetail() {
     fetchProductDetail();
   }, [id]);
 
-  // 로딩 상태 처리
-  if (loading) {
-    return <div>로딩 중...</div>; // 로딩 중일 때 표시할 UI
-  }
-
-  // product가 null일 때 처리
-  if (!product) {
-    return <div>상품 정보를 불러오지 못했습니다.</div>; // 상품 정보가 없을 때 표시할 UI
-  }
-
   return (
-    <div>
+    <div className="bg-white">
       <div className="flex items-center justify-between p-5">
         <button onClick={() => navigate(-1)}>
           <IoIosArrowBack />
@@ -61,17 +51,21 @@ function ShopDetail() {
         <div></div>
       </div>
 
-      <div className="max-h-[90vh] overflow-y-scroll">
-        <img src={product.image} alt={product.name} />
-        <div className="p-7">
-          <h1 className="text-xl break-keep">{product.name}</h1>
-          <p className="flex items-center mt-3">
-            <img className="w-8 mr-1" src="/src/assets/images/dogChew.svg" alt="" />
-            <span className="font-bold">{product.price}원</span>
-          </p>
+      {loading ? (
+        <div>로딩 중...</div>
+      ) : (
+        <div className="max-h-[78vh] overflow-y-scroll">
+          <img src={product.image} alt={product.name} />
+          <div className="p-7">
+            <h1 className="text-xl break-keep">{product.name}</h1>
+            <p className="flex items-center mt-3">
+              <img className="w-8 mr-1" src="/src/assets/images/dogChew.svg" alt="" />
+              <span className="font-bold">{product.price}개</span>
+            </p>
+          </div>
+          <img src={product.description} alt={product.name} />
         </div>
-        <img src={product.description} alt={product.name} />
-      </div>
+      )}
 
       <DetailBottom />
     </div>

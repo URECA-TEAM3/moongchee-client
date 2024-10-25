@@ -1,7 +1,58 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import PetSitterInfo from '../../components/PetSitterInfo';
+import Dropdown from '../../components/DropDown';
 
 const index = () => {
   const [sitterList, setSitterList] = useState([]);
+  const [isPetSitter, setIsPetSitter] = useState(false);
+  const [startTime, setStartTime] = useState('08:00 AM');
+  const [endTime, setEndTime] = useState('08:00 AM');
+  const [dayList, setDayList] = useState([
+    {
+      name: '월',
+      target: false,
+    },
+    {
+      name: '화',
+      target: false,
+    },
+    {
+      name: '수',
+      target: false,
+    },
+    {
+      name: '목',
+      target: false,
+    },
+    {
+      name: '금',
+      target: false,
+    },
+    {
+      name: '토',
+      target: false,
+    },
+    {
+      name: '일',
+      target: false,
+    },
+  ]);
+  const dropDownTime = [
+    '09:00 AM',
+    '08:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '13:00 PM',
+    '14:00 PM',
+    '15:00 PM',
+    '16:00 PM',
+    '17:00 PM',
+    '18:00 PM',
+    '19:00 PM',
+  ];
+  const navigate = useNavigate();
 
   useEffect(() => {
     setSitterList([
@@ -52,41 +103,87 @@ const index = () => {
     ]);
   }, []);
 
-  const handleApplyClick = () => {};
+  const handleApplyClick = () => {
+    navigate('/petsitter/apply');
+  };
 
-  const handleReservationClick = () => {};
+  const handleReservationClick = () => {
+    navigate('/petsitter/reservation');
+  };
+
+  const handleProfileClick = () => {
+    navigate('/petsitter/profile');
+  };
+
+  const handleDayClick = (dayName) => {
+    setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
+  };
+
+  const handleSearchClick = () => {};
 
   return (
-    <div className="container inline-grid px-4 py-5 gap-y-5 h-full overflow-y-scroll">
+    <div className="inline-grid gap-y-5 h-full">
       <h1 className="text-2xl subpixel-antialiased ">펫시터</h1>
       <div className="flex items-center container gap-5">
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal">펫시터 지원하기</button>
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal">예약 / 취소 내역</button>
+        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleApplyClick}>
+          펫시터 지원하기
+        </button>
+        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleReservationClick}>
+          예약 / 취소 내역
+        </button>
+        {isPetSitter && (
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleProfileClick}>
+            나의 펫시터 프로필
+          </button>
+        )}
       </div>
-      <div className="search"></div>
-      {sitterList.map((item, index) => (
-        <div key={'item' + index} className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200">
-          <div className="profile flex items-center">
-            <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
-            <div className="personal ml-5">
-              <span className="text-xl text-slate-900 font-medium">{item.name}</span>
-              <div className="weekday">
-                <div className="holiday">{item.weekday} 근무</div>
-                <span className="workTime">{`${item.startTime} ~ ${item.endTime}`}</span>
+      <div>
+        <div className="search">
+          <span className="text-text text-sm">펫시터가 필요한 요일과 시간을 선택해보세요</span>
+          <div className="days container flex items-center justify-center mt-3">
+            {dayList.map((day, index) => (
+              <div className="flex-1 flex items-center justify-center" key={day.name + index}>
+                <div
+                  onClick={() => handleDayClick(day.name)}
+                  className={`day rounded-full w-10 h-10 text-center leading-10 text-slate-400 cursor-pointer ${!day.target ? 'bg-divider' : 'bg-secondary'}`}
+                >
+                  {day.name}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-          <div className="personal-history mt-5 flex flex-col gap-3">
-            <div>
-              <span className="text-xl font-medium ">자기소개</span>
-              <div className="w-[520px] overflow-hidden text-ellipsis line-clamp-2">{item.introduction}</div>
+          <div className="flex justify-center items-center gap-5 mt-5">
+            <div className="flex items-center flex-col w-[150px]">
+              <span>Start Time</span>
+              <Dropdown
+                width={'150'}
+                label={startTime}
+                options={dropDownTime}
+                title={'Start Time'}
+                onSelect={(option) => {
+                  setStartTime(option);
+                }}
+              />
             </div>
-            <div>
-              <span className="text-xl font-medium">경험</span>
-              <div className="w-[520px] overflow-hidden text-ellipsis line-clamp-2">{item.experience}</div>
+            ~
+            <div className="flex items-center flex-col w-[150px]">
+              <span>End Time</span>
+              <Dropdown
+                width={'150'}
+                label={endTime}
+                options={dropDownTime}
+                title={'End Time'}
+                onSelect={(option) => {
+                  setEndTime(option);
+                }}
+              />
             </div>
           </div>
         </div>
+      </div>
+      <div className="search"></div>
+      {sitterList.map((item, index) => (
+        <PetSitterInfo key={'item' + index} info={item} />
       ))}
     </div>
   );
