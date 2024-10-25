@@ -175,9 +175,11 @@ const SignUpForm = () => {
     try {
       toast.loading('회원가입 진행 중...');
       const storageRef = ref(storage, `profiles/${userId}`);
+      console.log('이때의 userid', userId);
+
       await uploadBytes(storageRef, selectedImageFile);
       const downloadURL = await getDownloadURL(storageRef);
-
+      console.log('downloadurl', downloadURL);
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
         phone,
@@ -204,6 +206,8 @@ const SignUpForm = () => {
       toast.success('회원가입 성공!');
       navigate('/loginsuccess');
     } catch (error) {
+      toast.dismiss();
+      toast.error('회원가입 실패. 다시 시도해주세요.');
       toast.dismiss();
       toast.error('회원가입 실패. 다시 시도해주세요.');
       console.error('회원가입 오류:', error);

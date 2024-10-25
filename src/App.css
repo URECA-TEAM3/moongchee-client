@@ -1,6 +1,5 @@
 #root {
   min-width: 800px;
-  width: 100vw;
   display: flex;
   justify-content: center;
 }
