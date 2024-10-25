@@ -20,9 +20,11 @@ const GoogleLoginBtn = () => {
       console.log('서버 응답:', response.data);
 
       if (response.data.exists) {
+        console.log('이미 가입된 회원입니다. 회원 ID:', response.data.id); // ID 값 출력
         navigate('/main');
       } else {
         const userId = response.data.userId;
+        console.log('회원가입 필요, 받은 userId:', userId); // userId 출력
         navigate('/signup', { state: { provider: 'google', token, userId } });
       }
     } catch (error) {

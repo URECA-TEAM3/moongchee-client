@@ -175,11 +175,9 @@ const SignUpForm = () => {
     try {
       toast.loading('회원가입 진행 중...');
       const storageRef = ref(storage, `profiles/${userId}`);
-      console.log('이때의 userid', userId);
-
       await uploadBytes(storageRef, selectedImageFile);
       const downloadURL = await getDownloadURL(storageRef);
-      console.log('downloadurl', downloadURL);
+
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
         phone,
@@ -190,12 +188,20 @@ const SignUpForm = () => {
         nickname,
         profileImageUrl: downloadURL,
       });
-      const newUserId = response.data.userId;
-      console.log('받은 userId:', newUserId);
-      localStorage.setItem('userId', newUserId);
+
+      const { userId: newUserId, refreshToken } = response.data;
+      console.log('서버에서 받은 데이터:', response.data);
+
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('userId', newUserId);
+        console.log('로컬에 저장된 리프레시 토큰:', localStorage.getItem('refreshToken'));
+      } else {
+        console.error('서버에서 리프레시 토큰을 받지 못함');
+      }
+
       toast.dismiss();
       toast.success('회원가입 성공!');
-
       navigate('/loginsuccess');
     } catch (error) {
       toast.dismiss();

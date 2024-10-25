@@ -6,6 +6,7 @@ import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
 import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
+import ChargePage from '../pages/main/ChargePage';
 
 const MainScreens = {
   LoginPage: {
@@ -35,6 +36,11 @@ const MainScreens = {
   AnimalInfo: {
     path: '/animalinfo',
     element: <AnimalInfo />,
+  },
+
+  ChargePage: {
+    path: '/chargepage',
+    element: <ChargePage />,
   },
 };
 
