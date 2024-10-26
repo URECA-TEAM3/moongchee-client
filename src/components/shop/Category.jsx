@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const Category = ({ selectedCategory, setSelectedCategory }) => {
+  const location = useLocation();
+  let showCategory = location.pathname.includes('/category');
   const categories = [
     { id: 0, name: '전체' },
     { id: 1, name: '사료' },
@@ -11,6 +14,11 @@ const Category = ({ selectedCategory, setSelectedCategory }) => {
     { id: 6, name: '영양제' },
   ];
 
+  useEffect(() => {
+    if (showCategory) setSelectedCategory(1);
+    showCategory = false;
+  }, []);
+
   const handleClick = (id) => {
     setSelectedCategory(id);
   };
@@ -20,7 +28,7 @@ const Category = ({ selectedCategory, setSelectedCategory }) => {
       {categories.map((category) => (
         <div
           key={category.id}
-          className={`w-[70px] py-2 px-2 text-center mx-auto ${selectedCategory === category.id ? 'border-b-2 border-b-[#2589E7] font-bold text-[#2589E7]' : ''}`}
+          className={`w-[70px] py-2 px-2 text-center mx-auto ${selectedCategory === category.id ? 'border-b-2 border-b-primary font-bold text-primary' : ''}`}
         >
           <button onClick={() => handleClick(category.id)}>{category.name}</button>
         </div>

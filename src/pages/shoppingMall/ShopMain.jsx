@@ -6,7 +6,7 @@ import { storage } from '../../../firebase';
 import API from '../../api/axiosInstance';
 import { CgSearchLoading } from 'react-icons/cg';
 
-const ShopMain = () => {
+const ShopMain = (props) => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -74,11 +74,8 @@ const ShopMain = () => {
   const filteredItems = selectedCategory === 0 ? products : products.filter((product) => product.category_id === selectedCategory);
 
   return (
-    <div className="bg-white">
-      <div className="pt-5">
-        <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-      </div>
-
+    <div className="bg-white container inline-grid h-full py-5">
+      <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
       {/* 카테고리별 조회 */}
       <div className="p-5 flex justify-end mr-10 text-sm">
         <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">
@@ -98,7 +95,9 @@ const ShopMain = () => {
       ) : (
         <div className="grid grid-cols-2 gap-5 mx-10 max-h-[71vh] overflow-y-scroll">
           {filteredItems.map((item) => (
-            <ItemBox item={item} key={item.id} />
+            <div className="border rounded-2xl p-3" key={item.id}>
+              <ItemBox item={item} />
+            </div>
           ))}
         </div>
       )}

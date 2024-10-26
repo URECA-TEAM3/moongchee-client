@@ -1,30 +1,32 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 
 const ItemBox = ({ item }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="border-[1px] rounded-2xl p-3 h-[406px]">
-      <button onClick={() => navigate(`/shoppingmall/${item.id}`)} className="flex flex-col h-[100%]">
-        <div>
-          <img src={item.image} alt="Item Main Image" className="rounded-2xl" />
-        </div>
-
-        <div className="w-full mx-auto grow">
-          <div className="text-center p-1 my-3 border-[1px] rounded-2xl flex justify-center">
-            <img className="w-4 mr-2" src="/src/assets/images/shoppingCart.svg" alt="장바구니" />
-            <span>담기</span>
-          </div>
-          <div className="pl-2 flex flex-col h-[100px]">
-            <div className="text-start font-bold break-keep">{item.name}</div>
-            <div className="flex mt-1 grow items-end justify-end">
-              <img className="w-6 mr-2" src="/src/assets/images/dogChew.svg" alt="" />
-              <span>{item.price.toLocaleString()}개</span>
-            </div>
-          </div>
+    <div key={item.id}>
+      <button onClick={() => navigate(`/shoppingmall/${item.id}`)} className="flex flex-col">
+        <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg">
+          <img src={item.image} className="h-full w-full object-cover object-center hover:opacity-75" />
         </div>
       </button>
+
+      <button className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50">
+        <ShoppingCartIcon stroke="currentColor" className="size-5 mr-1" />
+        담기
+      </button>
+
+      <h3 className="mt-4 text-sm text-text">
+        <button onClick={() => navigate(`/shoppingmall/${item.id}`)} className="text-start flex flex-col h-[100%]">
+          {item.name}
+        </button>
+      </h3>
+      <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
+        <img src="/src/assets/icons/gum.png" className="w-8 mr-1" />
+        {item.price} 개
+      </p>
     </div>
   );
 };
