@@ -5,11 +5,8 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import API from '../../api/axiosInstance';
 import { CgSearchLoading } from 'react-icons/cg';
-import { useLocation } from 'react-router-dom';
 
 const ShopMain = (props) => {
-  const location = useLocation();
-  const isCategory = location.pathname.includes('/category');
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -78,7 +75,7 @@ const ShopMain = (props) => {
 
   return (
     <div className="bg-white container inline-grid h-full py-5">
-      <Category selectedCategory={isCategory ? 1 : selectedCategory} setSelectedCategory={setSelectedCategory} />
+      <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
       {/* 카테고리별 조회 */}
       <div className="p-5 flex justify-end mr-10 text-sm">
         <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">

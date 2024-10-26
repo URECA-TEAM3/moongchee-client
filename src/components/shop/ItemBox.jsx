@@ -24,7 +24,7 @@ const ItemBox = ({ item }) => {
         </button>
       </h3>
       <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
-        <img src="src/assets/icons/gum.png" className="w-8 mr-1" />
+        <img src="/src/assets/icons/gum.png" className="w-8 mr-1" />
         {item.price} 개
       </p>
     </div>
