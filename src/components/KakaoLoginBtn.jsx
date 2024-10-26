@@ -85,10 +85,14 @@ const KakaoLoginBtn = () => {
   const isTokenExpired = (token) => {
     if (!token) return true;
 
-    const decoded = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    return decoded.exp < currentTime + 10;
+    try {
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return decoded.exp < currentTime;
+    } catch (error) {
+      console.error('토큰 디코딩 오류:', error);
+      return true;
+    }
   };
 
   const axiosRequestWithRetry = async (url, method = 'GET', data = null) => {
