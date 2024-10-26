@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -7,24 +7,113 @@ const GoogleLoginBtn = () => {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const navigate = useNavigate();
 
+  const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      console.error('리프레시 토큰이 없습니다.');
+      return null;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/auth/refresh-token',
+        {},
+        {
+          headers: { Authorization: `Bearer ${refreshToken}` },
+        }
+      );
+
+      const newAccessToken = response.data.accessToken;
+      if (newAccessToken) {
+        localStorage.setItem('accessToken', newAccessToken);
+        return newAccessToken;
+      } else {
+        console.error('서버로부터 유효한 액세스 토큰을 받지 못했습니다.');
+        return null;
+      }
+    } catch (error) {
+      console.error('액세스 토큰 갱신 오류:', error);
+      return null;
+    }
+  };
+
+  const isTokenExpired = (token) => {
+    if (!token) return true;
+
+    try {
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return decoded.exp < currentTime;
+    } catch (error) {
+      console.error('토큰 만료 확인 중 오류:', error);
+      return true;
+    }
+  };
+
+  const requestWithToken = async (url, method = 'GET', data = null) => {
+    let accessToken = localStorage.getItem('accessToken');
+
+    if (isTokenExpired(accessToken)) {
+      console.log('액세스 토큰이 만료됨, 갱신 필요');
+      accessToken = await refreshAccessToken();
+      if (!accessToken) throw new Error('토큰 갱신 실패');
+    }
+
+    try {
+      const response = await axios({
+        method,
+        url,
+        data,
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const response = await requestWithToken('http://localhost:3000/api/auth/user-info');
+      console.log('사용자 정보:', response.data);
+    } catch (error) {
+      console.error('사용자 정보 가져오기 오류:', error);
+    }
+  };
+
   const handleLoginSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
 
-    console.log('로그인 성공, 받은 토큰:', token);
+    const storedAccessToken = localStorage.getItem('accessToken');
+    const storedRefreshToken = localStorage.getItem('refreshToken');
+
+    // 기존의 유효한 액세스 토큰이 있는 경우 메인 페이지로 이동
+    if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
+      console.log('기존의 유효한 액세스 토큰이 있어 로그인 페이지로 이동');
+      navigate('/main');
+      return;
+    }
 
     try {
       const response = await axios.post('http://localhost:3000/api/auth/google-login', {
         token,
       });
 
-      console.log('서버 응답:', response.data);
+      const { accessToken, refreshToken, userId, exists } = response.data;
 
-      if (response.data.exists) {
-        console.log('이미 가입된 회원입니다. 회원 ID:', response.data.id); // ID 값 출력
+      // 새로운 토큰 저장
+      if (accessToken && refreshToken) {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+      } else {
+        console.error('서버로부터 유효한 토큰을 받지 못했습니다.');
+        return;
+      }
+
+      if (exists) {
+        await fetchUserData();
         navigate('/main');
       } else {
-        const userId = response.data.userId;
-        console.log('회원가입 필요, 받은 userId:', userId); // userId 출력
         navigate('/signup', { state: { provider: 'google', token, userId } });
       }
     } catch (error) {
@@ -37,9 +126,12 @@ const GoogleLoginBtn = () => {
       client_id: googleClientId,
       callback: handleLoginSuccess,
     });
-
     window.google.accounts.id.prompt();
   };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
