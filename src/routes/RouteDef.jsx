@@ -18,7 +18,7 @@ import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
-import ChargePage from '../pages/main/ChargePage';
+import ChargePage from '../pages/mypage/ChargePage';
 
 const MainScreens = {
   LoginPage: {
