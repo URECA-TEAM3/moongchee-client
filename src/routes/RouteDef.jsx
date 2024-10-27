@@ -20,6 +20,7 @@ import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
+import Pay from '../pages/shoppingcart/Pay';
 
 const MainScreens = {
   LoginPage: {
@@ -91,6 +92,10 @@ const ShoppingMallScreens = {
   ShopDetail: {
     path: '/shoppingmall/:id',
     element: <ShopDetail />,
+  },
+  Pay: {
+    path: '/payment',
+    element: <Pay />,
   },
 };
 

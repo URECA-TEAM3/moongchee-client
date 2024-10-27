@@ -6,6 +6,7 @@ import { CiCircleMinus } from 'react-icons/ci';
 import { CiCirclePlus } from 'react-icons/ci';
 import { AiOutlineMinus } from 'react-icons/ai';
 import { GoInfo } from 'react-icons/go';
+import PayInfo from '../../components/shop/PayInfo';
 
 function ShoppingCart(props) {
   const [totalPrice, setTotalPrice] = useState();
@@ -99,31 +100,10 @@ function ShoppingCart(props) {
         </ul>
       </div>
 
-      <div className="border border-t-divider px-10">
-        <h1 className="font-bold text-lg mt-10">최종 결제 금액</h1>
-        <div className="flex justify-between items-center py-3">
-          <div>총 상품 금액</div>
-          <div className="flex items-center">
-            <div className="mr-2">
-              <DogChew />
-            </div>
+      <div className="border border-t-divider">
+        <PayInfo totalPrice={totalPrice} />
 
-            <div>{totalPrice}개</div>
-          </div>
-        </div>
-        <div className="flex justify-between items-center py-3">
-          <div>배송비</div>
-          <div>무료</div>
-        </div>
-
-        <div className="flex justify-between items-center py-3">
-          <div className="flex">
-            <span className="mr-2">최종 차감 될 </span> <DogChew />
-          </div>
-          <div>{totalPrice}개</div>
-        </div>
-
-        <div className="flex justify-between items-start pt-3">
+        <div className="flex justify-between items-start pt-3 px-10">
           <div className="flex">
             <span className="mr-2">나의 현재 </span> <DogChew />
           </div>
@@ -148,7 +128,7 @@ function ShoppingCart(props) {
         </div>
 
         {payment && (
-          <div className="flex justify-between items-center pb-3 mt-[0.25rem]">
+          <div className="flex justify-between items-center pb-3 mt-[0.25rem] px-10">
             <div className="flex">
               <span className="mr-2">결제 후 </span> <DogChew />
             </div>
@@ -157,7 +137,7 @@ function ShoppingCart(props) {
         )}
 
         {payment ? (
-          <Link to="#" className="grow">
+          <Link to="/payment" className="grow">
             <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
           </Link>
         ) : (
