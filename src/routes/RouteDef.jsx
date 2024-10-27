@@ -92,6 +92,10 @@ const ShoppingMallScreens = {
     path: '/shoppingmall/:id',
     element: <ShopDetail />,
   },
+  ShopCategory: {
+    path: '/shoppingmall/category',
+    element: <ShopMain />,
+  },
 };
 
 export const AppRouteDef = {
