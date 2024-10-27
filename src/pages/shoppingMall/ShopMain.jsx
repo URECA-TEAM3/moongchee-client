@@ -10,7 +10,7 @@ const ShopMain = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sortOption, setSortOption] = useState('popular'); // 기본값을 최신순으로 설정
+  const [sortOption, setSortOption] = useState('popular');
 
   const handleSortChange = (event) => {
     const option = event.target.value;
@@ -95,11 +95,9 @@ const ShopMain = () => {
           <CgSearchLoading size={20} />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-5 mx-10 max-h-[71vh] overflow-y-scroll">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
           {filteredItems.map((item) => (
-            <div className="border rounded-2xl p-3">
-              <ItemBox item={item} key={item.id} />
-            </div>
+            <ItemBox item={item} key={item.id} />
           ))}
         </div>
       )}
