@@ -5,10 +5,11 @@ import PayInfo from '../../components/shop/PayInfo';
 
 const Pay = () => {
   const navigate = useNavigate();
+
   return (
     <div className="bg-white flex flex-col h-full">
       <div className="flex items-center justify-between p-5 border border-b-divider">
-        <button onClick={() => navigate(-1)}>
+        <button onClick={() => navigate('/shoppingcart')}>
           <IoIosArrowBack />
         </button>
         <div>결제하기</div>
@@ -27,7 +28,9 @@ const Pay = () => {
             </div>
           </div>
           <div>
-            <button className="text-primary border border-primary px-4 py-1 rounded-lg">배송지 변경</button>
+            <button onClick={() => navigate('/changeAddress')} className="text-primary border border-primary px-4 py-1 rounded-lg">
+              배송지 변경
+            </button>
           </div>
         </div>
       </div>

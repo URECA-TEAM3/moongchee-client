@@ -21,6 +21,7 @@ import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
 import Pay from '../pages/shoppingcart/Pay';
+import ChangeAddress from '../pages/shoppingcart/ChangeAddress';
 
 const MainScreens = {
   LoginPage: {
@@ -96,6 +97,10 @@ const ShoppingMallScreens = {
   Pay: {
     path: '/payment',
     element: <Pay />,
+  },
+  ChangeAddress: {
+    path: 'changeAddress',
+    element: <ChangeAddress />,
   },
 };
 
