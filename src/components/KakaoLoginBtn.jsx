@@ -44,7 +44,6 @@ const KakaoLoginBtn = () => {
       return;
     }
 
-    // 기존 토큰이 없거나 만료된 경우에만 새 로그인 요청 수행
     window.Kakao.Auth.login({
       success: async (authObj) => {
         try {
@@ -54,7 +53,6 @@ const KakaoLoginBtn = () => {
 
           const { accessToken, refreshToken, userId, exists } = response.data;
 
-          // 새로운 토큰 저장
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
 
