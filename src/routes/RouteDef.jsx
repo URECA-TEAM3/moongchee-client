@@ -4,6 +4,8 @@ import Main from '../pages/main';
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
+import ShopMain from '../pages/shoppingMall/ShopMain';
+import ShopDetail from '../pages/shoppingMall/ShopDetail';
 import AnimalInfo from '../pages/main/AnimalInfo';
 
 //PetSitter
@@ -87,7 +89,23 @@ const PetSitterScreens = {
   },
 };
 
+const ShoppingMallScreens = {
+  ShopMain: {
+    path: '/shoppingmall',
+    element: <ShopMain />,
+  },
+  ShopDetail: {
+    path: '/shoppingmall/:id',
+    element: <ShopDetail />,
+  },
+  ShopCategory: {
+    path: '/shoppingmall/category',
+    element: <ShopMain />,
+  },
+};
+
 export const AppRouteDef = {
   ...MainScreens,
   ...PetSitterScreens,
+  ...ShoppingMallScreens,
 };
