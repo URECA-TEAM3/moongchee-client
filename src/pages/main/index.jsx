@@ -1,40 +1,48 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCarousel from './ProductCarousel';
 import MainCarousel from './MainCarousel';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { app } from '../../../firebase';
+import { Link } from 'react-router-dom';
+import ItemBox from '../../components/shop/ItemBox';
 
 const Index = () => {
-  const products = [
-    {
-      id: 1,
-      name: '[잇츄] 오리지널 S 43개입 (4종) 강아지 덴탈껌 대용량 간식 개껌',
-      href: '#',
-      price: '45,600',
-      image: 'https://static.fitpetcdn.com/prod/images/product/1000031556/S_43%EA%B0%9C%EC%9E%85_xmrari_PRODUCT_LIST.png',
-    },
-    {
-      id: 2,
-      name: '[잇츄] 오리지널 M 버라이어티팩 (48개입) 강아지 덴탈껌 대용량 간식 개껌',
-      href: '#',
-      price: '58,900',
-      image:
-        'https://static.fitpetcdn.com/prod/images/product/1000035685/%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90_%EB%B2%84%EB%9D%BC%EC%9D%B4%EC%96%B4%ED%8B%B0%ED%8C%A9_M_ddohlm_PRODUCT_LIST.png',
-    },
-    {
-      id: 3,
-      name: '[3개 세트] 인섹트업 미니바이트 스킨',
-      href: '#',
-      price: '14,900',
-      image: 'https://static.fitpetcdn.com/prod/images/product/1000036174/4967_2_fqdxjn_PRODUCT_LIST.png',
-    },
-    {
-      id: 4,
-      name: '[플라고] 벌집덴탈껌 스킨앤코트',
-      href: '#',
-      price: '9,900',
-      image: 'https://static.fitpetcdn.com/prod/images/product/1000033990/%EC%8A%A4%ED%82%A8%EC%95%A4%EC%BD%94%ED%8A%B8_imolwv.jpg',
-    },
-  ];
+  const [popularProducts, setPopularProducts] = useState([]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/products/popular-products');
+      const productsWithImages = await Promise.all(
+        response.data.data.map(async (product) => {
+          const imageUrl = await fetchImgFromFireStorage(product.image);
+          return {
+            ...product,
+            image: imageUrl,
+          };
+        })
+      );
+      setPopularProducts(productsWithImages);
+    } catch (error) {
+      console.error('상품 목록 조회 실패:', error);
+    }
+  };
+
+  const fetchImgFromFireStorage = async (img) => {
+    const storage = getStorage(app);
+    try {
+      const url = await getDownloadURL(ref(storage, img));
+      return url;
+    } catch (error) {
+      console.error('Error loading image:', error);
+      throw new Error('이미지 로드 중 오류가 발생했습니다.');
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   return (
     <div className="container inline-grid h-full">
@@ -43,20 +51,24 @@ const Index = () => {
       {/* 3 buttons */}
       <div className="p-5">
         <div className="flex justify-between items-center mx-8 mb-5">
-          <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-            <img src="/src/assets/icons/best.png" className="h-14 inline" />
-            <p>BEST</p>
-          </button>
-          <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-            <img src="/src/assets/icons/category.png" className="h-14 inline" />
-            <p>카테고리</p>
-          </button>
-          <a href="/petsitter">
+          <Link to="/shoppingmall">
+            <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/best.png" className="h-14 inline" />
+              <p>BEST</p>
+            </button>
+          </Link>
+          <Link to="/shoppingmall/category">
+            <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
+              <img src="/src/assets/icons/category.png" className="h-14 inline" />
+              <p>카테고리</p>
+            </button>
+          </Link>
+          <Link to="/petsitter">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
               <img src="/src/assets/icons/petsitting.png" className="h-14 inline" />
               <p>펫시팅</p>
             </button>
-          </a>
+          </Link>
         </div>
 
         {/* 오늘의 인기상품 */}
@@ -64,29 +76,8 @@ const Index = () => {
           <p>오늘의 인기상품</p>
           <div className="mx-auto max-w-2xl pt-5">
             <div className="grid grid-cols-2 gap-x-5 gap-y-5">
-              {products.map((product) => (
-                <div key={product.id}>
-                  <a href={product.href}>
-                    <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg">
-                      <img src={product.image} className="h-full w-full object-cover object-center hover:opacity-75" />
-                    </div>
-                  </a>
-
-                  <a href={product.href}>
-                    <div className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50">
-                      <ShoppingCartIcon stroke="currentColor" className="size-5 mr-1" />
-                      담기
-                    </div>
-                  </a>
-
-                  <h3 className="mt-4 text-sm text-text line-clamp-2">
-                    <a href={product.href}>{product.name}</a>
-                  </h3>
-                  <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
-                    <img src="src/assets/icons/gum.png" className="w-8 mr-1" />
-                    {product.price} 개
-                  </p>
-                </div>
+              {popularProducts.map((item) => (
+                <ItemBox item={item} key={item.id} />
               ))}
             </div>
           </div>

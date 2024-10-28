@@ -102,6 +102,10 @@ const ShoppingMallScreens = {
     path: 'changeAddress',
     element: <ChangeAddress />,
   },
+  ShopCategory: {
+    path: '/shoppingmall/category',
+    element: <ShopMain />,
+  },
 };
 
 export const AppRouteDef = {
