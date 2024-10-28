@@ -30,6 +30,7 @@ const SignUpForm = () => {
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
   const userId = location.state?.userId || null;
+  const accessToken = location.state?.accessToken || null;
 
   useEffect(() => {
     const handleUnload = () => {
@@ -60,7 +61,7 @@ const SignUpForm = () => {
   };
 
   const validateNickname = (nickname) => {
-    const validPattern = /^(?![ㄱ-ㅎㅏ-ㅣ])[가-힣a-zA-Z]+$/;
+    const validPattern = /^(?!.*[._]{2})(?![._])[가-힣a-zA-Z0-9._]+(?<![._])$/;
     return validPattern.test(nickname);
   };
 
@@ -75,8 +76,8 @@ const SignUpForm = () => {
       return;
     }
 
-    if (nickname.length > 8) {
-      toast.error('닉네임은 8자 이하여야 합니다.');
+    if (nickname.length > 15) {
+      toast.error('닉네임은 15자 이하여야 합니다.');
       return;
     }
 
@@ -176,6 +177,7 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 유효성 검사
     if (!validateFields()) {
       return;
     }
@@ -208,15 +210,13 @@ const SignUpForm = () => {
         profileImageUrl: downloadURL,
       });
 
-      const { userId: newUserId, refreshToken } = response.data;
-      console.log('서버에서 받은 데이터:', response.data);
+      const { refreshToken } = response.data;
 
-      if (refreshToken) {
+      if (accessToken && refreshToken) {
+        // 회원가입이 완료된 후에만 토큰을 저장
+        localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-        localStorage.setItem('userId', newUserId);
-        console.log('로컬에 저장된 리프레시 토큰:', localStorage.getItem('refreshToken'));
-      } else {
-        console.error('서버에서 리프레시 토큰을 받지 못함');
+        console.log('토큰이 로컬 스토리지에 저장되었습니다.');
       }
 
       toast.dismiss();
@@ -225,11 +225,10 @@ const SignUpForm = () => {
     } catch (error) {
       toast.dismiss();
       toast.error('회원가입 실패. 다시 시도해주세요.');
-      toast.dismiss();
-      toast.error('회원가입 실패. 다시 시도해주세요.');
       console.error('회원가입 오류:', error);
     }
   };
+
   return (
     <div className="flex flex-col items-center bg-white min-h-screen">
       <Toaster />
