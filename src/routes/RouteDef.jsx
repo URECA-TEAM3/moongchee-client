@@ -20,6 +20,10 @@ import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
+import ChargePage from '../pages/mypage/ChargePage';
+import CheckoutPage from '../pages/mypage/Checkout';
+import SuccessPage from '../pages/mypage/Success';
+import FailPage from '../pages/mypage/Fail';
 
 const MainScreens = {
   LoginPage: {
@@ -57,6 +61,22 @@ const MainScreens = {
   Mypage: {
     path: '/mypage',
     element: <Mypage />,
+  },
+  Chargepage: {
+    path: '/chargepage',
+    element: <ChargePage />,
+  },
+  Checkout: {
+    path: '/checkout',
+    element: <CheckoutPage />,
+  },
+  Success: {
+    path: '/success',
+    element: <SuccessPage />,
+  },
+  Fail: {
+    path: '/fail',
+    element: <FailPage />,
   },
 };
 
