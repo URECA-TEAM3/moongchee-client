@@ -50,16 +50,19 @@ const KakaoLoginBtn = () => {
             token: authObj.access_token,
           });
 
-          const { accessToken, refreshToken, userId, exists } = response.data;
+          const { accessToken, refreshToken, userId, exists, userData } = response.data;
+
+          console.log('유저데이터', userData);
 
           if (exists) {
-            // 기존 회원: 사용자 정보 조회 후 메인 페이지로 이동
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
+
+            sessionStorage.setItem('userData', JSON.stringify(userData));
+
             await fetchUserData();
             navigate('/main');
           } else {
-            // 신규 회원: 회원가입 페이지로 이동하면서 accessToken 전달
             navigate('/signup', { state: { provider: 'kakao', userId, accessToken } });
           }
         } catch (error) {
