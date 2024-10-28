@@ -11,8 +11,8 @@ const index = () => {
   };
 
   return (
-    <div className="flex items-center flex-col">
-      <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200 mt-10">
+    <div className="flex items-center flex-col p-5">
+      <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200 mt-10 w-full">
         <div className="profile flex items-center justify-between">
           <div className="flex items-center">
             <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
