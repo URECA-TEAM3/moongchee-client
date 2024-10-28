@@ -24,12 +24,12 @@ const ItemBox = ({ item }) => {
           {item.name}
         </button>
       </h3>
-      <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
+      <div className="flex items-center mt-1 text-lg font-medium text-gray-900">
         <div className="mr-1">
           <DogChew />
         </div>
         {item.price} 개
-      </p>
+      </div>
     </div>
   );
 };
