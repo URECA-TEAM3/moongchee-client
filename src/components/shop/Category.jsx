@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 const Category = ({ selectedCategory, setSelectedCategory }) => {
   const location = useLocation();
   let showCategory = location.pathname.includes('/category');
+
   const categories = [
     { id: 0, name: '전체' },
     { id: 1, name: '사료' },

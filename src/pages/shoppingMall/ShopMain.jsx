@@ -6,11 +6,11 @@ import { storage } from '../../../firebase';
 import API from '../../api/axiosInstance';
 import { CgSearchLoading } from 'react-icons/cg';
 
-const ShopMain = (props) => {
+const ShopMain = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sortOption, setSortOption] = useState('latest'); // 기본값을 최신순으로 설정
+  const [sortOption, setSortOption] = useState('popular');
 
   const handleSortChange = (event) => {
     const option = event.target.value;
@@ -75,7 +75,9 @@ const ShopMain = (props) => {
 
   return (
     <div className="bg-white container inline-grid h-full py-5">
-      <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+      <div className="">
+        <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+      </div>
       {/* 카테고리별 조회 */}
       <div className="p-5 flex justify-end mr-10 text-sm">
         <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">
@@ -93,11 +95,9 @@ const ShopMain = (props) => {
           <CgSearchLoading size={20} />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-5 mx-10 max-h-[71vh] overflow-y-scroll">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
           {filteredItems.map((item) => (
-            <div className="border rounded-2xl p-3" key={item.id}>
-              <ItemBox item={item} />
-            </div>
+            <ItemBox item={item} key={item.id} />
           ))}
         </div>
       )}

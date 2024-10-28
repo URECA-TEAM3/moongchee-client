@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import DogChew from '../DogChew';
 
 const ItemBox = ({ item }) => {
   const navigate = useNavigate();
@@ -23,10 +24,12 @@ const ItemBox = ({ item }) => {
           {item.name}
         </button>
       </h3>
-      <p className="flex items-center mt-1 text-lg font-medium text-gray-900">
-        <img src="/src/assets/icons/gum.png" className="w-8 mr-1" />
+      <div className="flex items-center mt-1 text-lg font-medium text-gray-900">
+        <div className="mr-1">
+          <DogChew />
+        </div>
         {item.price} 개
-      </p>
+      </div>
     </div>
   );
 };
