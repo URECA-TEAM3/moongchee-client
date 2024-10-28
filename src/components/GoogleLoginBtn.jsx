@@ -84,11 +84,25 @@ const GoogleLoginBtn = () => {
   const handleLoginSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
 
+    console.log('토큰:', token);
+
     const storedAccessToken = localStorage.getItem('accessToken');
 
     if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
-      console.log('기존의 유효한 액세스 토큰이 있어 로그인 페이지로 이동');
-      navigate('/main');
+      // 유효한 액세스 토큰이 있는 경우에도 서버에서 userData를 가져옵니다.
+      try {
+        const userInfoResponse = await axios.get('http://localhost:3000/api/auth/user-info', {
+          headers: { Authorization: `Bearer ${storedAccessToken}` },
+        });
+
+        // 세션 스토리지에 userData 저장
+        sessionStorage.setItem('userData', JSON.stringify(userInfoResponse.data));
+
+        console.log('유저 데이터:', userInfoResponse.data);
+        navigate('/main');
+      } catch (error) {
+        console.error('유저 데이터 가져오기 오류:', error);
+      }
       return;
     }
 
@@ -97,15 +111,16 @@ const GoogleLoginBtn = () => {
         token,
       });
 
-      const { accessToken, refreshToken, userId, exists } = response.data;
+      const { accessToken, refreshToken, exists, userData } = response.data;
 
       if (exists) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-        await fetchUserData();
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        console.log('유저 데이터:', userData);
         navigate('/main');
       } else {
-        navigate('/signup', { state: { provider: 'google', userId, accessToken } });
+        navigate('/signup', { state: { provider: 'google', userId: response.data.userId, accessToken } });
       }
     } catch (error) {
       console.error('로그인 오류:', error);
