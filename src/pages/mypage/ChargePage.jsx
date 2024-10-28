@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import backButtonIcon from '/src/assets/images/backbtn.svg';
-import doggumIcon from '/src/assets/images/doggum.svg';
+import DogChew from '../../components/DogChew.jsx';
 
 const ChargePage = () => {
   const [selectedAmount, setSelectedAmount] = useState(0);
@@ -39,7 +39,7 @@ const ChargePage = () => {
         <button className={getButtonClass(10000)} onClick={() => handleAmountClick(10000)}>
           1만원
           <div className="flex items-center mt-1">
-            <img src={doggumIcon} alt="Doggum Icon" className="w-4 h-4 mr-1" />
+            <DogChew className="w-4 h-4 mr-1" />
             <span className="text-xs">10개</span>
           </div>
         </button>
@@ -49,12 +49,12 @@ const ChargePage = () => {
         <button className={getButtonClass(30000)} onClick={() => handleAmountClick(30000)}>
           3만원
           <div className="flex items-center mt-1">
-            <img src={doggumIcon} alt="Doggum Icon" className="w-4 h-4 mr-1" />
+            <DogChew className="w-4 h-4 mr-1" />
             <span className="text-xs">30개</span>
           </div>
         </button>
         <span className="text-gray-500 flex items-center">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />+ 3개 추가 지급
+          <DogChew className="mr-2 w-4 h-4" />+ 3개 추가 지급
         </span>
       </div>
 
@@ -62,12 +62,12 @@ const ChargePage = () => {
         <button className={getButtonClass(50000)} onClick={() => handleAmountClick(50000)}>
           5만원
           <div className="flex items-center mt-1">
-            <img src={doggumIcon} alt="Doggum Icon" className="w-4 h-4 mr-1" />
+            <DogChew className="w-4 h-4 mr-1" />
             <span className="text-xs">50개</span>
           </div>
         </button>
         <span className="text-gray-500 flex items-center">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />+ 5개 추가 지급
+          <DogChew className="mr-2 w-4 h-4" />+ 5개 추가 지급
         </span>
       </div>
 
@@ -75,12 +75,12 @@ const ChargePage = () => {
         <button className={getButtonClass(70000)} onClick={() => handleAmountClick(70000)}>
           7만원
           <div className="flex items-center mt-1">
-            <img src={doggumIcon} alt="Doggum Icon" className="w-4 h-4 mr-1" />
+            <DogChew className="w-4 h-4 mr-1" />
             <span className="text-xs">70개</span>
           </div>
         </button>
         <span className="text-gray-500 flex items-center">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />+ 7개 추가 지급
+          <DogChew className="mr-2 w-4 h-4" />+ 7개 추가 지급
         </span>
       </div>
 
@@ -88,19 +88,19 @@ const ChargePage = () => {
         <button className={getButtonClass(100000)} onClick={() => handleAmountClick(100000)}>
           10만원
           <div className="flex items-center mt-1">
-            <img src={doggumIcon} alt="Doggum Icon" className="w-4 h-4 mr-1" />
+            <DogChew className="w-4 h-4 mr-1" />
             <span className="text-xs">100개</span>
           </div>
         </button>
         <span className="text-gray-500 flex items-center">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />+ 10개 추가 지급
+          <DogChew className="mr-2 w-4 h-4" />+ 10개 추가 지급
         </span>
       </div>
 
       <div className="flex items-center justify-between mb-4 py-2 border-b border-gray-200">
         <span className="text-lg">현재 보유한 개껌:</span>
         <span className="text-lg font-bold flex items-center ml-auto">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />
+          <DogChew className="mr-2 w-4 h-4" />
           {currentBones}개
         </span>
       </div>
@@ -108,7 +108,7 @@ const ChargePage = () => {
       <div className="flex items-center justify-between mb-4 py-2 border-b border-gray-200">
         <span className="text-lg">충전할 개껌수:</span>
         <span className="text-lg font-bold flex items-center ml-auto">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />
+          <DogChew className="mr-2 w-4 h-4" />
           {selectedAmount ? selectedAmount / 1000 : 0}개 + {additionalBones[selectedAmount] || 0}개
         </span>
       </div>
@@ -116,7 +116,7 @@ const ChargePage = () => {
       <div className="flex items-center justify-between mb-4 py-2 border-b border-gray-200">
         <span className="text-lg">결제 후 개껌:</span>
         <span className="text-lg font-bold flex items-center ml-auto">
-          <img src={doggumIcon} alt="Doggum Icon" className="mr-2 w-4 h-4" />
+          <DogChew className="mr-2 w-4 h-4" />
           {currentBones + (selectedAmount ? selectedAmount / 1000 : 0) + (additionalBones[selectedAmount] || 0)}개
         </span>
       </div>
