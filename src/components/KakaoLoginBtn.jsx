@@ -36,7 +36,6 @@ const KakaoLoginBtn = () => {
 
   const handleKakaoLogin = async () => {
     const storedAccessToken = localStorage.getItem('accessToken');
-    const storedRefreshToken = localStorage.getItem('refreshToken');
 
     if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
       console.log('기존의 유효한 액세스 토큰이 있어 로그인 페이지로 이동');
@@ -53,14 +52,15 @@ const KakaoLoginBtn = () => {
 
           const { accessToken, refreshToken, userId, exists } = response.data;
 
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
-
           if (exists) {
+            // 기존 회원: 사용자 정보 조회 후 메인 페이지로 이동
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
             await fetchUserData();
             navigate('/main');
           } else {
-            navigate('/signup', { state: { provider: 'kakao', userId } });
+            // 신규 회원: 회원가입 페이지로 이동하면서 accessToken 전달
+            navigate('/signup', { state: { provider: 'kakao', userId, accessToken } });
           }
         } catch (error) {
           console.error('로그인 오류:', error);
