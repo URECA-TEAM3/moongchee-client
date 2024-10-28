@@ -99,21 +99,13 @@ const GoogleLoginBtn = () => {
 
       const { accessToken, refreshToken, userId, exists } = response.data;
 
-      if (accessToken && refreshToken) {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-      } else {
-        console.error('서버로부터 유효한 토큰을 받지 못했습니다.');
-        return;
-      }
-
       if (exists) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         await fetchUserData();
         navigate('/main');
       } else {
-        navigate('/signup', { state: { provider: 'google', token, userId } });
+        navigate('/signup', { state: { provider: 'google', userId, accessToken } });
       }
     } catch (error) {
       console.error('로그인 오류:', error);
