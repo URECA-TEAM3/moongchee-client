@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
@@ -13,6 +13,7 @@ import { storage } from '../../../firebase';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
@@ -29,6 +30,22 @@ const SignUpForm = () => {
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
   const userId = location.state?.userId || null;
+
+  useEffect(() => {
+    const handleUnload = () => {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+      console.log('토큰 삭제 완료');
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('popstate', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener('popstate', handleUnload);
+    };
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
