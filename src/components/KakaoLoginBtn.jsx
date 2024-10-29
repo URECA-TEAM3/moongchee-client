@@ -38,8 +38,18 @@ const KakaoLoginBtn = () => {
     const storedAccessToken = localStorage.getItem('accessToken');
 
     if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
-      console.log('기존의 유효한 액세스 토큰이 있어 로그인 페이지로 이동');
-      navigate('/main');
+      try {
+        const userInfoResponse = await axios.get('http://localhost:3000/api/auth/user-info', {
+          headers: { Authorization: `Bearer ${storedAccessToken}` },
+        });
+
+        sessionStorage.setItem('userData', JSON.stringify(userInfoResponse.data));
+
+        console.log('유저 데이터:', userInfoResponse.data);
+        navigate('/main');
+      } catch (error) {
+        console.error('유저 데이터 가져오기 오류:', error);
+      }
       return;
     }
 
@@ -52,15 +62,13 @@ const KakaoLoginBtn = () => {
 
           const { accessToken, refreshToken, userId, exists, userData } = response.data;
 
-          console.log('유저데이터', userData);
-
           if (exists) {
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
 
             sessionStorage.setItem('userData', JSON.stringify(userData));
 
-            await fetchUserData();
+            console.log('유저 데이터:', userData);
             navigate('/main');
           } else {
             navigate('/signup', { state: { provider: 'kakao', userId, accessToken } });
@@ -74,6 +82,7 @@ const KakaoLoginBtn = () => {
       },
     });
   };
+
   const fetchUserData = async () => {
     try {
       const response = await axiosRequestWithRetry('http://localhost:3000/api/auth/user-info');
