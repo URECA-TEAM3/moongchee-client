@@ -60,6 +60,10 @@ const MainScreens = {
     path: '/chat',
     element: <Chat />,
   },
+  ChargePage: {
+    path: '/chargepage',
+    element: <ChargePage />,
+  },
 };
 
 const PetSitterScreens = {
