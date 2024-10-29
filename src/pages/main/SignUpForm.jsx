@@ -10,17 +10,22 @@ import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import toast, { Toaster } from 'react-hot-toast';
 import { storage } from '../../../firebase';
+import { auth } from '../../../firebase';
+import { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [showVerificationInput, setShowVerificationInput] = useState(false);
+  const [emailVerificationCode, setEmailVerificationCode] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [birthDate, setBirthDate] = useState(null);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [errors, setErrors] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [nickname, setNickname] = useState('');
@@ -61,7 +66,7 @@ const SignUpForm = () => {
   };
 
   const validateNickname = (nickname) => {
-    const validPattern = /^(?=.{1,15}$)[가-힣a-zA-Z0-9._]+$/;
+    const validPattern = /^(?!.*[._]{2})(?![._])[가-힣a-zA-Z0-9._]+(?<![._])$/;
     return validPattern.test(nickname);
   };
 
@@ -92,6 +97,37 @@ const SignUpForm = () => {
     } catch (error) {
       toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
       console.error('닉네임 중복 확인 오류:', error);
+    }
+  };
+
+  const handleEmailVerification = async () => {
+    if (!email) {
+      toast.error('이메일을 입력해주세요.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/members/send-email-verification', { email });
+      setEmailVerificationCode(response.data.code);
+      setShowVerificationInput(true);
+      toast.success('인증 코드가 발송되었습니다.');
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        toast.error('이미 등록된 이메일 주소입니다.');
+      } else {
+        toast.error('이메일 인증 중 오류가 발생했습니다.');
+      }
+      console.error('이메일 인증 오류:', error);
+    }
+  };
+
+  const handleVerifyEmailCode = () => {
+    if (verificationCode === emailVerificationCode) {
+      setIsEmailVerified(true);
+      toast.success('이메일 인증 성공!');
+      setShowVerificationInput(false);
+    } else {
+      toast.error('인증 코드가 올바르지 않습니다.');
     }
   };
 
@@ -155,18 +191,12 @@ const SignUpForm = () => {
     setBirthDate(date);
   };
 
-  const handleVerifyClick = () => {
-    setShowVerificationInput(true);
-  };
-
-  const handleVerificationCodeChange = (e) => {
-    setVerificationCode(e.target.value);
-  };
-
   const validateFields = () => {
     let newErrors = {};
     if (!name) newErrors.name = '이름을 입력해주세요.';
     if (!phone) newErrors.phone = '휴대폰 번호를 입력해주세요.';
+    if (!email) newErrors.email = '이메일을 입력해주세요.';
+    if (!isEmailVerified) newErrors.emailVerified = '이메일 인증을 완료해주세요.';
     if (!roadAddress) newErrors.address = '주소를 입력해주세요.';
     if (!birthDate) newErrors.birthDate = '생년월일을 선택해주세요.';
 
@@ -177,8 +207,15 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 유효성 검사
     if (!validateFields()) {
+      if (!isEmailVerified) {
+        toast.error('이메일 인증을 완료해주세요.');
+      }
+      return;
+    }
+
+    if (!isEmailVerified) {
+      toast.error('이메일 인증을 완료해주세요.');
       return;
     }
 
@@ -194,14 +231,14 @@ const SignUpForm = () => {
     try {
       toast.loading('회원가입 진행 중...');
       const storageRef = ref(storage, `profiles/${userId}`);
-      console.log('이때의 userid', userId);
 
       await uploadBytes(storageRef, selectedImageFile);
       const downloadURL = await getDownloadURL(storageRef);
-      console.log('downloadurl', downloadURL);
+
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
         phone,
+        email,
         address: `${roadAddress} ${detailedAddress}`,
         birthDate: formattedBirthDate,
         provider,
@@ -209,17 +246,16 @@ const SignUpForm = () => {
         nickname,
         profileImageUrl: downloadURL,
       });
-
       const { refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-        console.log('토큰이 로컬 스토리지에 저장되었습니다.');
 
         const userData = {
           name,
           phone,
+          email,
           address: `${roadAddress} ${detailedAddress}`,
           birthDate: formattedBirthDate,
           provider,
@@ -228,7 +264,6 @@ const SignUpForm = () => {
           profileImageUrl: downloadURL,
         };
         sessionStorage.setItem('userData', JSON.stringify(userData));
-        console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
       }
 
       toast.dismiss();
@@ -293,20 +328,20 @@ const SignUpForm = () => {
         />
         {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
-        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <label className="block text-sm font-medium mb-1">이메일 주소*</label>
         <div className="flex space-x-2 mb-1">
           <input
-            type="tel"
-            placeholder="휴대폰번호"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className={`w-3/4 p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+            type="email"
+            placeholder="이메일 주소"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={`w-3/4 p-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded`}
           />
-          <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onClick={handleVerifyClick}>
-            인증
+          <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onClick={handleEmailVerification}>
+            인증번호 발송
           </button>
         </div>
-        {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
+        {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email}</span>}
 
         {showVerificationInput && (
           <div className="flex space-x-2 mb-1">
@@ -314,14 +349,24 @@ const SignUpForm = () => {
               type="text"
               placeholder="인증번호 입력"
               value={verificationCode}
-              onChange={handleVerificationCodeChange}
+              onChange={(e) => setVerificationCode(e.target.value)}
               className="w-3/4 p-2 border border-gray-300 rounded"
             />
-            <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
-              인증하기
+            <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onClick={handleVerifyEmailCode}>
+              인증
             </button>
           </div>
         )}
+
+        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <input
+          type="tel"
+          placeholder="휴대폰번호"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+        />
+        {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
         <label className="block text-sm font-medium mb-1">생년월일*</label>
         <div className="flex items-center space-x-2 mb-1">
