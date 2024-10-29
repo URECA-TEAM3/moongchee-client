@@ -5,6 +5,7 @@ import API from '../../api/axiosInstance';
 const DetailBottom = ({ id, product }) => {
   const navigate = useNavigate();
 
+  // 전역 함수로 ... 쓰고싶은디 ..
   const handleNavigate = async () => {
     try {
       await API.post('/api/cart', {
@@ -14,7 +15,8 @@ const DetailBottom = ({ id, product }) => {
         checked: true,
       });
 
-      navigate('/shoppingcart', { state: { product } });
+      navigate('/shoppingcart');
+      // navigate('/shoppingcart', { state: { product } });
     } catch (error) {
       console.error('Error adding product to cart:', error);
       alert('There was an error adding the product to the cart.');

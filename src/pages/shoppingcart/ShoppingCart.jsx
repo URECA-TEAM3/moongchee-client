@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DogChew from '../../components/DogChew';
-import { Link, useLocation } from 'react-router-dom';
-import CartItem from '../../components/shop/CartItem';
+import { Link, useNavigate } from 'react-router-dom';
 import { CiCircleMinus } from 'react-icons/ci';
 import { CiCirclePlus } from 'react-icons/ci';
 import { AiOutlineMinus } from 'react-icons/ai';
@@ -10,8 +9,10 @@ import PayInfo from '../../components/shop/PayInfo';
 import API from '../../api/axiosInstance';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
+import { IoMdClose } from 'react-icons/io';
 
 function ShoppingCart() {
+  const navigate = useNavigate();
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
   const [payment, setPayment] = useState(true);
@@ -85,48 +86,68 @@ function ShoppingCart() {
     });
   };
 
+  // 결제하기 btn
+  const handleCheckout = async () => {
+    await uploadLocalCart();
+    navigate('/payment', { state: { cartItems } });
+  };
+
+  // 장바구니 상품 삭제
+  const handleDelete = async (id) => {
+    try {
+      const response = await API.delete(`/api/cart/${id}`);
+
+      if (response.status === 200) {
+        setCartItems((prevItems) => prevItems.filter((item) => item.cart_id !== id));
+        console.log('삭제 완료');
+      }
+    } catch (error) {
+      console.error('삭제 오류:', error);
+    }
+  };
+
   // 업데이트된 결제 금액을 계산 후 상태 업데이트
   useEffect(() => {
     const total = calculateTotal();
     setTotalPrice(total);
-    setAfterPayment(555 - total);
+    setAfterPayment(1000 - total);
 
-    setPayment(555 - total >= 0);
+    setPayment(1000 - total >= 0);
   }, [cartItems]);
 
-  // 페이지 떠날 때 로컬스토리지에 있는 데이터 서버로 넘김
+  const uploadLocalCart = async () => {
+    const cartToSend = JSON.parse(localStorage.getItem('cart')) || [];
+    const user_id = JSON.parse(localStorage.getItem('userId')) || [];
+
+    await API.post(
+      '/api/cart/save',
+      { cartData: { cartToSend, user_id } },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  };
+
   useEffect(() => {
-    const handleBeforeUnload = async (event) => {
-      const cartToSend = JSON.parse(localStorage.getItem('cart')) || [];
-      const user_id = JSON.parse(localStorage.getItem('userId')) || [];
-
-      await API.post(
-        '/api/cart/save',
-        { cartData: { cartToSend, user_id } },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // 페이지 떠날 때 로컬스토리지에 있는 데이터 서버로 넘김
+    window.addEventListener('beforeunload', uploadLocalCart);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', uploadLocalCart);
     };
   }, []);
 
   return (
-    <div className="bg-white">
+    <div className="bg-white flex flex-col min-h-full">
       <div className="px-10 py-6 font-bold text-xl">장바구니</div>
       {/* 장바구니 담긴 상품 조회 */}
-      <div className="px-10 mb-10">
+      <div className="mb-10">
         <ul>
           {cartItems.map((item) => (
-            <li key={item.cart_id} className="cart-item text-lg my-5">
-              <div className="flex items-start">
+            <li key={item.cart_id} className="cart-item text-lg">
+              <div className="flex items-start border-b-[1px] border-divider  w-full mx-auto py-5 px-10">
                 <input className="block mt-2 scale-125" type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(item.cart_id)} />
                 <div className="flex grow">
                   <img src={item.image} alt={item.name} className="mx-7 cart-item-image w-[150px]" />
@@ -147,13 +168,16 @@ function ShoppingCart() {
                     </div>
                   </div>
                 </div>
+                <button onClick={() => handleDelete(item.cart_id)}>
+                  <IoMdClose className="mt-2" />
+                </button>
               </div>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="border border-t-divider">
+      <div className="grow">
         <PayInfo totalPrice={totalPrice} />
 
         <div className="flex justify-between items-start pt-3 px-10">
@@ -162,7 +186,7 @@ function ShoppingCart() {
           </div>
           {payment ? (
             <div className="w-24 flex flex-col items-end gap-1">
-              <div>555개</div>
+              <div>1000개</div>
               <div className="flex justify-between w-full pl-2">
                 <AiOutlineMinus />
                 <div>{totalPrice}개</div>
@@ -190,9 +214,11 @@ function ShoppingCart() {
         )}
 
         {payment ? (
-          <Link to="/payment" className="grow">
-            <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
-          </Link>
+          <div className="grow text-center">
+            <button onClick={handleCheckout} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+              결제하기
+            </button>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-center my-10">
             <Link to="#" className="text-xs underline underline-offset-2">
