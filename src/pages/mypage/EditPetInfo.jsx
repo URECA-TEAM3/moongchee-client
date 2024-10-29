@@ -44,7 +44,7 @@ const EditPetInfo = () => {
     }
 
     return (
-        <div className="flex flex-col items-center bg-white min-h-screen">
+        <div className="flex flex-col items-center bg-white h-full">
             <Toaster position="top-center" reverseOrder={false} />
             <div className="relative w-full flex items-center mb-6 mt-6">
                 <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">

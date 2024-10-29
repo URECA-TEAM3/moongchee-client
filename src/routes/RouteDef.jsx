@@ -24,6 +24,7 @@ import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
 import EditUserInfo from '../pages/mypage/EditUserInfo';
 import EditPetInfo from '../pages/mypage/EditPetInfo';
+import ShopHistory from '../pages/mypage/ShopHistory';
 
 const MainScreens = {
   LoginPage: {
@@ -110,6 +111,10 @@ const MypageScreens = {
   EditPetInfo: {
     path: '/mypage/editpet/:id',
     element: <EditPetInfo />,
+  },
+  ShopHistory: {
+    path: 'mypage/shophistory/:id',
+    element: <ShopHistory />
   }
 }
 

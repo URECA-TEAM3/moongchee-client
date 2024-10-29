@@ -66,7 +66,7 @@ const EditUserInfo = () => {
     return (
         // <div>
         // </div>
-        <div className="flex flex-col items-center bg-white min-h-screen">
+        <div className="flex flex-col items-center bg-white h-full">
             <Toaster />
             <div className="relative w-full flex items-center mb-4 mt-6">
                 <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
@@ -76,9 +76,7 @@ const EditUserInfo = () => {
             </div>
             {/* <hr className="border-gray-300 w-full mb-6" /> */}
 
-            <div className="w-full max-w-md mt-10">
-                <label className="block text-lg font-medium mb-3">프로필 등록</label>
-
+            <div className="w-full max-w-md mt-5">
                 <div className="flex items-center space-x-4 mb-4">
                 <div className="relative w-20 h-20 overflow-hidden cursor-pointer">
                     {selectedImage ? (
@@ -101,7 +99,7 @@ const EditUserInfo = () => {
                     <button
                         type="button"
                         // onClick={handleNicknameCheck}
-                        className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+                        className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
                     >
                         중복확인
                     </button>
@@ -130,7 +128,7 @@ const EditUserInfo = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     className={`w-3/4 p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
                 />
-                <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onClick={handleVerifyClick}>
+                <button type="button" className="w-1/4 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white" onClick={handleVerifyClick}>
                     인증
                 </button>
                 </div>

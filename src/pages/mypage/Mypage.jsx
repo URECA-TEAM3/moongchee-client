@@ -17,6 +17,10 @@ function Mypage(props) {
 
   const confirmLogout = () => {
     // 로그아웃 로직
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate('/');
+
     setIsModalOpen(false); // 모달 닫기
     alert("로그아웃되었습니다.");
   }
@@ -33,12 +37,16 @@ function Mypage(props) {
     navigate(`/mypage/editpet/${petId}`)
   }
 
+  const handleShopHistoryClick = (userId) => {
+    navigate(`/mypage/shophistory/${userId}`)
+  }
+
   return (
     <div className="container inline-grid h-full">
       <div className="pt-7 pb-7 pl-10 pr-10">
 
         {/* User Profile */}
-        <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-5 flex justify-between items-center">
+        <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className='flex items-center space-x-4'>
             <img src='/src/assets/images/dog.jpeg' alt="Profile" className="w-12 h-12 rounded-full" />
             <p className='text-lg'>홍길동</p>
@@ -48,7 +56,7 @@ function Mypage(props) {
 
         {/* Petsitter Profile - 펫시터일 경우에만 표시 */}
         {isPetsitter && (
-          <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-5">
+          <div className="w-full bg-white rounded-lg p-5 shadow mb-5">
             <p className='mb-2 text-lg'>펫시터 프로필</p>
             <div className='flex justify-between items-center'>
               <div className='flex items-center space-x-4'>
@@ -84,7 +92,7 @@ function Mypage(props) {
           <p className='mb-2 text-lg'>개껌 충전하기</p>
           <div className='flex justify-between items-center'>
             <div className='flex items-center space-x-4'>
-              <img src='/src/assets/images/dogChew.svg' alt="Profile" className="w-12 h-12 rounded-full" />
+              <img src='/src/assets/images/dogChew.svg' className="w-12 h-12 rounded-full" />
               <p className='text-lg'><span className='font-bold'>500</span> 개</p>
             </div>
             <button className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>충전</button>
@@ -94,13 +102,13 @@ function Mypage(props) {
         {/* Purchase History */}
         <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-5 flex justify-between items-center">
           <p className='text-lg'>구매 / 취소 내역</p>
-          <button onClick={() => navigate('/petsitter/reservation/list')} className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>더보기</button>
+          <button onClick={() => handleShopHistoryClick(1)} className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>더보기</button>
         </div>
 
         {/* Petsitter Reservation History */}
         <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-8 flex justify-between items-center">
           <p className='text-lg'>펫시터 예약 / 취소 내역</p>
-          <button className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>더보기</button>
+          <button onClick={() => navigate('/petsitter/reservation/list')} className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>더보기</button>
         </div>
 
         {/* Logout */}
@@ -108,16 +116,15 @@ function Mypage(props) {
           <button onClick={handleLogout} className="text-base text-gray-600 underline">로그아웃</button>
         </div>
 
-        {/* Confirm Logout Modal */}
         {isModalOpen && (
           <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-            <div className='bg-white p-6 rounded-lg shadow-lg w-80'>
-              <h2 className='text-xl font-semibold mb-6 text-center'>로그아웃 하시겠습니까?</h2>
-              <div className='flex justify-center space-x-4'>
-                <button onClick={closeModal} className='px-6 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
-                <button onClick={confirmLogout} className='px-6 py-2 bg-primary text-white rounded-lg'>확인</button>
+              <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                <h2 className='text-lg font-extrabold mb-6'>로그아웃 하시겠습니까?</h2>
+                <div className='flex justify-center space-x-4'>
+                    <button onClick={closeModal} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
+                    <button onClick={confirmLogout} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
+                </div>
               </div>
-            </div>
           </div>
         )}
 
