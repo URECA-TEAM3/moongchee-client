@@ -1,5 +1,7 @@
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
 // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
 // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
@@ -7,9 +9,10 @@ const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
 const customerKey = generateRandomString();
 
 export default function CheckoutPage() {
+  const [searchParams] = useSearchParams();
   const [amount, setAmount] = useState({
     currency: 'KRW',
-    value: 50000,
+    value: Number(searchParams.get('price')) || 0,
   });
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
@@ -26,8 +29,6 @@ export default function CheckoutPage() {
         const widgets = tossPayments.widgets({
           customerKey,
         });
-        // 비회원 결제
-        // const widgets = tossPayments.widgets({ customerKey: ANONYMOUS });
 
         setWidgets(widgets);
       } catch (error) {
@@ -96,13 +97,20 @@ export default function CheckoutPage() {
             try {
               // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
               // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+              const orderId = generateRandomString();
+
+              const response = await axios.post('http://localhost:3000/api/payment', {
+                orderId,
+                amount: amount.value,
+              });
+
               await widgets.requestPayment({
-                orderId: generateRandomString(),
-                orderName: '토스 티셔츠 외 2건',
+                orderId: orderId,
+                orderName: '뭉치 쇼핑몰 결제',
                 successUrl: window.location.origin + '/success',
                 failUrl: window.location.origin + '/fail',
                 customerEmail: 'customer123@gmail.com',
-                customerName: '김토스',
+                customerName: '뭉치',
                 customerMobilePhone: '01012341234',
               });
             } catch (error) {

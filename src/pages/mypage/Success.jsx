@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import successImage from '../../assets/images/white-curve.png';
+import axios from 'axios';
 
 export default function SuccessPage() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ export default function SuccessPage() {
     };
 
     async function confirm() {
-      const response = await fetch('http://localhost:3000/api/confirm', {
+      const response = await fetch('http://localhost:3000/api/payment/confirm', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,23 +29,24 @@ export default function SuccessPage() {
 
       if (!response.ok) {
         // 결제 실패 비즈니스 로직을 구현하세요.
+        console.log(json);
         navigate(`/fail?message=${json.message}&code=${json.code}`);
         return;
       }
 
       // 결제 성공 비즈니스 로직을 구현하세요.
+      console.log(json);
     }
     confirm();
   }, []);
 
   return (
-    <div className="result wrapper">
-      <div className="box_section">
-        <h2>결제 성공</h2>
-        <p>{`주문번호: ${searchParams.get('orderId')}`}</p>
-        <p>{`결제 금액: ${Number(searchParams.get('amount')).toLocaleString()}원`}</p>
-        <p>{`paymentKey: ${searchParams.get('paymentKey')}`}</p>
-      </div>
+    <div className="flex flex-col justify-start items-center min-h-screen bg-white pt-12">
+      <img src={successImage} alt="회원가입 성공" className="w-[300px] h-[300px] mb-3" />
+      <h2 className="text-lg font-bold text-gray-800">결제 완료</h2>
+      <button onClick={() => navigate(`/mypage`)} className="mt-6 py-2 px-4 bg-primary text-white rounded-lg hover:bg-blue-600 focus:outline-none">
+        마이페이지로 돌아가기
+      </button>
     </div>
   );
 }

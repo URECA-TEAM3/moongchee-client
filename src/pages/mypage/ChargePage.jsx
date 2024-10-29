@@ -77,7 +77,7 @@ const ChargePage = () => {
         </div>
 
         {selectedAmount ? (
-          <button onClick={() => navigate(`/checkout`)} className="h-12 w-[70%] bg-primary text-white text-lg rounded-lg">
+          <button onClick={() => navigate(`/checkout?price=${selectedAmount * 10000}`)} className="h-12 w-[70%] bg-primary text-white text-lg rounded-lg">
             결제하기
           </button>
         ) : (
