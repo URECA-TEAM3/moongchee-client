@@ -61,6 +61,14 @@ const SignUpForm = () => {
     }
   };
 
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+
+    if (/^[0-9\b]+$/.test(value) || value === '') {
+      setPhone(value);
+    }
+  };
+
   const handleProfileClick = () => {
     document.getElementById('profileImageUpload').click();
   };
@@ -253,7 +261,7 @@ const SignUpForm = () => {
         localStorage.setItem('refreshToken', refreshToken);
 
         const userData = {
-          id: responseUserId, // 서버에서 받은 자동 생성된 id 값
+          id: responseUserId,
           name,
           phone,
           email,
@@ -364,7 +372,7 @@ const SignUpForm = () => {
           type="tel"
           placeholder="휴대폰번호"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={handlePhoneChange}
           className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
         />
         {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
