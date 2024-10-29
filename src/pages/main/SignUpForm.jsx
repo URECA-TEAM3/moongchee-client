@@ -213,10 +213,22 @@ const SignUpForm = () => {
       const { refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
-        // 회원가입이 완료된 후에만 토큰을 저장
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         console.log('토큰이 로컬 스토리지에 저장되었습니다.');
+
+        const userData = {
+          name,
+          phone,
+          address: `${roadAddress} ${detailedAddress}`,
+          birthDate: formattedBirthDate,
+          provider,
+          userId,
+          nickname,
+          profileImageUrl: downloadURL,
+        };
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
       }
 
       toast.dismiss();
