@@ -12,7 +12,7 @@ const index = () => {
 
   return (
     <div className="flex items-center flex-col p-5">
-      <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200 mt-10 w-full">
+      <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 ease-in duration-200 mt-10 w-full">
         <div className="profile flex items-center justify-between">
           <div className="flex items-center">
             <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
@@ -24,7 +24,7 @@ const index = () => {
               </div>
             </div>
           </div>
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleReservationClick}>
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal cursor-pointer" onClick={handleReservationClick}>
             예약
           </button>
         </div>
@@ -39,7 +39,7 @@ const index = () => {
           </div>
         </div>
       </div>
-      <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal mt-10 w-[300px]" onClick={handleReservationClick}>
+      <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal mt-10 w-[300px] cursor-pointer" onClick={handleReservationClick}>
         예약하기
       </button>
     </div>

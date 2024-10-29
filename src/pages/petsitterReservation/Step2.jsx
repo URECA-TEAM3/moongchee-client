@@ -7,7 +7,7 @@ const Step2 = ({ handleNextStep }) => {
     setIsChecked(event.target.checked);
   };
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col p-5">
       <div className="required">
         <span className="font-bold">필수 용품 준비</span>
         <ul className="list-disc px-5 mt-2 text-gray-400">
@@ -59,7 +59,7 @@ const Step2 = ({ handleNextStep }) => {
           <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
           <span className="ml-4">모두 확인, 동의하였습니다.</span>
         </label>
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[200px] mt-5" onClick={handleNextStep}>
+        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[200px] mt-5" onClick={isChecked ? handleNextStep : ''}>
           다음
         </button>
       </div>

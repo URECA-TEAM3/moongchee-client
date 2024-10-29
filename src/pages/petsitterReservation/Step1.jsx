@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Dropdown from '../../components/DropDown';
+import DogChew from '../../components/DogChew';
 
 const index = ({ handleNextStep }) => {
   const [startTime, setStartTime] = useState('08:00 AM');
@@ -47,7 +48,7 @@ const index = ({ handleNextStep }) => {
   };
 
   return (
-    <div>
+    <div className="p-5">
       <h1>펫시터</h1>
       <div className="profile flex items-center mt-3">
         <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
@@ -145,7 +146,10 @@ const index = ({ handleNextStep }) => {
           </div>
           <div>
             <span>{`150개 X ${calculateTimeDifference()}(시간) =`}</span>
-            <p>{150 * calculateTimeDifference()} 개</p>
+            <p className="flex">
+              <DogChew />
+              {150 * calculateTimeDifference()} 개
+            </p>
           </div>
         </div>
         <div className="flex justify-between w-full mt-5 items-center">
@@ -154,12 +158,18 @@ const index = ({ handleNextStep }) => {
           </div>
           <div>
             <span>{`${handleSizeCost()}개 X ${calculateTimeDifference()}(시간) =`}</span>
-            <p>{`${handleSizeCost() * calculateTimeDifference()}개`}</p>
+            <p className="flex">
+              <DogChew />
+              {`${handleSizeCost() * calculateTimeDifference()}개`}
+            </p>
           </div>
         </div>
         <div className="flex justify-between w-full mt-5 items-center">
           <span>최종 차감될</span>
-          <span className="font-bold">{`${handleSizeCost() * calculateTimeDifference() + 150 * calculateTimeDifference()}개`}</span>
+          <span className="font-bold flex">
+            <DogChew />
+            {`${handleSizeCost() * calculateTimeDifference() + 150 * calculateTimeDifference()}개`}
+          </span>
         </div>
       </div>
       <div className="flex justify-center mt-10">
