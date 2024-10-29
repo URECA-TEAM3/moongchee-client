@@ -20,6 +20,7 @@ import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import Mypage from '../pages/mypage/Mypage';
+import ChargePage from '../pages/mypage/ChargePage';
 
 const MainScreens = {
   LoginPage: {
@@ -57,6 +58,11 @@ const MainScreens = {
   Mypage: {
     path: '/mypage',
     element: <Mypage />,
+  },
+
+  ChargePage: {
+    path: '/chargepage',
+    element: <ChargePage />,
   },
 };
 
