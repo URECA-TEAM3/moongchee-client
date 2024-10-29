@@ -3,6 +3,7 @@ import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
 import { useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import Modal from '../../components/Modal';
 
 
 const EditPetInfo = () => {
@@ -45,11 +46,12 @@ const EditPetInfo = () => {
     return (
         <div className="flex flex-col items-center bg-white min-h-screen">
             <Toaster position="top-center" reverseOrder={false} />
-            <div className='flex items-center mb-4 mt-6'>
-                <button onClick={() => navigate('/mypage')}><ChevronLeftIcon className="h-6 w-6 ml-1" stroke="gray" /></button>
-                <h1 className="text-center text-lg font-bold">반려동물 정보 수정</h1>
+            <div className="relative w-full flex items-center mb-6 mt-6">
+                <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+                    <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
+                </button>
+                <h1 className="mx-auto text-lg font-bold">반려동물 정보 수정</h1>
             </div>
-            <hr className="border-gray-300 w-[450px] mb-6" />
 
             <div className="mb-6">
                 <div className="relative w-20 h-20 overflow-hidden cursor-pointer">
@@ -154,16 +156,18 @@ const EditPetInfo = () => {
                 {/* Confirm Delete Modal */}
                 {isModalOpen && (
                 <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-                    <div className='bg-white p-6 rounded-lg shadow-lg w-80'>
-                    <h2 className='text-base font-bold mb-6 text-center'>반려견을 삭제하시겠습니까?</h2>
-                    <h3 className='text-sm text-center mb-6'>해당 반려견의 정보도 함께 삭제됩니다.</h3>
-                    <div className='flex justify-center space-x-4'>
-                        <button onClick={closeModal} className='px-6 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
-                        <button onClick={confirmDelete} className='px-6 py-2 bg-delete text-white rounded-lg'>확인</button>
-                    </div>
+                    <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                        <h2 className='text-base font-extrabold mb-6'>반려견 정보를 삭제하시겠습니까?</h2>
+                        <h3 className='text-sm m-10 p-2'>삭제 후 복구가 불가능합니다.</h3>
+                        <div className='flex justify-center space-x-4'>
+                            <button onClick={closeModal} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
+                            <button onClick={confirmDelete} className='px-12 py-2 bg-delete text-white rounded-lg'>확인</button>
+                        </div>
                     </div>
                 </div>
                 )}
+
+    
             </div>
 
         </div>

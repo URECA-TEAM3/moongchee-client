@@ -94,7 +94,7 @@ function Mypage(props) {
         {/* Purchase History */}
         <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-5 flex justify-between items-center">
           <p className='text-lg'>구매 / 취소 내역</p>
-          <button className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>더보기</button>
+          <button onClick={() => navigate('/petsitter/reservation/list')} className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>더보기</button>
         </div>
 
         {/* Petsitter Reservation History */}

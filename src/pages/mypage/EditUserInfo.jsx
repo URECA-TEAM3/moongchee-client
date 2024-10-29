@@ -54,24 +54,30 @@ const EditUserInfo = () => {
                 </script>
             </body>
             </html>
-            `;
+        `;
         
-            popup.document.write(htmlContent);
-        };
+        popup.document.write(htmlContent);
+    };
+
+    const handleVerifyClick = () => {
+        setShowVerificationInput(true);
+    };
 
     return (
         // <div>
         // </div>
         <div className="flex flex-col items-center bg-white min-h-screen">
             <Toaster />
-            <div className='flex items-center mb-4 mt-6'>
-                <button onClick={() => navigate('/mypage')}><ChevronLeftIcon className="h-6 w-6 ml-1" stroke="gray" /></button>
-                <h1 className="text-center text-lg font-bold">프로필 수정</h1>
+            <div className="relative w-full flex items-center mb-4 mt-6">
+                <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+                    <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
+                </button>
+                <h1 className="mx-auto text-lg font-bold">프로필 수정</h1>
             </div>
-            <hr className="border-gray-300 w-[450px] mb-6" />
+            {/* <hr className="border-gray-300 w-full mb-6" /> */}
 
-            <div className="w-full max-w-md">
-                <label className="block text-sm font-medium mb-1">프로필 등록</label>
+            <div className="w-full max-w-md mt-10">
+                <label className="block text-lg font-medium mb-3">프로필 등록</label>
 
                 <div className="flex items-center space-x-4 mb-4">
                 <div className="relative w-20 h-20 overflow-hidden cursor-pointer">
@@ -84,14 +90,13 @@ const EditUserInfo = () => {
                 <input type="file" id="profileImageUpload" accept="image/*" className="hidden" />
 
                 <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">닉네임*</label>
                     <div className="flex space-x-2">
                     <input
                         type="text"
-                        placeholder="닉네임 입력"
+                        placeholder="닉네임"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
-                        className="flex-1 p-2 border border-blue-500 rounded"
+                        className="flex-1 p-2 p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded"
                     />
                     <button
                         type="button"
@@ -112,12 +117,12 @@ const EditUserInfo = () => {
                 placeholder="이름"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+                className={`mb-4 block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
                 />
                 {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
                 <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
-                <div className="flex space-x-2 mb-1">
+                <div className="flex space-x-2 mb-4">
                 <input
                     type="tel"
                     placeholder="휴대폰번호"
@@ -125,6 +130,9 @@ const EditUserInfo = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     className={`w-3/4 p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
                 />
+                <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onClick={handleVerifyClick}>
+                    인증
+                </button>
                 </div>
                 {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
@@ -144,7 +152,7 @@ const EditUserInfo = () => {
                 )}
 
                 <label className="block text-sm font-medium mb-1">생년월일*</label>
-                <div className="flex items-center space-x-2 mb-1">
+                <div className="flex items-center space-x-2 mb-4">
                 <DatePicker
                     selected={birthDate}
                     onChange={handleDateChange}
