@@ -48,7 +48,7 @@ const ShopMain = () => {
             const imageUrl = await getDownloadURL(storageRef);
             return {
               ...product,
-              image: imageUrl, // URL로 업데이트
+              image: imageUrl,
             };
           } catch (error) {
             console.error('상품 이미지 로드 실패:', error);

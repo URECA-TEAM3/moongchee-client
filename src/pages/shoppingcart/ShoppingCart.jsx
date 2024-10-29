@@ -1,43 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import DogChew from '../../components/DogChew';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import CartItem from '../../components/shop/CartItem';
 import { CiCircleMinus } from 'react-icons/ci';
 import { CiCirclePlus } from 'react-icons/ci';
 import { AiOutlineMinus } from 'react-icons/ai';
 import { GoInfo } from 'react-icons/go';
 import PayInfo from '../../components/shop/PayInfo';
+import API from '../../api/axiosInstance';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
 
-function ShoppingCart(props) {
+function ShoppingCart() {
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
   const [payment, setPayment] = useState(true);
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: '[잇츄] 오리지널 S 43개입 (4종) 강아지 덴탈껌 대용량 간식 개껌',
-      price: 100,
-      quantity: 1,
-      checked: false,
-      image: 'https://static.fitpetcdn.com/prod/images/product/1000031556/S_43%EA%B0%9C%EC%9E%85_xmrari_PRODUCT_LIST.png', // 예시 이미지 URL
-    },
-    {
-      id: 2,
-      name: 'Product B',
-      price: 200,
-      quantity: 1,
-      checked: false,
-      image: 'https://static.fitpetcdn.com/prod/images/product/1000031556/S_43%EA%B0%9C%EC%9E%85_xmrari_PRODUCT_LIST.png', // 예시 이미지 URL
-    },
-    {
-      id: 3,
-      name: 'Product C',
-      price: 150,
-      quantity: 1,
-      checked: false,
-      image: 'https://static.fitpetcdn.com/prod/images/product/1000031556/S_43%EA%B0%9C%EC%9E%85_xmrari_PRODUCT_LIST.png', // 예시 이미지 URL
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+
+  const getCartItemsList = async () => {
+    try {
+      const response = await API.get('/api/cart/1');
+
+      const productsWithImages = await Promise.all(
+        response.data.data.map(async (product) => {
+          try {
+            const storageRef = ref(storage, product.image);
+            const imageUrl = await getDownloadURL(storageRef);
+            return {
+              ...product,
+              image: imageUrl,
+            };
+          } catch (error) {
+            console.error('상품 이미지 로드 실패:', error);
+            return product;
+          }
+        })
+      );
+      setCartItems(productsWithImages);
+    } catch (error) {
+      console.error();
+    }
+  };
+
+  useEffect(() => {
+    getCartItemsList();
+  }, []);
 
   // 최종 결제 금액 계산
   const calculateTotal = () => {
@@ -48,12 +55,34 @@ function ShoppingCart(props) {
 
   // 체크박스 핸들러
   const handleCheckboxChange = (id) => {
-    setCartItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)));
+    updateCartItem(id, 'checkbox');
   };
 
   // 수량 변경 핸들러
   const handleQuantityChange = (id, delta) => {
-    setCartItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item)));
+    updateCartItem(id, 'quantity', delta);
+  };
+
+  // 장바구니 아이템 업데이트 핸들러
+  const updateCartItem = (id, updateType, delta = 0) => {
+    setCartItems((prevItems) => {
+      const updatedItems = prevItems.map((item) => {
+        if (item.cart_id === id) {
+          if (updateType === 'checkbox') {
+            return { ...item, checked: !item.checked };
+          } else if (updateType === 'quantity') {
+            return { ...item, quantity: Math.max(1, item.quantity + delta) };
+          }
+        }
+        return item;
+      });
+
+      // 필요한 속성만 추출하여 로컬스토리지에 저장
+      const storageData = updatedItems.map(({ cart_id, checked, quantity }) => ({ cart_id, checked, quantity }));
+      localStorage.setItem('cart', JSON.stringify(storageData));
+
+      return updatedItems;
+    });
   };
 
   // 업데이트된 결제 금액을 계산 후 상태 업데이트
@@ -65,6 +94,30 @@ function ShoppingCart(props) {
     setPayment(555 - total >= 0);
   }, [cartItems]);
 
+  // 페이지 떠날 때 로컬스토리지에 있는 데이터 서버로 넘김
+  useEffect(() => {
+    const handleBeforeUnload = async (event) => {
+      const cartToSend = JSON.parse(localStorage.getItem('cart')) || [];
+      const user_id = JSON.parse(localStorage.getItem('userId')) || [];
+
+      await API.post(
+        '/api/cart/save',
+        { cartData: { cartToSend, user_id } },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <div className="bg-white">
       <div className="px-10 py-6 font-bold text-xl">장바구니</div>
@@ -72,9 +125,9 @@ function ShoppingCart(props) {
       <div className="px-10 mb-10">
         <ul>
           {cartItems.map((item) => (
-            <li key={item.id} className="cart-item text-lg my-5">
+            <li key={item.cart_id} className="cart-item text-lg my-5">
               <div className="flex items-start">
-                <input className="block mt-2 scale-125" type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(item.id)} />
+                <input className="block mt-2 scale-125" type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(item.cart_id)} />
                 <div className="flex grow">
                   <img src={item.image} alt={item.name} className="mx-7 cart-item-image w-[150px]" />
                   <div className="flex flex-col">
@@ -84,11 +137,11 @@ function ShoppingCart(props) {
                       <div className="ml-2 font-bold">{item.price.toLocaleString()}개</div>
                     </span>
                     <div className="flex items-center">
-                      <button onClick={() => handleQuantityChange(item.id, -1)}>
+                      <button onClick={() => handleQuantityChange(item.cart_id, -1)}>
                         <CiCircleMinus size={25} color={'#2589E7'} />
                       </button>
                       <span className="mx-2">{item.quantity}</span>
-                      <button onClick={() => handleQuantityChange(item.id, 1)}>
+                      <button onClick={() => handleQuantityChange(item.cart_id, 1)}>
                         <CiCirclePlus size={25} color={'#2589E7'} />
                       </button>
                     </div>

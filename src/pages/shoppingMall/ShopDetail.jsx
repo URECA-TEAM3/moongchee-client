@@ -67,7 +67,9 @@ function ShopDetail() {
             <img src={product.description} alt={product.name} />
           </div>
         )}
-        <DetailBottom id={id} />
+        <div className="min-h-screen">
+          <DetailBottom id={id} product={product} />
+        </div>
       </div>
     </>
   );
