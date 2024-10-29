@@ -25,7 +25,7 @@ const ChargePage = () => {
   };
 
   return (
-    <div className="p-5 text-center h-full flex flex-col justify-between">
+    <div className="p-5 text-center h-full flex flex-col justify-between bg-white">
       <div className="flex items-center">
         <img src={backButtonIcon} alt="Back Button" className="w-6 h-6 cursor-pointer" onClick={() => window.history.back()} />
         <h1 className="flex-grow text-lg text-center">개껌 충전하기</h1>
@@ -81,7 +81,7 @@ const ChargePage = () => {
             결제하기
           </button>
         ) : (
-          <p className="h-12 text-alert">충전할 금액을 선택해 주세요.</p>
+          <button className="h-12 w-[70%] bg-gray-300 text-white text-lg rounded-lg">결제하기</button>
         )}
       </div>
     </div>
