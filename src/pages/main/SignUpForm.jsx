@@ -246,13 +246,14 @@ const SignUpForm = () => {
         nickname,
         profileImageUrl: downloadURL,
       });
-      const { refreshToken } = response.data;
+      const { userId: responseUserId, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
 
         const userData = {
+          id: responseUserId, // 서버에서 받은 자동 생성된 id 값
           name,
           phone,
           email,
@@ -264,6 +265,7 @@ const SignUpForm = () => {
           profileImageUrl: downloadURL,
         };
         sessionStorage.setItem('userData', JSON.stringify(userData));
+        console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
       }
 
       toast.dismiss();
@@ -275,7 +277,6 @@ const SignUpForm = () => {
       console.error('회원가입 오류:', error);
     }
   };
-
   return (
     <div className="flex flex-col items-center bg-white min-h-screen">
       <Toaster />
