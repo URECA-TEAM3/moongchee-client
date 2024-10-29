@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
@@ -13,6 +13,7 @@ import { storage } from '../../../firebase';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
@@ -29,6 +30,23 @@ const SignUpForm = () => {
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
   const userId = location.state?.userId || null;
+  const accessToken = location.state?.accessToken || null;
+
+  useEffect(() => {
+    const handleUnload = () => {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+      console.log('토큰 삭제 완료');
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('popstate', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener('popstate', handleUnload);
+    };
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -43,7 +61,7 @@ const SignUpForm = () => {
   };
 
   const validateNickname = (nickname) => {
-    const validPattern = /^(?![ㄱ-ㅎㅏ-ㅣ])[가-힣a-zA-Z]+$/;
+    const validPattern = /^(?=.{1,15}$)[가-힣a-zA-Z0-9._]+$/;
     return validPattern.test(nickname);
   };
 
@@ -58,8 +76,8 @@ const SignUpForm = () => {
       return;
     }
 
-    if (nickname.length > 8) {
-      toast.error('닉네임은 8자 이하여야 합니다.');
+    if (nickname.length > 15) {
+      toast.error('닉네임은 15자 이하여야 합니다.');
       return;
     }
 
@@ -159,6 +177,7 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 유효성 검사
     if (!validateFields()) {
       return;
     }
@@ -190,12 +209,30 @@ const SignUpForm = () => {
         nickname,
         profileImageUrl: downloadURL,
       });
-      const newUserId = response.data.userId;
-      console.log('받은 userId:', newUserId);
-      localStorage.setItem('userId', newUserId);
+
+      const { refreshToken } = response.data;
+
+      if (accessToken && refreshToken) {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        console.log('토큰이 로컬 스토리지에 저장되었습니다.');
+
+        const userData = {
+          name,
+          phone,
+          address: `${roadAddress} ${detailedAddress}`,
+          birthDate: formattedBirthDate,
+          provider,
+          userId,
+          nickname,
+          profileImageUrl: downloadURL,
+        };
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
+      }
+
       toast.dismiss();
       toast.success('회원가입 성공!');
-
       navigate('/loginsuccess');
     } catch (error) {
       toast.dismiss();
@@ -203,6 +240,7 @@ const SignUpForm = () => {
       console.error('회원가입 오류:', error);
     }
   };
+
   return (
     <div className="flex flex-col items-center bg-white min-h-screen">
       <Toaster />

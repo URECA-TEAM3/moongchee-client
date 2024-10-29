@@ -25,6 +25,7 @@ import Mypage from '../pages/mypage/Mypage';
 import EditUserInfo from '../pages/mypage/EditUserInfo';
 import EditPetInfo from '../pages/mypage/EditPetInfo';
 import ShopHistory from '../pages/mypage/ShopHistory';
+import ChargePage from '../pages/mypage/ChargePage';
 
 const MainScreens = {
   LoginPage: {
