@@ -26,6 +26,7 @@ import EditUserInfo from '../pages/mypage/EditUserInfo';
 import EditPetInfo from '../pages/mypage/EditPetInfo';
 import ShopHistory from '../pages/mypage/ShopHistory';
 import ChargePage from '../pages/mypage/ChargePage';
+import PetRegister from '../pages/mypage/PetRegister';
 
 const MainScreens = {
   LoginPage: {
@@ -112,6 +113,10 @@ const MypageScreens = {
   EditUserInfo: {
     path: '/mypage/edituser',
     element: <EditUserInfo />,
+  },
+  PetRegister: {
+    path: '/mypage/petregister',
+    element: <PetRegister />,
   },
   EditPetInfo: {
     path: '/mypage/editpet/:id',

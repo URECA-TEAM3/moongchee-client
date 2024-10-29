@@ -82,7 +82,10 @@ function Mypage(props) {
 
         {/* Pet Profile */}
         <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-5">
-          <p className='mb-2 text-lg'>내 반려동물 <span className='text-gray-300'>{petCnt}</span></p>
+          <div className='flex items-center justify-between mb-2'>
+            <p className='text-lg'>내 반려동물 <span className='text-gray-300'>{petCnt}</span></p>
+            <button onClick={() => navigate('/mypage/petregister')}><p className='text-lg text-primary'>⊕ 추가</p></button>
+          </div>
           <div className='flex justify-between items-center'>
             <div className='flex items-center space-x-4'>
               <img src='/src/assets/images/dog.jpeg' alt="Profile" className="w-12 h-12 rounded-full" />
