@@ -89,13 +89,11 @@ const GoogleLoginBtn = () => {
     const storedAccessToken = localStorage.getItem('accessToken');
 
     if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
-      // 유효한 액세스 토큰이 있는 경우에도 서버에서 userData를 가져옵니다.
       try {
         const userInfoResponse = await axios.get('http://localhost:3000/api/auth/user-info', {
           headers: { Authorization: `Bearer ${storedAccessToken}` },
         });
 
-        // 세션 스토리지에 userData 저장
         sessionStorage.setItem('userData', JSON.stringify(userInfoResponse.data));
 
         console.log('유저 데이터:', userInfoResponse.data);
