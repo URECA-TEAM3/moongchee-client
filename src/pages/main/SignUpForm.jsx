@@ -61,7 +61,7 @@ const SignUpForm = () => {
   };
 
   const validateNickname = (nickname) => {
-    const validPattern = /^(?!.*[._]{2})(?![._])[가-힣a-zA-Z0-9._]+(?<![._])$/;
+    const validPattern = /^(?=.{1,15}$)[가-힣a-zA-Z0-9._]+$/;
     return validPattern.test(nickname);
   };
 
