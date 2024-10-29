@@ -61,7 +61,7 @@ const KakaoLoginBtn = () => {
           });
 
           const { accessToken, refreshToken, userId, exists, userData } = response.data;
-
+          console.log(response.data)
           if (exists) {
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);

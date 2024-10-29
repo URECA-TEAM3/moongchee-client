@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Mypage(props) {
@@ -10,6 +10,17 @@ function Mypage(props) {
   
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [profileImageUrl, setProfileImageUrl] = useState('');
+
+  useEffect(() => {
+    const userData = sessionStorage.getItem('userData');
+    if (userData) {
+      const parsedData = JSON.parse(userData); // JSON 파싱
+      setUserName(parsedData.name);
+      setProfileImageUrl(parsedData.profile_image_url);
+    }
+  }, []);
 
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
@@ -48,8 +59,8 @@ function Mypage(props) {
         {/* User Profile */}
         <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className='flex items-center space-x-4'>
-            <img src='/src/assets/images/dog.jpeg' alt="Profile" className="w-12 h-12 rounded-full" />
-            <p className='text-lg'>홍길동</p>
+            <img src={profileImageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
+            <p className='text-lg'>{userName}</p>
           </div>
           <button onClick={handleEditUserInfoClick} className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>편집</button>
         </div>
@@ -61,7 +72,7 @@ function Mypage(props) {
             <div className='flex justify-between items-center'>
               <div className='flex items-center space-x-4'>
                 <img src='/src/assets/images/dog.jpeg' alt="Profile" className="w-12 h-12 rounded-full" />
-                <p className='text-lg'>홍길동</p>
+                <p className='text-lg'>{userName}</p>
               </div>
               <button className='border-2 border-blue-500 text-primary text-sm rounded-xl w-16 h-7'>편집</button>
             </div>
