@@ -97,8 +97,8 @@ const ShopMain = () => {
       ) : (
         <div className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
           {filteredItems.map((item) => (
-            <div className="border rounded-2xl p-3">
-              <ItemBox item={item} key={item.id} />
+            <div key={item.id} className="border rounded-2xl p-3">
+              <ItemBox item={item} />
             </div>
           ))}
         </div>

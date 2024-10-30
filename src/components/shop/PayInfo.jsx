@@ -4,7 +4,7 @@ import DogChew from '../DogChew';
 const PayInfo = ({ totalPrice }) => {
   return (
     <>
-      <h1 className="font-bold text-lg mt-10 px-10">최종 결제 금액</h1>
+      <h1 className="font-bold text-lg px-10">최종 결제 금액</h1>
       <div className="flex justify-between items-center py-3 px-10">
         <div>총 상품 금액</div>
         <div className="flex items-center">

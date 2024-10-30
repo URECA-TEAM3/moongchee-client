@@ -111,27 +111,29 @@ const Pay = () => {
       </div>
 
       {/* 결제 금액 */}
-      <div className="grow">
+      <div className="grow flex flex-col justify-end">
         <PayInfo totalPrice={orderData.total} />
+
+        <div className="text-center">
+          <button onClick={openModal} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+            결제하기
+          </button>
+        </div>
+
+        <Modal isOpen={isModalOpen} onClose={closeModal} title={'결제하기'}>
+          <div className="my-10 flex justify-center">
+            <span className="font-bold text-lg">결제하시겠습니까?</span>
+          </div>
+          <div className="flex gap-4 mt-3">
+            <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
+              취소
+            </button>
+            <button onClick={confirmOrder} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+              확인
+            </button>
+          </div>
+        </Modal>
       </div>
-
-      <button onClick={openModal} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
-        결제하기
-      </button>
-
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={'결제하기'}>
-        <div className="my-10 flex justify-center">
-          <span className="font-bold text-lg">결제하시겠습니까?</span>
-        </div>
-        <div className="flex gap-4 mt-3">
-          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
-            취소
-          </button>
-          <button onClick={confirmOrder} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
-            확인
-          </button>
-        </div>
-      </Modal>
     </div>
   );
 };

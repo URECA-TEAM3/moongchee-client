@@ -15,8 +15,9 @@ function ShoppingCart() {
   const navigate = useNavigate();
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
-  const [payment, setPayment] = useState(true);
+  const [payment, setPayment] = useState(true); // 결제가능여부
   const [cartItems, setCartItems] = useState([]);
+  const [showItems, setShowItems] = useState(true);
 
   const getCartItemsList = async () => {
     try {
@@ -99,7 +100,6 @@ function ShoppingCart() {
 
       if (response.status === 200) {
         setCartItems((prevItems) => prevItems.filter((item) => item.cart_id !== id));
-        console.log('삭제 완료');
       }
     } catch (error) {
       console.error('삭제 오류:', error);
@@ -113,6 +113,7 @@ function ShoppingCart() {
     setAfterPayment(1000 - total);
 
     setPayment(1000 - total >= 0);
+    setShowItems(cartItems.length > 0);
   }, [cartItems]);
 
   const uploadLocalCart = async () => {
@@ -143,7 +144,7 @@ function ShoppingCart() {
     <div className="bg-white flex flex-col min-h-full">
       <div className="px-10 py-6 font-bold text-xl">장바구니</div>
       {/* 장바구니 담긴 상품 조회 */}
-      <div className="mb-10">
+      <div className="mb-5">
         <ul>
           {cartItems.map((item) => (
             <li key={item.cart_id} className="cart-item text-lg">
@@ -177,59 +178,69 @@ function ShoppingCart() {
         </ul>
       </div>
 
-      <div className="grow">
-        <PayInfo totalPrice={totalPrice} />
+      {showItems ? (
+        <div className="grow flex flex-col justify-end">
+          <PayInfo totalPrice={totalPrice} />
 
-        <div className="flex justify-between items-start pt-3 px-10">
-          <div className="flex">
-            <span className="mr-2">나의 현재 </span> <DogChew />
-          </div>
-          {payment ? (
-            <div className="w-24 flex flex-col items-end gap-1">
-              <div>1000개</div>
-              <div className="flex justify-between w-full pl-2">
-                <AiOutlineMinus />
-                <div>{totalPrice}개</div>
-              </div>
-              <div className="border border-black w-full" />
+          <div className="flex justify-between items-start pt-3 px-10">
+            <div className="flex">
+              <span className="mr-2">나의 현재 </span> <DogChew />
             </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-[red] text-xs mr-2">
-                잔액이 부족합니다.
-                <GoInfo className="ml-1" />
+            {payment ? (
+              <div className="w-24 flex flex-col items-end gap-1">
+                <div>1000개</div>
+                <div className="flex justify-between w-full pl-2">
+                  <AiOutlineMinus />
+                  <div>{totalPrice}개</div>
+                </div>
+                <div className="border border-black w-full" />
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-[red] text-xs mr-2">
+                  잔액이 부족합니다.
+                  <GoInfo className="ml-1" />
+                </div>
+                <div>{afterPayment}개</div>
+              </div>
+            )}
+          </div>
+
+          {payment && (
+            <div className="flex justify-between items-center pb-3 mt-[0.25rem] px-10">
+              <div className="flex">
+                <span className="mr-2">결제 후 </span> <DogChew />
               </div>
               <div>{afterPayment}개</div>
             </div>
           )}
-        </div>
 
-        {payment && (
-          <div className="flex justify-between items-center pb-3 mt-[0.25rem] px-10">
-            <div className="flex">
-              <span className="mr-2">결제 후 </span> <DogChew />
+          {payment ? (
+            <div className="text-center">
+              <button onClick={handleCheckout} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+                결제하기
+              </button>
             </div>
-            <div>{afterPayment}개</div>
-          </div>
-        )}
-
-        {payment ? (
-          <div className="grow text-center">
-            <button onClick={handleCheckout} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
-              결제하기
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center my-10">
-            <Link to="#" className="text-xs underline underline-offset-2">
-              지금 바로 충전하기
-            </Link>
-            <Link to="#" className="grow w-6/12 mt-2">
-              <div className=" mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
-            </Link>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center my-10">
+              <Link to="#" className="text-xs underline underline-offset-2">
+                지금 바로 충전하기
+              </Link>
+              <Link to="#" className="grow w-6/12 mt-2">
+                <div className=" mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
+              </Link>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mb-20 grow flex flex-col items-center justify-center text-xl font-bold">
+          <img className="w-1/2 " src="/src/assets/images/black-curve.png" alt="" />
+          <div className="py-8">장바구니가 비었습니다.</div>
+          <button onClick={() => navigate('/shoppingmall')} className="w-6/12 mx-auto bg-primary text-white p-3 mx-2 rounded-xl text-center">
+            상품 구경하러가기
+          </button>
+        </div>
+      )}
     </div>
   );
 }

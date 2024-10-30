@@ -53,7 +53,7 @@ function ShopDetail() {
         </div>
 
         {loading ? (
-          <div>로딩 중...</div>
+          <div className="flex justify-center items-center">로딩 중...</div>
         ) : (
           <div className="max-h-[79vh] overflow-y-scroll">
             <img src={product.image} alt={product.name} />
