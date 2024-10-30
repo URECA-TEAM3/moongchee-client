@@ -43,7 +43,7 @@ function ShopDetail() {
 
   return (
     <>
-      <div className="bg-white">
+      <div className="bg-white relative">
         <div className="flex items-center justify-between p-5">
           <button onClick={() => navigate(-1)}>
             <IoIosArrowBack />
@@ -55,7 +55,7 @@ function ShopDetail() {
         {loading ? (
           <div className="flex justify-center items-center">로딩 중...</div>
         ) : (
-          <div className="max-h-[79vh] overflow-y-scroll">
+          <div>
             <img src={product.image} alt={product.name} />
             <div className="p-7">
               <h1 className="text-xl break-keep">{product.name}</h1>
@@ -67,9 +67,8 @@ function ShopDetail() {
             <img src={product.description} alt={product.name} />
           </div>
         )}
-        <div className="min-h-screen">
-          <DetailBottom id={id} product={product} />
-        </div>
+
+        <DetailBottom id={id} product={product} />
       </div>
     </>
   );
