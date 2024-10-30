@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import petProfileImage from '/src/assets/images/registerpetprofile.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 
@@ -21,7 +23,8 @@ const EditPetInfo = () => {
     const [profileImage, setProfileImage] = useState(petProfileImage);
     const [selectedImageFile, setSelectedImageFile] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [pet, setPet] = useState([]);
+    const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false); // 삭제 완료 모달
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const fetchPet = async (petId) => {
@@ -33,6 +36,7 @@ const EditPetInfo = () => {
                 setGender(response.data[0].gender);
                 setNeutered(response.data[0].surgery == 1 ? 'yes' : 'no');
                 setWeight(response.data[0].weight);
+                setProfileImage(response.data[0].animal_image_url);
             } catch (error) {
                 console.error(error);
             }
@@ -55,19 +59,58 @@ const EditPetInfo = () => {
         setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
     }
     
-    const confirmDelete = () => {
-        // 반려동물 삭제 로직
-        setIsModalOpen(false); // 모달 닫기
-        alert("삭제되었습니다.");
+    const confirmDelete = async () => {
+        
+        try {
+            await axios.delete(`http://localhost:3000/api/pets/${petId}`);
+            setIsModalOpen(false); // 삭제 여부 모달 닫기
+            setIsDeletedModalOpen(true); // 삭제 확인 모달 열기
+        } catch (error) {
+            console.error(error);
+            toast.error('반려동물 정보 삭제에 실패했습니다.');
+        }
     }
+
+    const handleCloseDeletedModal = () => {
+        setIsDeletedModalOpen(false);
+        navigate('/mypage'); // 마이페이지로 이동
+    };
     
     const closeModal = () => {
         setIsModalOpen(false); // 모달 닫기
     }
 
+    const handleSave = async () => {
+
+        try {
+            let profileImageUrl = profileImage;
+            if (selectedImageFile) {
+                const storageRef = ref(storage, `animals/${petId}_${Date.now()}`);
+                await uploadBytes(storageRef, selectedImageFile);
+                profileImageUrl = await getDownloadURL(storageRef);
+            }
+
+            const updatedData = {
+                id: petId,
+                name,
+                age,
+                surgery: neutered === 'yes'? 1 : 0,
+                weight: weight,
+                animal_image_url: profileImageUrl,
+            }
+
+            const response = await axios.put('http://localhost:3000/api/pets/update-profile', updatedData);
+
+        } catch (error) {
+            console.error(error);
+            toast.dismiss(toastId);
+            toast.error('반려동물 정보 저장에 실패했습니다.')
+        }
+    }
+
     return (
         <div className="flex flex-col items-center bg-white h-full">
-            <Toaster position="top-center" reverseOrder={false} />
+            <Toaster position="bottom-center" reverseOrder={false} />
             <div className="relative w-full flex items-center mb-6 mt-6">
                 <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
                     <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
@@ -76,14 +119,14 @@ const EditPetInfo = () => {
             </div>
 
             <div className="mb-6">
-                <div className="relative w-20 h-20 overflow-hidden cursor-pointer">
-                {profileImage !== petProfileImage ? (
-                    <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
-                ) : (
-                    <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
-                )}
+                <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={() => fileInputRef.current.click()}>
+                    {profileImage !== petProfileImage ? (
+                        <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                        <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+                    )}
                 </div>
-                <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
+                <input type="file" ref={fileInputRef} id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
             </div>
             
             <div className='flex flex-col w-full items-center max-w-md'>
@@ -173,7 +216,7 @@ const EditPetInfo = () => {
                 </div>
                 <div className='flex justify-between p-5 w-full'>
                     <button onClick={handleDelete} className='py-2 bg-delete text-white rounded-lg w-48'>삭제하기</button>
-                    <button className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
+                    <button onClick={handleSave} className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
                 </div>
 
                 {/* Confirm Delete Modal */}
@@ -190,6 +233,15 @@ const EditPetInfo = () => {
                 </div>
                 )}
 
+                {/* Delete Completed Modal */}
+                {isDeletedModalOpen && (
+                    <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+                        <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                            <h2 className='text-base font-extrabold mb-6'>삭제되었습니다.</h2>
+                            <button onClick={handleCloseDeletedModal} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
+                        </div>
+                    </div>
+                )}
     
             </div>
 

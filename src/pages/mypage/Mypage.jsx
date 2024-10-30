@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
-import petProfileImage from '/src/assets/images/registerpetprofile.svg';
+import petProfileImage from '/src/assets/images/defaultpet.png';
 import axios from 'axios';
 
 function Mypage(props) {
@@ -25,6 +25,7 @@ function Mypage(props) {
 
       // 반려동물 리스트 출력 함수 호출
       fetchPets(parsedData.id);
+
     }
   }, []);
 
@@ -58,10 +59,6 @@ function Mypage(props) {
 
   const handleEditUserInfoClick = () => {
     navigate('/mypage/edituser')
-  }
-
-  const handleEditPetInfoClick = (petId) => {
-    navigate(`/mypage/editpet/${petId}`)
   }
 
   const handleShopHistoryClick = (userId) => {
