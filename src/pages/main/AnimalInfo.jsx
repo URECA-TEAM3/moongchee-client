@@ -20,6 +20,21 @@ const AnimalInfo = () => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+  const inputFields = [
+    { label: '이름*', value: name, setter: setName, errorKey: 'name', type: 'text' },
+    { label: '나이*', value: age, setter: setAge, errorKey: 'age', type: 'number' },
+    { label: '견종*', value: species, setter: setSpecies, errorKey: 'species', type: 'text' },
+  ];
+  const genderOptions = [
+    { type: 'male', label: '남아' },
+    { type: 'female', label: '여아' },
+  ];
+
+  const neuteredOptions = [
+    { option: 'yes', label: '했어요' },
+    { option: 'no', label: '안했어요' },
+  ];
+
   useEffect(() => {
     const storedUser = JSON.parse(sessionStorage.getItem('userData'));
     console.log('Stored User:', storedUser);
@@ -52,7 +67,7 @@ const AnimalInfo = () => {
     const newErrors = {};
     if (!name) newErrors.name = '이름을 입력해주세요';
     if (!age) newErrors.age = '나이를 입력해주세요';
-    else if (parseInt(age, 10) < 0) newErrors.age = '양수를 입력해주세요';
+    else if (parseInt(age, 10) < 0) newErrors.age = '올바른 값을 입력해주세요';
     if (!weight) newErrors.weight = '몸무게를 입력해주세요';
     if (!species) newErrors.species = '견종을 입력해주세요';
     if (!gender) newErrors.gender = '성별을 선택해주세요';
@@ -115,11 +130,7 @@ const AnimalInfo = () => {
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
       </div>
 
-      {[
-        { label: '이름*', value: name, setter: setName, errorKey: 'name' },
-        { label: '나이*', value: age, setter: setAge, errorKey: 'age', type: 'number' },
-        { label: '견종*', value: species, setter: setSpecies, errorKey: 'species' },
-      ].map(({ label, value, setter, errorKey, type = 'text' }) => (
+      {inputFields.map(({ label, value, setter, errorKey, type }) => (
         <div key={label} className="w-full max-w-md mb-4">
           <label className="block text-sm font-medium mb-2 text-left">{label}</label>
           <input
@@ -135,7 +146,7 @@ const AnimalInfo = () => {
 
       <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">성별*</label>
       <div className="flex justify-between mb-4 w-full max-w-md space-x-2">
-        {['male', 'female'].map((type) => (
+        {genderOptions.map(({ type, label }) => (
           <button
             key={type}
             onClick={() => setGender(type)}
@@ -143,7 +154,7 @@ const AnimalInfo = () => {
               gender === type ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
             } hover:border-blue-500 hover:text-blue-500 transition-colors`}
           >
-            {type === 'male' ? '남아' : '여아'}
+            {label}
           </button>
         ))}
       </div>
@@ -151,7 +162,7 @@ const AnimalInfo = () => {
 
       <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">중성화 수술 여부*</label>
       <div className="flex justify-between mb-4 w-full max-w-md space-x-2">
-        {['yes', 'no'].map((option) => (
+        {neuteredOptions.map(({ option, label }) => (
           <button
             key={option}
             onClick={() => setNeutered(option)}
@@ -159,7 +170,7 @@ const AnimalInfo = () => {
               neutered === option ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
             } hover:border-blue-500 hover:text-blue-500 transition-colors`}
           >
-            {option === 'yes' ? '했어요' : '안했어요'}
+            {label}
           </button>
         ))}
       </div>
