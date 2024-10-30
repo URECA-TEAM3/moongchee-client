@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DogChew from '../../components/DogChew';
 
 const ShopHistory = () => {
 
@@ -30,7 +31,6 @@ const ShopHistory = () => {
             </div>
 
             <div className='pt-3 pb-7 pl-10 pr-10'>
-                
                 <div className='w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center'>
                     <div className='w-full flex flex-col justify-between'>
                         <div className='flex w-full justify-between items-center'>
@@ -44,10 +44,10 @@ const ShopHistory = () => {
                                         <div className='flex'>
                                             <span className='mr-1'>순우리 국산 개껌 (4개입)</span>
                                             <span className='text-primary mr-1'> 외 3개</span>
-                                            <ChevronDownIcon className='h-6 w-6' stroke='black' />
+                                            <ChevronUpIcon className='h-6 w-6' stroke='black' />
                                         </div>
                                     ) : (
-                                        <ChevronUpIcon className='h-6 w-6' stroke='black' />
+                                        <ChevronDownIcon className='h-6 w-6' stroke='black' />
                                     )}
 
                                 </button>
@@ -61,7 +61,8 @@ const ShopHistory = () => {
                                     <span className='text-primary'> 외 3개</span>
                                 )}
                                 <div className='p-1 flex'>
-                                    <img src='/src/assets/images/dogChew.svg' className='w-6 h-6 rounded-full' />
+                                    <DogChew />
+                                    {/* <img src='/src/assets/images/dogChew.svg' className='w-6 h-6 rounded-full' /> */}
                                     <p className='ml-2 font-bold'>750개</p>
                                 </div>
                             </div>
