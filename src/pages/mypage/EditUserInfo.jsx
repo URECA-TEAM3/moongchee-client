@@ -81,7 +81,7 @@ const EditUserInfo = () => {
         try {
             let profileImageUrl = selectedImage;
             // 이미지 파일이 선택된 경우 Firebase에 업로드
-            if (selectedImage) {
+            if (selectedImageFile) {
                 const storageRef = ref(storage, `profiles/${id}_${Date.now()}`);
                 await uploadBytes(storageRef, selectedImageFile);
                 profileImageUrl = await getDownloadURL(storageRef);
@@ -113,6 +113,7 @@ const EditUserInfo = () => {
             alert('프로필 수정 실패')
         }
     }
+
 
     const handleNicknameCheck = async () => {
         if (!nickname) {
