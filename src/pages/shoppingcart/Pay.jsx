@@ -4,8 +4,18 @@ import { IoIosArrowBack } from 'react-icons/io';
 import PayInfo from '../../components/shop/PayInfo';
 import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
+import Modal from '../../components/Modal';
 
 const Pay = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+    console.log('모달 오픈');
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedItems, setSelectItems] = useState([]);
@@ -17,17 +27,12 @@ const Pay = () => {
   });
 
   const confirmOrder = async () => {
-    const result = window.confirm('이 작업을 수행하시겠습니까.');
-    if (result) {
-      try {
-        const response = await API.post('/api/cart/pay', orderData);
-        console.log(response);
-        navigate('/main');
-      } catch (error) {
-        console.error();
-      }
-    } else {
-      alert('No를 선택했습니다.');
+    try {
+      const response = await API.post('/api/cart/pay', orderData);
+      console.log(response);
+      navigate('/main');
+    } catch (error) {
+      console.error();
     }
   };
 
@@ -110,9 +115,23 @@ const Pay = () => {
         <PayInfo totalPrice={orderData.total} />
       </div>
 
-      <button onClick={() => confirmOrder()} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+      <button onClick={openModal} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
         결제하기
       </button>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={'결제하기'}>
+        <div className="my-10 flex justify-center">
+          <span className="font-bold text-lg">결제하시겠습니까?</span>
+        </div>
+        <div className="flex gap-4 mt-3">
+          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
+            취소
+          </button>
+          <button onClick={confirmOrder} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+            확인
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };
