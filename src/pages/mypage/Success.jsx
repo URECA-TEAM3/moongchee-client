@@ -28,17 +28,22 @@ export default function SuccessPage() {
       const json = await response.json();
 
       if (!response.ok) {
-        // 결제 실패 비즈니스 로직을 구현하세요.
-        console.log(json);
         navigate(`/fail?message=${json.message}&code=${json.code}`);
         return;
       }
 
-      // 결제 성공 비즈니스 로직을 구현하세요.
-      console.log(json);
+      //결제 성공 로직 - 포인트 추가
+      addPoints('1', requestData.amount.value);
     }
     confirm();
   }, []);
+
+  const updatePoints = (userId, amount) => {
+    axios.post('http://localhost:3000/api/members', {
+      userId,
+      amount,
+    });
+  };
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen bg-white pt-12">

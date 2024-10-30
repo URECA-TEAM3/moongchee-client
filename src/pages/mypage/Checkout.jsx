@@ -73,11 +73,6 @@ export default function CheckoutPage() {
     renderPaymentWidgets();
   }, [widgets]);
 
-  const updateAmount = async (amount) => {
-    setAmount(amount);
-    await widgets.setAmount(amount);
-  };
-
   return (
     <div className="wrapper text-center m-auto bg-white h-full">
       <div className="box_section bg-white p-5">
