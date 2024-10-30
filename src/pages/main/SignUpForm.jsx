@@ -255,6 +255,7 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 유효성 검사
     if (!validateFields()) {
       if (!isEmailVerified) {
         toast.error('이메일 인증을 완료해주세요.');
