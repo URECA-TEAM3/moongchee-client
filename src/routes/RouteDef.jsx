@@ -60,6 +60,15 @@ const MainScreens = {
     path: '/chat',
     element: <Chat />,
   },
+  Mypage: {
+    path: '/mypage',
+    element: <Mypage />,
+  },
+
+  ChargePage: {
+    path: '/chargepage',
+    element: <ChargePage />,
+  },
 };
 
 const PetSitterScreens = {
@@ -115,9 +124,9 @@ const MypageScreens = {
   },
   ShopHistory: {
     path: 'mypage/shophistory/:id',
-    element: <ShopHistory />
-  }
-}
+    element: <ShopHistory />,
+  },
+};
 
 export const AppRouteDef = {
   ...MainScreens,

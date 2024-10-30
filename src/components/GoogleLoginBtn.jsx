@@ -97,6 +97,7 @@ const GoogleLoginBtn = () => {
         sessionStorage.setItem('userData', JSON.stringify(userInfoResponse.data));
 
         console.log('유저 데이터:', userInfoResponse.data);
+        console.log('화이팅', storedAccessToken);
         navigate('/main');
       } catch (error) {
         console.error('유저 데이터 가져오기 오류:', error);
