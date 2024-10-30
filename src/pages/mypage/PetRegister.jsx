@@ -1,6 +1,8 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import petProfileImage from '/src/assets/images/registerpetprofile.svg';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,8 +20,8 @@ const PetRegister = () => {
     const [userId, setUserId] = useState(null);
     const [profileImage, setProfileImage] = useState(petProfileImage);
     const [selectedImageFile, setSelectedImageFile] = useState(null);
-
     const [errors, setErrors] = useState({});
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const userData = sessionStorage.getItem('userData');
@@ -43,7 +45,7 @@ const PetRegister = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleImageChange = () => {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setSelectedImageFile(file);
@@ -88,7 +90,7 @@ const PetRegister = () => {
             });
             toast.dismiss(toastId);
             toast.success('반려동물 정보가 성공적으로 저장되었습니다!');
-            navigate('/animalRegisterSuccess');
+            navigate('/mypage');
             } catch (error) {
             console.error('반려동물 정보 저장 오류:', error);
             toast.dismiss(toastId);
@@ -108,10 +110,14 @@ const PetRegister = () => {
             </div>
 
             <div className='mb-6'>
-                <div className='relative w-20 h-20 overflow-hidden cursor-pointer'>
-                    <img src={petProfileImage} alt='반려동물 기본 프로필 이미지' className='w-full h-full object-contain' />
+                <div className='relative w-20 h-20 overflow-hidden cursor-pointer' onClick={() => fileInputRef.current.click()}>
+                    {profileImage !== petProfileImage ? (
+                        <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                        <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+                    )}
                 </div>
-                <input type='file' accept='image/*' className='hidden' onChange={handleImageChange} />
+                <input type='file' ref={fileInputRef} accept='image/*' className='hidden' onChange={handleImageChange} />
             </div>
 
             <div>

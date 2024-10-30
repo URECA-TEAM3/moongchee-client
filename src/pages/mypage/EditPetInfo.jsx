@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import petProfileImage from '/src/assets/images/registerpetprofile.svg';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
-import Modal from '../../components/Modal';
+import axios from 'axios';
 
 
 const EditPetInfo = () => {
 
+    const location = useLocation();
+    const petId = location.state?.petId;
     const navigate = useNavigate();
 
     const [name, setName] = useState('');
@@ -16,10 +18,30 @@ const EditPetInfo = () => {
     const [species, setSpecies] = useState('');
     const [gender, setGender] = useState('');
     const [neutered, setNeutered] = useState('');
-    const [userId, setUserId] = useState(null);
-    const [profileImage, setProfileImage] = useState(registerPetProfileImage);
+    const [profileImage, setProfileImage] = useState(petProfileImage);
     const [selectedImageFile, setSelectedImageFile] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [pet, setPet] = useState([]);
+
+    useEffect(() => {
+        const fetchPet = async (petId) => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/pets/detail/${petId}`);
+                setName(response.data[0].name);
+                setAge(response.data[0].age);
+                setSpecies(response.data[0].species);
+                setGender(response.data[0].gender);
+                setNeutered(response.data[0].surgery == 1 ? 'yes' : 'no');
+                setWeight(response.data[0].weight);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (petId) {
+            fetchPet(petId);
+        }
+    }, [petId]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -55,7 +77,7 @@ const EditPetInfo = () => {
 
             <div className="mb-6">
                 <div className="relative w-20 h-20 overflow-hidden cursor-pointer">
-                {profileImage !== registerPetProfileImage ? (
+                {profileImage !== petProfileImage ? (
                     <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
                 ) : (
                     <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
@@ -88,14 +110,15 @@ const EditPetInfo = () => {
                     type="text"
                     placeholder="견종"
                     value={species}
+                    readOnly
                     onChange={(e) => setSpecies(e.target.value)}
-                    className="block w-full max-w-md p-2 border border-gray-300 rounded mb-4"
+                    className="block w-full max-w-md p-2 border border-gray-300 text-gray-400 rounded mb-4"
                 />
 
                 <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">성별</label>
                 <div className="flex justify-between mb-4 w-full max-w-md space-x-2">
                     <button
-                    onClick={() => setGender('male')}
+                    disabled
                     className={`w-1/2 py-2 border-2 rounded-[10px] ${
                         gender === 'male' ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
                     } hover:border-blue-500 hover:text-blue-500 transition-colors`}
@@ -103,7 +126,7 @@ const EditPetInfo = () => {
                     남아
                     </button>
                     <button
-                    onClick={() => setGender('female')}
+                    disabled
                     className={`w-1/2 py-2 border-2 rounded-[10px] ${
                         gender === 'female' ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
                     } hover:border-blue-500 hover:text-blue-500 transition-colors`}

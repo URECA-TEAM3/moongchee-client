@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
+import petProfileImage from '/src/assets/images/registerpetprofile.svg';
+import axios from 'axios';
 
 function Mypage(props) {
 
   // 전역 변수
   const isPetsitter = true;
-  const petCnt = 1;
   //
   
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState('');
+  const [pets, setPets] = useState([]);
 
   useEffect(() => {
     const userData = sessionStorage.getItem('userData');
@@ -20,8 +22,21 @@ function Mypage(props) {
       const parsedData = JSON.parse(userData); // JSON 파싱
       setUserName(parsedData.name);
       setProfileImageUrl(parsedData.profile_image_url);
+
+      // 반려동물 리스트 출력 함수 호출
+      fetchPets(parsedData.id);
     }
   }, []);
+
+  // 반려동물 데이터 가져오기
+  const fetchPets = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/pets/${userId}`);
+      setPets(response.data);
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
@@ -83,23 +98,30 @@ function Mypage(props) {
         {/* Pet Profile */}
         <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-5">
           <div className='flex items-center justify-between mb-2'>
-            <p className='text-lg'>내 반려동물 <span className='text-gray-300'>{petCnt}</span></p>
+            <p className='text-lg'>내 반려동물 <span className='text-gray-300'>{pets.length}</span></p>
             <button onClick={() => navigate('/mypage/petregister')}><p className='text-lg text-primary'>⊕ 추가</p></button>
           </div>
-          <div className='flex justify-between items-center'>
-            <div className='flex items-center space-x-4'>
-              <img src='/src/assets/images/dog.jpeg' alt="Profile" className="w-12 h-12 rounded-full" />
-              <div>
-                <p className='text-lg'>미츄</p>
-                <div className='text-gray-400 text-sm'>
-                  말티즈 | 10살 | 여아 | 12.5kg
-                  <br />
-                  중성화 수술 전
+
+          {pets.map((pet) => (
+            <div key={pet.id} className='flex justify-between items-center'>
+              <div className='flex items-center space-x-4 p-2'>
+                {pet.animal_image_url ? (
+                  <img src={pet.animal_image_url} alt='Pet Profile' className='w-16 h-16 rounded-full' />
+                ) : (
+                  <img src={petProfileImage} alt='Pet Profile' className='w-16 h-16 rounded-full'/>
+                )}
+                <div>
+                  <p>{pet.name}</p>
+                  <div className='text-gray-400 text-sm'>
+                    {pet.species} | {pet.age}살 | {pet.gender === 'male' ? '남아' : '여아'} | {pet.weight}kg
+                    <br />
+                    {pet.surgery == 0 ? '중성화 수술 전' : '중성화 수술 완료'}
+                  </div>
                 </div>
               </div>
+              <button onClick={() => navigate(`/mypage/editpet/${pet.id}`, {state: {petId: pet.id} })} className='border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7'>편집</button>
             </div>
-            <button onClick={() => handleEditPetInfoClick(1)} className='border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7'>편집</button>
-          </div>
+          ))}
         </div>
 
         {/* Point Recharge */}
