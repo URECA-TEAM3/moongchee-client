@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -13,22 +12,63 @@ import { storage } from '../../../firebase';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [showVerificationInput, setShowVerificationInput] = useState(false);
+  const [emailVerificationCode, setEmailVerificationCode] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [birthDate, setBirthDate] = useState(null);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [errors, setErrors] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [nickname, setNickname] = useState('');
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
 
+  const [timer, setTimer] = useState(180);
+  const [isResend, setIsResend] = useState(false);
+
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
   const userId = location.state?.userId || null;
+  const accessToken = location.state?.accessToken || null;
+
+  useEffect(() => {
+    const handleUnload = () => {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('popstate', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener('popstate', handleUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval;
+    if (showVerificationInput && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [showVerificationInput, timer]);
+
+  const formatTime = (seconds) => {
+    const min = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const sec = String(seconds % 60).padStart(2, '0');
+    return `${min}:${sec}`;
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -38,12 +78,22 @@ const SignUpForm = () => {
     }
   };
 
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    if (/^[0-9\b]+$/.test(value) || value === '') {
+      setPhone(value);
+      if (value) {
+        setErrors((prevErrors) => ({ ...prevErrors, phone: '' }));
+      }
+    }
+  };
+
   const handleProfileClick = () => {
     document.getElementById('profileImageUpload').click();
   };
 
   const validateNickname = (nickname) => {
-    const validPattern = /^(?![ㄱ-ㅎㅏ-ㅣ])[가-힣a-zA-Z]+$/;
+    const validPattern = /^[가-힣a-zA-Z0-9._]+$/;
     return validPattern.test(nickname);
   };
 
@@ -58,8 +108,8 @@ const SignUpForm = () => {
       return;
     }
 
-    if (nickname.length > 8) {
-      toast.error('닉네임은 8자 이하여야 합니다.');
+    if (nickname.length > 15) {
+      toast.error('닉네임은 15자 이하여야 합니다.');
       return;
     }
 
@@ -74,6 +124,44 @@ const SignUpForm = () => {
     } catch (error) {
       toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
       console.error('닉네임 중복 확인 오류:', error);
+    }
+  };
+
+  const handleEmailVerification = async () => {
+    if (!email) {
+      toast.error('이메일을 입력해주세요.');
+      return;
+    }
+
+    const toastId = toast.loading('인증 번호 보내는 중...');
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/members/send-email-verification', { email });
+      setEmailVerificationCode(response.data.code);
+      setShowVerificationInput(true);
+      setTimer(180);
+      setIsResend(true);
+
+      toast.dismiss(toastId);
+      toast.success('인증 코드가 발송되었습니다.');
+    } catch (error) {
+      toast.dismiss(toastId);
+      if (error.response && error.response.status === 409) {
+        toast.error('이미 등록된 이메일 주소입니다.');
+      } else {
+        toast.error('이메일 인증 중 오류가 발생했습니다.');
+      }
+      console.error('이메일 인증 오류:', error);
+    }
+  };
+
+  const handleVerifyEmailCode = () => {
+    if (verificationCode === emailVerificationCode) {
+      setIsEmailVerified(true);
+      toast.success('이메일 인증 성공!');
+      setShowVerificationInput(false);
+    } else {
+      toast.error('인증 코드가 올바르지 않습니다.');
     }
   };
 
@@ -92,6 +180,18 @@ const SignUpForm = () => {
     }
 
     setRoadAddress(fullAddress);
+    setErrors((prevErrors) => ({ ...prevErrors, address: '' }));
+  };
+
+  const handleInputChange = (field, value) => {
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+    if (field === 'name') setName(value);
+    if (field === 'phone') setPhone(value);
+    if (field === 'email') setEmail(value);
+    if (field === 'nickname') setNickname(value);
+    if (field === 'verificationCode') setVerificationCode(value);
+    if (field === 'detailedAddress') setDetailedAddress(value);
+    if (field === 'birthDate') setBirthDate(value);
   };
 
   const openPostcodePopup = () => {
@@ -135,22 +235,18 @@ const SignUpForm = () => {
 
   const handleDateChange = (date) => {
     setBirthDate(date);
-  };
-
-  const handleVerifyClick = () => {
-    setShowVerificationInput(true);
-  };
-
-  const handleVerificationCodeChange = (e) => {
-    setVerificationCode(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, birthDate: '' }));
   };
 
   const validateFields = () => {
     let newErrors = {};
     if (!name) newErrors.name = '이름을 입력해주세요.';
     if (!phone) newErrors.phone = '휴대폰 번호를 입력해주세요.';
+    if (!email) newErrors.email = '이메일을 입력해주세요.';
+    if (!isEmailVerified) newErrors.emailVerified = '이메일 인증을 완료해주세요.';
     if (!roadAddress) newErrors.address = '주소를 입력해주세요.';
     if (!birthDate) newErrors.birthDate = '생년월일을 선택해주세요.';
+    if (!nickname) newErrors.nickname = '닉네임을 입력해주세요.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -159,7 +255,16 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 유효성 검사
     if (!validateFields()) {
+      if (!isEmailVerified) {
+        toast.error('이메일 인증을 완료해주세요.');
+      }
+      return;
+    }
+
+    if (!isEmailVerified) {
+      toast.error('이메일 인증을 완료해주세요.');
       return;
     }
 
@@ -175,14 +280,14 @@ const SignUpForm = () => {
     try {
       toast.loading('회원가입 진행 중...');
       const storageRef = ref(storage, `profiles/${userId}`);
-      console.log('이때의 userid', userId);
 
       await uploadBytes(storageRef, selectedImageFile);
       const downloadURL = await getDownloadURL(storageRef);
-      console.log('downloadurl', downloadURL);
+
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
         phone,
+        email,
         address: `${roadAddress} ${detailedAddress}`,
         birthDate: formattedBirthDate,
         provider,
@@ -190,12 +295,30 @@ const SignUpForm = () => {
         nickname,
         profileImageUrl: downloadURL,
       });
-      const newUserId = response.data.userId;
-      console.log('받은 userId:', newUserId);
-      localStorage.setItem('userId', newUserId);
+      const { userId: responseUserId, refreshToken } = response.data;
+
+      if (accessToken && refreshToken) {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+
+        const userData = {
+          id: responseUserId,
+          name,
+          phone,
+          email,
+          address: `${roadAddress} ${detailedAddress}`,
+          birthDate: formattedBirthDate,
+          provider,
+          userId,
+          nickname,
+          profile_image_url: downloadURL,
+        };
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
+      }
+
       toast.dismiss();
       toast.success('회원가입 성공!');
-
       navigate('/loginsuccess');
     } catch (error) {
       toast.dismiss();
@@ -203,6 +326,7 @@ const SignUpForm = () => {
       console.error('회원가입 오류:', error);
     }
   };
+
   return (
     <div className="flex flex-col items-center bg-white min-h-screen">
       <Toaster />
@@ -211,7 +335,6 @@ const SignUpForm = () => {
 
       <div className="w-full max-w-md">
         <label className="block text-sm font-medium mb-1">프로필 등록(선택)</label>
-
         <div className="flex items-center space-x-4 mb-4">
           <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
             {selectedImage ? (
@@ -229,8 +352,8 @@ const SignUpForm = () => {
                 type="text"
                 placeholder="닉네임 입력"
                 value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                className="flex-1 p-2 border border-blue-500 rounded"
+                onChange={(e) => handleInputChange('nickname', e.target.value)}
+                className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-blue-500'} rounded`}
               />
               <button
                 type="button"
@@ -240,6 +363,7 @@ const SignUpForm = () => {
                 중복확인
               </button>
             </div>
+            {errors.nickname && <span className="text-red-500 text-xs mt-1">{errors.nickname}</span>}
           </div>
         </div>
       </div>
@@ -250,40 +374,61 @@ const SignUpForm = () => {
           type="text"
           placeholder="이름"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => handleInputChange('name', e.target.value)}
           className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
         />
         {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
-        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <label className="block text-sm font-medium mb-1">이메일 주소*</label>
         <div className="flex space-x-2 mb-1">
           <input
-            type="tel"
-            placeholder="휴대폰번호"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className={`w-3/4 p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+            type="email"
+            placeholder="이메일 주소"
+            value={email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded`}
           />
-          <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onClick={handleVerifyClick}>
-            인증
+          <button
+            type="button"
+            onClick={handleEmailVerification}
+            className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+          >
+            {isResend ? '재발송' : '인증번호 발송'}
           </button>
         </div>
-        {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
+        {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email}</span>}
 
         {showVerificationInput && (
-          <div className="flex space-x-2 mb-1">
-            <input
-              type="text"
-              placeholder="인증번호 입력"
-              value={verificationCode}
-              onChange={handleVerificationCodeChange}
-              className="w-3/4 p-2 border border-gray-300 rounded"
-            />
-            <button type="button" className="w-1/4 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
-              인증하기
+          <div className="flex space-x-2 mb-1 items-center">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="인증번호 입력"
+                value={verificationCode}
+                onChange={(e) => handleInputChange('verificationCode', e.target.value)}
+                className="w-full p-2 pr-12 border border-gray-300 rounded"
+              />
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">{formatTime(timer)}</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleVerifyEmailCode}
+              className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+            >
+              인증
             </button>
           </div>
         )}
+
+        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <input
+          type="tel"
+          placeholder="휴대폰번호"
+          value={phone}
+          onChange={handlePhoneChange}
+          className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+        />
+        {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
         <label className="block text-sm font-medium mb-1">생년월일*</label>
         <div className="flex items-center space-x-2 mb-1">
@@ -310,7 +455,7 @@ const SignUpForm = () => {
           className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
           value={roadAddress}
           readOnly
-          onClick={openPostcodePopup}
+          onClick={() => openPostcodePopup()}
         />
         {errors.address && <span className="text-red-500 text-xs mt-1">{errors.address}</span>}
 
@@ -318,7 +463,7 @@ const SignUpForm = () => {
           type="text"
           placeholder="상세 주소 입력 (선택)"
           value={detailedAddress}
-          onChange={(e) => setDetailedAddress(e.target.value)}
+          onChange={(e) => handleInputChange('detailedAddress', e.target.value)}
           className="block w-full p-2 border border-gray-300 rounded mb-6"
         />
 
