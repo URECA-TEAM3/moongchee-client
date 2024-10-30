@@ -124,9 +124,9 @@ const MypageScreens = {
   },
   ShopHistory: {
     path: 'mypage/shophistory/:id',
-    element: <ShopHistory />
-  }
-}
+    element: <ShopHistory />,
+  },
+};
 
 export const AppRouteDef = {
   ...MainScreens,
