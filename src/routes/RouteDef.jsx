@@ -19,7 +19,12 @@ import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
 
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
+
+// Mypage
 import Mypage from '../pages/mypage/Mypage';
+import EditUserInfo from '../pages/mypage/EditUserInfo';
+import EditPetInfo from '../pages/mypage/EditPetInfo';
+import ShopHistory from '../pages/mypage/ShopHistory';
 import ChargePage from '../pages/mypage/ChargePage';
 
 const MainScreens = {
@@ -54,15 +59,6 @@ const MainScreens = {
   Chat: {
     path: '/chat',
     element: <Chat />,
-  },
-  Mypage: {
-    path: '/mypage',
-    element: <Mypage />,
-  },
-
-  ChargePage: {
-    path: '/chargepage',
-    element: <ChargePage />,
   },
 };
 
@@ -104,8 +100,28 @@ const ShoppingMallScreens = {
   },
 };
 
+const MypageScreens = {
+  Mypage: {
+    path: '/mypage',
+    element: <Mypage />,
+  },
+  EditUserInfo: {
+    path: '/mypage/edituser',
+    element: <EditUserInfo />,
+  },
+  EditPetInfo: {
+    path: '/mypage/editpet/:id',
+    element: <EditPetInfo />,
+  },
+  ShopHistory: {
+    path: 'mypage/shophistory/:id',
+    element: <ShopHistory />
+  }
+}
+
 export const AppRouteDef = {
   ...MainScreens,
   ...PetSitterScreens,
   ...ShoppingMallScreens,
+  ...MypageScreens,
 };
