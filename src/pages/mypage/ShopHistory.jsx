@@ -62,7 +62,6 @@ const ShopHistory = () => {
                                 )}
                                 <div className='p-1 flex'>
                                     <DogChew />
-                                    {/* <img src='/src/assets/images/dogChew.svg' className='w-6 h-6 rounded-full' /> */}
                                     <p className='ml-2 font-bold'>750개</p>
                                 </div>
                             </div>
@@ -78,7 +77,7 @@ const ShopHistory = () => {
                                             <p>{item.title}</p>
                                             <p>수량 : {item.quantity}개</p>
                                             <div className='flex'>
-                                                <img src='/src/assets/images/dogChew.svg' className='w-6 h-6 rounded-full' />
+                                                <DogChew />
                                                 <p className='ml-2 font-bold'>{item.points}개</p>
                                             </div>
                                         </div>

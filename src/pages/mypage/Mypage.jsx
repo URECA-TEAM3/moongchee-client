@@ -94,7 +94,6 @@ function Mypage(props) {
           <div className='flex justify-between items-center'>
             <div className='flex items-center space-x-4'>
               <DogChew />
-              {/* <img src='/src/assets/images/dogChew.svg' className="w-12 h-12 rounded-full" /> */}
               <p className='text-lg'><span className='font-bold'>500</span> 개</p>
             </div>
             <button className='border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7'>충전</button>
