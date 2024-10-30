@@ -58,7 +58,6 @@ export default function CheckoutPage() {
       // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
       // TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
       await widgets.setAmount(amount);
-      // setId(1);
 
       // ------  결제 UI 렌더링 ------
       // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
@@ -104,7 +103,7 @@ export default function CheckoutPage() {
               // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
               const orderId = generateRandomString();
 
-              const response = await axios.post('http://localhost:3000/api/payment', {
+              const response = await axios.post('http://localhost:3000/api/payments', {
                 orderId,
                 userId: id,
                 amount: amount.value,

@@ -1,11 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import successImage from '../../assets/images/white-curve.png';
 import axios from 'axios';
 
 export default function SuccessPage() {
+  const [id, setId] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const userData = sessionStorage.getItem('userData');
+    if (userData) {
+      const parsedData = JSON.parse(userData); // JSON 파싱
+      setId(parsedData.id);
+    }
+  }, []);
 
   useEffect(() => {
     // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
@@ -17,7 +26,7 @@ export default function SuccessPage() {
     };
 
     async function confirm() {
-      const response = await fetch('http://localhost:3000/api/payment/confirm', {
+      const response = await fetch('http://localhost:3000/api/payments/confirm', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,16 +42,35 @@ export default function SuccessPage() {
       }
 
       //결제 성공 로직 - 포인트 추가 & add to payment-approved table
-      // updatePoints('1', requestData.amount.value);
+      updatePoints(id, requestData.amount.value);
+      addToPaymentApprovedTable(requestData.orderId, requestData.amount, requestData.paymentKey);
     }
     confirm();
   }, []);
 
   const updatePoints = (userId, amount) => {
-    axios.post('http://localhost:3000/api/members/update-points', {
-      userId,
-      amount,
-    });
+    try {
+      const response = axios.post('http://localhost:3000/api/members/update-points', {
+        userId,
+        amount,
+      });
+      console.log('Updated points successfully:', response.data);
+    } catch (error) {
+      console.log('Error updating points:', error);
+    }
+  };
+
+  const addToPaymentApprovedTable = (orderId, amount, paymentKey) => {
+    try {
+      const response = axios.post('http://localhost:3000/api/payments/approve', {
+        orderId,
+        amount,
+        paymentKey,
+      });
+      console.log('Payment completed / approved:', response.data);
+    } catch (error) {
+      console.log('Error handling payment_approved table:', error);
+    }
   };
 
   return (
