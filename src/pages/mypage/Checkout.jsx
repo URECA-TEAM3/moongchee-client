@@ -23,7 +23,6 @@ export default function CheckoutPage() {
     if (userData) {
       const parsedData = JSON.parse(userData); // JSON 파싱
       setId(parsedData.id);
-      console.log(id);
     }
   }, []);
 
