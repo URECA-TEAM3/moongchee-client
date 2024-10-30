@@ -269,8 +269,8 @@ const SignUpForm = () => {
       const { userId: responseUserId, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('refreshToken', refreshToken);
 
         const userData = {
           name,
