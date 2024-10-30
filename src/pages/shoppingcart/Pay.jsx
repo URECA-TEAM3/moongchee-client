@@ -3,20 +3,47 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import PayInfo from '../../components/shop/PayInfo';
 import DogChew from '../../components/DogChew';
+import API from '../../api/axiosInstance';
 
 const Pay = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedItems, setSelectItems] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [orderData, setOrderData] = useState({
+    userId: 1,
+    status: 'paid',
+    total: 0,
+    productData: [],
+  });
+
+  const confirmOrder = async () => {
+    const result = window.confirm('이 작업을 수행하시겠습니까.');
+    if (result) {
+      try {
+        const response = await API.post('/api/cart/pay', orderData);
+        console.log(response);
+        navigate('/main');
+      } catch (error) {
+        console.error();
+      }
+    } else {
+      alert('No를 선택했습니다.');
+    }
+  };
 
   useEffect(() => {
     const cartItems = location.state.cartItems || {};
-    const filteredItems = cartItems.filter((item) => item.checked); // 체크된 상품만 필터링
-    const total = filteredItems.reduce((acc, item) => acc + item.quantity * item.price, 0); // 가격 * 수량 누적
-
+    const filteredItems = cartItems.filter((item) => item.checked);
     setSelectItems(filteredItems);
-    setTotal(total);
+    setOrderData((prev) => ({
+      ...prev,
+      total: filteredItems.reduce((acc, item) => acc + item.quantity * item.price, 0),
+      productData: filteredItems.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    }));
   }, []);
 
   return (
@@ -80,12 +107,12 @@ const Pay = () => {
 
       {/* 결제 금액 */}
       <div className="grow">
-        <PayInfo totalPrice={total} />
+        <PayInfo totalPrice={orderData.total} />
       </div>
 
-      <Link to="/payment">
-        <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
-      </Link>
+      <button onClick={() => confirmOrder()} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+        결제하기
+      </button>
     </div>
   );
 };

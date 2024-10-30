@@ -16,7 +16,6 @@ const DetailBottom = ({ id, product }) => {
       });
 
       navigate('/shoppingcart');
-      // navigate('/shoppingcart', { state: { product } });
     } catch (error) {
       console.error('Error adding product to cart:', error);
       alert('There was an error adding the product to the cart.');
@@ -25,7 +24,7 @@ const DetailBottom = ({ id, product }) => {
 
   return (
     <div className="fixed bottom-0 flex items-center justify-between w-[600px] bg-white">
-      <button onClick={handleNavigate}>
+      <button onClick={() => navigate('/shoppingcart')}>
         <div className="p-3 flex flex-col justify-center items-center">
           <img className="w-8 mb-1" src="/src/assets/images/shoppingCart_gray.svg" alt="" />
           <span className="text-xs">장바구니</span>
