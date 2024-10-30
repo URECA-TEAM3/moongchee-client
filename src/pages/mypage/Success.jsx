@@ -32,14 +32,14 @@ export default function SuccessPage() {
         return;
       }
 
-      //결제 성공 로직 - 포인트 추가
-      addPoints('1', requestData.amount.value);
+      //결제 성공 로직 - 포인트 추가 & add to payment-approved table
+      // updatePoints('1', requestData.amount.value);
     }
     confirm();
   }, []);
 
   const updatePoints = (userId, amount) => {
-    axios.post('http://localhost:3000/api/members', {
+    axios.post('http://localhost:3000/api/members/update-points', {
       userId,
       amount,
     });

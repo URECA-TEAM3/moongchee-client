@@ -9,6 +9,7 @@ const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
 const customerKey = generateRandomString();
 
 export default function CheckoutPage() {
+  const [id, setId] = useState(0);
   const [searchParams] = useSearchParams();
   const [amount, setAmount] = useState({
     currency: 'KRW',
@@ -16,6 +17,15 @@ export default function CheckoutPage() {
   });
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
+
+  useEffect(() => {
+    const userData = sessionStorage.getItem('userData');
+    if (userData) {
+      const parsedData = JSON.parse(userData); // JSON 파싱
+      setId(parsedData.id);
+      console.log(id);
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchPaymentWidgets() {
@@ -49,6 +59,7 @@ export default function CheckoutPage() {
       // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
       // TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
       await widgets.setAmount(amount);
+      // setId(1);
 
       // ------  결제 UI 렌더링 ------
       // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
@@ -96,6 +107,7 @@ export default function CheckoutPage() {
 
               const response = await axios.post('http://localhost:3000/api/payment', {
                 orderId,
+                userId: id,
                 amount: amount.value,
               });
 
