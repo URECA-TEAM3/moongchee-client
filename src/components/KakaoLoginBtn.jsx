@@ -12,7 +12,7 @@ const KakaoLoginBtn = () => {
   }, []);
 
   const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = sessionStorage.getItem('refreshToken');
     console.log('저장된 리프레시 토큰:', refreshToken);
     try {
       const response = await axios.post(
@@ -26,7 +26,7 @@ const KakaoLoginBtn = () => {
       const newAccessToken = response.data.accessToken;
       console.log('새로 받은 액세스 토큰:', newAccessToken);
 
-      localStorage.setItem('accessToken', newAccessToken);
+      sessionStorage.setItem('accessToken', newAccessToken);
       return newAccessToken;
     } catch (error) {
       console.error('액세스 토큰 갱신 오류:', error);
@@ -35,7 +35,7 @@ const KakaoLoginBtn = () => {
   };
 
   const handleKakaoLogin = async () => {
-    const storedAccessToken = localStorage.getItem('accessToken');
+    const storedAccessToken = sessionStorage.getItem('accessToken');
 
     if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
       try {
@@ -63,8 +63,8 @@ const KakaoLoginBtn = () => {
           const { accessToken, refreshToken, userId, exists, userData } = response.data;
 
           if (exists) {
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            sessionStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('refreshToken', refreshToken);
 
             sessionStorage.setItem('userData', JSON.stringify(userData));
 
@@ -106,7 +106,7 @@ const KakaoLoginBtn = () => {
   };
 
   const axiosRequestWithRetry = async (url, method = 'GET', data = null) => {
-    let accessToken = localStorage.getItem('accessToken');
+    let accessToken = sessionStorage.getItem('accessToken');
 
     if (isTokenExpired(accessToken)) {
       console.log('액세스 토큰이 만료됨, 갱신 필요');
