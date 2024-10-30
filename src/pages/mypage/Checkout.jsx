@@ -4,12 +4,13 @@ import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
-// @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
 const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
 const customerKey = generateRandomString();
 
 export default function CheckoutPage() {
-  const [id, setId] = useState(0);
+  const userData = sessionStorage.getItem('userData');
+  const parsedData = userData ? JSON.parse(userData) : null;
+  const [id, setId] = useState(parsedData.id);
   const [searchParams] = useSearchParams();
   const [amount, setAmount] = useState({
     currency: 'KRW',
@@ -19,22 +20,12 @@ export default function CheckoutPage() {
   const [widgets, setWidgets] = useState(null);
 
   useEffect(() => {
-    const userData = sessionStorage.getItem('userData');
-    if (userData) {
-      const parsedData = JSON.parse(userData); // JSON 파싱
-      setId(parsedData.id);
-    }
-  }, []);
-
-  useEffect(() => {
     async function fetchPaymentWidgets() {
       try {
         // ------  SDK 초기화 ------
-        // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
         const tossPayments = await loadTossPayments(clientKey);
 
         // 회원 결제
-        // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentswidgets
         const widgets = tossPayments.widgets({
           customerKey,
         });
@@ -55,22 +46,15 @@ export default function CheckoutPage() {
       }
 
       // ------  주문서의 결제 금액 설정 ------
-      // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
-      // TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
       await widgets.setAmount(amount);
 
       // ------  결제 UI 렌더링 ------
-      // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
       await widgets.renderPaymentMethods({
         selector: '#payment-method',
-        // 렌더링하고 싶은 결제 UI의 variantKey
-        // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
-        // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
         variantKey: 'DEFAULT',
       });
 
       // ------  이용약관 UI 렌더링 ------
-      // @docs https://docs.tosspayments.com/reference/widget-sdk#renderagreement선택자-옵션
       await widgets.renderAgreement({
         selector: '#agreement',
         variantKey: 'AGREEMENT',
@@ -96,7 +80,6 @@ export default function CheckoutPage() {
           style={{ marginTop: '30px' }}
           disabled={!ready}
           // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
-          // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
           onClick={async () => {
             try {
               // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.

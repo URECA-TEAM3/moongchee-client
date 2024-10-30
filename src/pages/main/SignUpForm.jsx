@@ -328,7 +328,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white min-h-screen">
+    <div className="flex flex-col items-center bg-white h-full overflow-y-auto">
       <Toaster />
       <h1 className="text-center text-lg font-bold mb-4 mt-6">회원정보</h1>
       <hr className="border-gray-300 w-[450px] mb-6" />
@@ -353,12 +353,12 @@ const SignUpForm = () => {
                 placeholder="닉네임 입력"
                 value={nickname}
                 onChange={(e) => handleInputChange('nickname', e.target.value)}
-                className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-blue-500'} rounded`}
+                className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-primary'} rounded`}
               />
               <button
                 type="button"
                 onClick={handleNicknameCheck}
-                className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+                className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
               >
                 중복확인
               </button>
@@ -391,7 +391,7 @@ const SignUpForm = () => {
           <button
             type="button"
             onClick={handleEmailVerification}
-            className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+            className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
           >
             {isResend ? '재발송' : '인증번호 발송'}
           </button>
@@ -413,7 +413,7 @@ const SignUpForm = () => {
             <button
               type="button"
               onClick={handleVerifyEmailCode}
-              className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+              className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
             >
               인증
             </button>
@@ -467,7 +467,7 @@ const SignUpForm = () => {
           className="block w-full p-2 border border-gray-300 rounded mb-6"
         />
 
-        <button type="submit" className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+        <button type="submit" className="w-full py-2 bg-primary text-white rounded-lg hover:bg-blue-600">
           회원가입
         </button>
       </form>

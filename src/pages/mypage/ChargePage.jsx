@@ -25,7 +25,7 @@ const ChargePage = () => {
   };
 
   return (
-    <div className="p-5 text-center h-full flex flex-col justify-between bg-white">
+    <div className="p-5 text-center h-full overflow-y-auto flex flex-col justify-between bg-white">
       <div className="flex items-center">
         <img src={backButtonIcon} alt="Back Button" className="w-6 h-6 cursor-pointer" onClick={() => window.history.back()} />
         <h1 className="flex-grow text-lg text-center">개껌 충전하기</h1>
