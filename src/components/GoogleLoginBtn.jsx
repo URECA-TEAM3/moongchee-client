@@ -8,7 +8,7 @@ const GoogleLoginBtn = () => {
   const navigate = useNavigate();
 
   const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = sessionStorage.getItem('refreshToken');
     if (!refreshToken) {
       console.error('리프레시 토큰이 없습니다.');
       return null;
@@ -25,7 +25,7 @@ const GoogleLoginBtn = () => {
 
       const newAccessToken = response.data.accessToken;
       if (newAccessToken) {
-        localStorage.setItem('accessToken', newAccessToken);
+        sessionStorage.setItem('accessToken', newAccessToken);
         return newAccessToken;
       } else {
         console.error('서버로부터 유효한 액세스 토큰을 받지 못했습니다.');
@@ -51,7 +51,7 @@ const GoogleLoginBtn = () => {
   };
 
   const requestWithToken = async (url, method = 'GET', data = null) => {
-    let accessToken = localStorage.getItem('accessToken');
+    let accessToken = sessionStorage.getItem('accessToken');
 
     if (isTokenExpired(accessToken)) {
       console.log('액세스 토큰이 만료됨, 갱신 필요');
@@ -86,7 +86,7 @@ const GoogleLoginBtn = () => {
 
     console.log('토큰:', token);
 
-    const storedAccessToken = localStorage.getItem('accessToken');
+    const storedAccessToken = sessionStorage.getItem('accessToken');
 
     if (storedAccessToken && !isTokenExpired(storedAccessToken)) {
       try {
@@ -113,8 +113,8 @@ const GoogleLoginBtn = () => {
       const { accessToken, refreshToken, exists, userData } = response.data;
 
       if (exists) {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('refreshToken', refreshToken);
         sessionStorage.setItem('userData', JSON.stringify(userData));
         console.log('유저 데이터:', userData);
         navigate('/main');
