@@ -33,6 +33,7 @@ const EditUserInfo = () => {
         const userData = sessionStorage.getItem('userData');
         if (userData) {
             const parsedData = JSON.parse(userData); // JSON 파싱
+            console.log(parsedData)
             setId(parsedData.id);
             setNickname(parsedData.nickname);
             setName(parsedData.name);
@@ -77,8 +78,15 @@ const EditUserInfo = () => {
     };
 
     const handleSave = async() => {
-        console.log(id, isPetsitter, socialProvider, uniqueId, name, email, nickname, phone, formattedBirthDate, roadAddress, detailedAddress, selectedImage)
         try {
+            let profileImageUrl = selectedImage;
+            // 이미지 파일이 선택된 경우 Firebase에 업로드
+            if (selectedImage) {
+                const storageRef = ref(storage, `profiles/${id}_${Date.now()}`);
+                await uploadBytes(storageRef, selectedImageFile);
+                profileImageUrl = await getDownloadURL(storageRef);
+            }
+
             const updatedData = {
                 id,
                 petsitter: isPetsitter,
@@ -91,7 +99,7 @@ const EditUserInfo = () => {
                 birthDate: formattedBirthDate,
                 address: roadAddress,
                 detailedAddress,
-                profile_image_url: selectedImage,
+                profile_image_url: profileImageUrl,
             };
 
             const response = await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
