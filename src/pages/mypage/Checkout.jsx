@@ -79,7 +79,6 @@ export default function CheckoutPage() {
           className="button h-12 w-[70%] bg-primary text-white text-lg rounded-lg"
           style={{ marginTop: '30px' }}
           disabled={!ready}
-          // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
           onClick={async () => {
             try {
               // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
