@@ -60,6 +60,7 @@ const SignUpForm = () => {
       }, 1000);
     } else if (timer === 0) {
       clearInterval(interval);
+      setShowVerificationInput(false);
     }
     return () => clearInterval(interval);
   }, [showVerificationInput, timer]);
@@ -403,7 +404,7 @@ const SignUpForm = () => {
         </div>
         {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email}</span>}
 
-        {showVerificationInput && (
+        {showVerificationInput && timer > 0 && (
           <div className="flex space-x-2 mb-1 items-center">
             <div className="relative flex-1">
               <input
