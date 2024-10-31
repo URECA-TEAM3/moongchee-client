@@ -27,6 +27,9 @@ import EditPetInfo from '../pages/mypage/EditPetInfo';
 import ShopHistory from '../pages/mypage/ShopHistory';
 import ChargePage from '../pages/mypage/ChargePage';
 import PetRegister from '../pages/mypage/PetRegister';
+import CheckoutPage from '../pages/mypage/Checkout';
+import SuccessPage from '../pages/mypage/Success';
+import FailPage from '../pages/mypage/Fail';
 
 const MainScreens = {
   LoginPage: {
@@ -64,6 +67,18 @@ const MainScreens = {
   ChargePage: {
     path: '/chargepage',
     element: <ChargePage />,
+  },
+  Checkout: {
+    path: '/checkout',
+    element: <CheckoutPage />,
+  },
+  Success: {
+    path: '/success',
+    element: <SuccessPage />,
+  },
+  Fail: {
+    path: '/fail',
+    element: <FailPage />,
   },
 };
 

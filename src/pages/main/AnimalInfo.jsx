@@ -121,7 +121,7 @@ const AnimalInfo = () => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white min-h-screen p-4">
+    <div className="flex flex-col items-center bg-white h-full overflow-y-auto p-5">
       <Toaster position="top-center" reverseOrder={false} />
       <h1 className="text-center text-lg font-bold mb-4">반려동물 정보</h1>
       <hr className="border-gray-300 w-[450px] mb-6" />
@@ -164,8 +164,8 @@ const AnimalInfo = () => {
               validateSingleField('gender', type);
             }}
             className={`w-1/2 py-2 border-2 rounded-[10px] ${
-              gender === type ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
-            } hover:border-blue-500 hover:text-blue-500 transition-colors`}
+              gender === type ? 'border-primary text-primary' : 'border-gray-200 text-black'
+            } hover:border-primary hover:text-primary transition-colors`}
           >
             {label}
           </button>
@@ -183,8 +183,8 @@ const AnimalInfo = () => {
               validateSingleField('neutered', option);
             }}
             className={`w-1/2 py-2 border-2 rounded-[10px] ${
-              neutered === option ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
-            } hover:border-blue-500 hover:text-blue-500 transition-colors`}
+              neutered === option ? 'border-primary text-primary' : 'border-gray-200 text-black'
+            } hover:border-primary hover:text-primary transition-colors`}
           >
             {label}
           </button>
@@ -209,9 +209,9 @@ const AnimalInfo = () => {
       </div>
       {errors.weight && <span className="text-red-500 text-xs w-full max-w-md text-left">{errors.weight}</span>}
 
-      <div className="flex justify-between w-full max-w-md mt-4">
-        <button className="py-2 px-4 bg-gray-400 text-white rounded-lg hover:bg-gray-500">스킵하기</button>
-        <button onClick={handleSave} className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+      <div className="flex justify-between w-full max-w-md my-5">
+        <button className="py-2 px-4 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white">스킵하기</button>
+        <button onClick={handleSave} className="py-2 px-4 bg-primary text-white rounded-lg hover:bg-primary">
           저장하고 홈으로
         </button>
       </div>
