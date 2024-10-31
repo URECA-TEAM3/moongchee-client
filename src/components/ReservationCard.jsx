@@ -22,22 +22,25 @@ const ReservationCard = ({ info, openModal }) => {
 
   return (
     <div className={`rounded-lg shadow-sm p-5 ${info.status === 'reserved' ? 'bg-paleblue' : 'bg-gray-100'}`}>
-      <div className='profile flex items-center'>
-        <img src="/src/assets/images/dog.jpeg" className={`object-cover object-center w-16 h-16 rounded-full ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`} />
+      <div className="profile flex items-center">
+        <img
+          src="/src/assets/images/dog.jpeg"
+          className={`object-cover object-center w-16 h-16 rounded-full ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`}
+        />
         <div className="personal ml-5">
           <span className="text text-slate-900 font-bold">{info.name}</span>
         </div>
-        <span className={`${info.status === 'cancelled' ? 'text-alert' : 'text-primary'} -mt-10 mr-2 text-sm ml-auto`}>
-          {handleStatusCode()}
-        </span>
+        <span className={`${info.status === 'cancelled' ? 'text-alert' : 'text-primary'} -mt-10 mr-2 text-sm ml-auto`}>{handleStatusCode()}</span>
       </div>
       <div className="flex mt-3 justify-between items-center">
         <div className={`flex flex-col ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`}>
           <span className="text-sm">요청한 날짜와 시간</span>
-          <span><span className='font-semibold mr-3'>📅 {info.requestDate}</span> 🕟 {`${info.startTime} - ${info.endTime}`}</span>
+          <span>
+            <span className="font-semibold mr-3">📅 {info.requestDate}</span> 🕟 {`${info.startTime} - ${info.endTime}`}
+          </span>
         </div>
         <button onClick={handleDetailClick} className="cursor-pointer -mt-16">
-          <ChevronRightIcon className="h-6 w-6 ml-5"/>
+          <ChevronRightIcon className="h-6 w-6 ml-5" />
         </button>
       </div>
       <div className="flex gap-5 mt-3">
@@ -51,7 +54,10 @@ const ReservationCard = ({ info, openModal }) => {
             </button>
           </div>
         ) : info.status === 'reserved' ? (
-          <button className="text-primary border border-primary px-4 py-2 rounded-lg w-full hover:bg-primary hover:text-white" onClick={() => openModalAction('cancel')}>
+          <button
+            className="text-primary border border-primary px-4 py-2 rounded-lg w-full hover:bg-primary hover:text-white"
+            onClick={() => openModalAction('cancel')}
+          >
             예약 취소하기
           </button>
         ) : (

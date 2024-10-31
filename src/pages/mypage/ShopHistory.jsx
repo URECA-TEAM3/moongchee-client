@@ -127,23 +127,19 @@ const ShopHistory = () => {
         </div>
       </div>
 
-      <Modal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={<div className='font-bold'>주문을 취소하시겠습니까?</div>}
-        >
-          <div className="my-10 flex justify-center">
-            <span className="">주문 취소시 포인트가 다시 적립됩니다.</span>
-          </div>
-          <div className="flex gap-4 mt-3">
-            <button onClick={closeModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
-              아니요
-            </button>
-            <button onClick={refundPoint} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
-              주문 취소
-            </button>
-          </div>
-        </Modal>
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={<div className="font-bold">주문을 취소하시겠습니까?</div>}>
+        <div className="my-10 flex justify-center">
+          <span className="">주문 취소시 포인트가 다시 적립됩니다.</span>
+        </div>
+        <div className="flex gap-4 mt-3">
+          <button onClick={closeModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
+            아니요
+          </button>
+          <button onClick={refundPoint} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
+            주문 취소
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

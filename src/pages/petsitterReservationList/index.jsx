@@ -47,7 +47,7 @@ const index = () => {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/cancel', { reservation_id: selectedReservation.reservationId });
       console.log('Cancellation response:', res.data);
       closeModal();
-      refundPoint()
+      refundPoint();
       handleReservationList();
     } catch (error) {
       console.error('Error cancelling reservation:', error);
@@ -92,13 +92,13 @@ const index = () => {
 
   return (
     <div className="bg-white pb-10">
-        <div className="relative w-full flex items-center pb-4 pt-6">
-          <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
-            <ChevronLeftIcon className="h-6 w-6 ml-5" />
-          </button>
-          <h1 className="mx-auto">예약 / 취소 내역</h1>
-        </div>
-       <div className="px-10 pt-5 flex flex-col gap-10 ">
+      <div className="relative w-full flex items-center pb-4 pt-6">
+        <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+          <ChevronLeftIcon className="h-6 w-6 ml-5" />
+        </button>
+        <h1 className="mx-auto">예약 / 취소 내역</h1>
+      </div>
+      <div className="px-10 pt-5 flex flex-col gap-10 ">
         {reservationList.map((item, index) => (
           <ReservationCard key={item.name + index} info={item} openModal={openModal} />
         ))}
@@ -135,7 +135,6 @@ const index = () => {
         </Modal>
       </div>
     </div>
-   
   );
 };
 
