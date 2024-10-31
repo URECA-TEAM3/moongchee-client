@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import axios from 'axios';
+import Modal from '../../components/Modal';
 
 const ShopHistory = () => {
   const userData = sessionStorage.getItem('userData');
@@ -28,7 +29,7 @@ const ShopHistory = () => {
     try {
       const response = await axios.post('http://localhost:3000/api/members/update-points', {
         userId: id,
-        amount: cancelPrice, //neg value
+        amount: cancelPrice,
       });
 
       console.log('Updated points successfully:', response);
@@ -43,6 +44,8 @@ const ShopHistory = () => {
       }
     }
   };
+
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <div>
@@ -124,22 +127,23 @@ const ShopHistory = () => {
         </div>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
-            <h2 className="text-base font-extrabold mb-6">주문을 취소하시겠습니까?</h2>
-            <h3 className="text m-10 p-2">주문 취소시 포인트가 다시 적립됩니다.</h3>
-            <div className="flex justify-center space-x-4">
-              <button onClick={() => setIsModalOpen(false)} className="px-10 py-2 bg-divider text-gray-500 rounded-lg">
-                아니요
-              </button>
-              <button onClick={refundPoint} className="px-8 py-2 bg-delete text-white rounded-lg">
-                주문 취소
-              </button>
-            </div>
+      <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={<div className='font-bold'>주문을 취소하시겠습니까?</div>}
+        >
+          <div className="my-10 flex justify-center">
+            <span className="">주문 취소시 포인트가 다시 적립됩니다.</span>
           </div>
-        </div>
-      )}
+          <div className="flex gap-4 mt-3">
+            <button onClick={closeModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
+              아니요
+            </button>
+            <button onClick={refundPoint} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
+              주문 취소
+            </button>
+          </div>
+        </Modal>
     </div>
   );
 };
