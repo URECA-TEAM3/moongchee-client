@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 
 const ChargePage = () => {
+  const userData = sessionStorage.getItem('userData');
+  const parsedData = userData ? JSON.parse(userData) : null;
+  const [id, setId] = useState(parsedData.id);
+  const [point, setPoint] = useState(parsedData.point);
   const [selectedAmount, setSelectedAmount] = useState(0);
-  const [currentBones, setCurrentBones] = useState(100);
   const navigate = useNavigate();
 
   const additionalBones = {
@@ -54,7 +57,7 @@ const ChargePage = () => {
           <div className="flex items-center">
             <span className="mr-1">현재</span>
             <DogChew />
-            <span className="flex items-center ml-auto">{currentBones}개</span>
+            <span className="flex items-center ml-auto">{point}개</span>
           </div>
           <div className="flex items-center my-2">
             <span className="mr-1">충전할</span>
@@ -66,9 +69,7 @@ const ChargePage = () => {
           <div className="flex items-center">
             <span className="mr-1">결제 후</span>
             <DogChew />
-            <span className="font-bold flex items-center ml-auto">
-              {selectedAmount ? currentBones + selectedAmount * 100 + additionalBones[selectedAmount] : 0}개
-            </span>
+            <span className="font-bold flex items-center ml-auto">{selectedAmount ? point + selectedAmount * 100 + additionalBones[selectedAmount] : 0}개</span>
           </div>
           <div className="flex items-center my-5">
             <span className="mr-5">결제 금액</span>
