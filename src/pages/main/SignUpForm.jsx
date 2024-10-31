@@ -5,7 +5,7 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import defaultProfileImage from '/src/assets/images/user.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import toast, { Toaster } from 'react-hot-toast';
 import { storage } from '../../../firebase';
@@ -72,6 +72,7 @@ const SignUpForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    console.log(file)
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       setSelectedImageFile(file);
@@ -279,10 +280,16 @@ const SignUpForm = () => {
 
     try {
       toast.loading('회원가입 진행 중...');
-      const storageRef = ref(storage, `profiles/${userId}`);
+      let downloadURL;
 
-      await uploadBytes(storageRef, selectedImageFile);
-      const downloadURL = await getDownloadURL(storageRef);
+      if (selectedImage) {
+        const storageRef = ref(storage, `profiles/${userId}`);
+        await uploadBytes(storageRef, selectedImageFile);
+        downloadURL = await getDownloadURL(storageRef);
+      } else {
+        downloadURL = defaultProfileImage;
+      }
+      
 
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
@@ -293,7 +300,7 @@ const SignUpForm = () => {
         provider,
         token: userId,
         nickname,
-        profileImageUrl: downloadURL,
+        profileImageUrl: downloadURL ,
       });
       const { userId: responseUserId, refreshToken } = response.data;
 

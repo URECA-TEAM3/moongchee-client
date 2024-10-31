@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import petProfileImage from '/src/assets/images/defaultpet.png';
-import defaultProfileImage from '/src/assets/images/user.svg';
+import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import defaultImage from '/src/assets/images/user.svg';
 import axios from 'axios';
 
 function Mypage(props) {
@@ -70,10 +71,11 @@ function Mypage(props) {
   return (
     <div className="container inline-grid h-full">
       <div className="pt-7 pb-7 pl-10 pr-10">
+
         {/* User Profile */}
         <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className='flex items-center space-x-4'>
-            <img src={profileImageUrl ? encodeURI(profileImageUrl) : defaultProfileImage} alt="Profile" className="w-12 h-12 rounded-full" />
+            <img src={profileImageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
             <p className='text-lg'>{userName}</p>
           </div>
           <button
