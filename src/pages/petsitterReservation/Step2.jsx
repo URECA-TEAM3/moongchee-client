@@ -59,7 +59,10 @@ const Step2 = ({ handleNextStep }) => {
           <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
           <span className="ml-4">모두 확인, 동의하였습니다.</span>
         </label>
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[200px] mt-5" onClick={isChecked ? handleNextStep : ''}>
+        <button
+          className={`text-white bg-primary px-4 py-2 rounded-lg font-normal w-[200px] mt-5 ${!isChecked ? 'grayscale' : ''}`}
+          onClick={isChecked ? handleNextStep : null}
+        >
           다음
         </button>
       </div>
