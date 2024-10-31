@@ -11,6 +11,9 @@ export default function CheckoutPage() {
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
+  const [name, setname] = useState(parseData.name);
+  const [phone, setPhone] = useState(parseData.phone);
+  const [email, setEmail] = useState(parseData.email);
   const [searchParams] = useSearchParams();
   const [amount, setAmount] = useState({
     currency: 'KRW',
@@ -93,12 +96,12 @@ export default function CheckoutPage() {
 
               await widgets.requestPayment({
                 orderId: orderId,
-                orderName: '뭉치 쇼핑몰 결제',
+                orderName: '뭉치 포인트 충전',
                 successUrl: window.location.origin + '/success',
                 failUrl: window.location.origin + '/fail',
-                customerEmail: 'customer123@gmail.com',
-                customerName: '뭉치',
-                customerMobilePhone: '01012341234',
+                customerEmail: email,
+                customerName: name,
+                customerMobilePhone: phone,
               });
             } catch (error) {
               console.error(error);

@@ -110,7 +110,7 @@ const ChargePage = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
             <h2 className="text-base font-extrabold mb-6">결제하시겠습니까?</h2>
-            <h3 className="text-sm m-10 p-2">포인트 적립을 위한 결제는 환불이 불가능합니다.</h3>
+            <h3 className="text m-10 p-2">포인트 적립을 위한 결제는 환불이 불가능합니다.</h3>
             <div className="flex justify-center space-x-4">
               <button onClick={() => setIsModalOpen(false)} className="px-12 py-2 bg-divider text-gray-500 rounded-lg">
                 취소
