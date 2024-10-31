@@ -2,20 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import petProfileImage from '/src/assets/images/defaultpet.png';
-import defaultProfileImage from '/src/assets/images/registerprofile.svg';
-import defaultImage from '/src/assets/images/user.svg';
 import axios from 'axios';
 
 function Mypage(props) {
-  // 전역 변수
-  const isPetsitter = true;
-  //
   
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState('');
   const [pets, setPets] = useState([]);
+  const [isPetsitter, setIsPetsitter] = useState(true);
 
   useEffect(() => {
     const userData = sessionStorage.getItem('userData');
@@ -23,10 +19,10 @@ function Mypage(props) {
       const parsedData = JSON.parse(userData); // JSON 파싱
       setUserName(parsedData.name);
       setProfileImageUrl(parsedData.profile_image_url);
-
+      // setIsPetsitter(parsedData.petsitter); -> 펫시터 등록 기능 구현되면 주석 해제
+      // setPoint(parsedData.point);
       // 반려동물 리스트 출력 함수 호출
       fetchPets(parsedData.id);
-
     }
   }, []);
 
@@ -39,9 +35,7 @@ function Mypage(props) {
       console.error(error)
     }
   }
-
-  console.log(profileImageUrl)
-
+  
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
   };
