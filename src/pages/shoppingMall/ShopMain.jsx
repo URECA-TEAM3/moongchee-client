@@ -1,75 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import Category from '../../components/shop/Category';
 import ItemBox from '../../components/shop/ItemBox';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../../firebase';
-import API from '../../api/axiosInstance';
 import { CgSearchLoading } from 'react-icons/cg';
+import { useProductStore } from '../../store/products';
 
 const ShopMain = () => {
-  const [selectedCategory, setSelectedCategory] = useState(0);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [sortOption, setSortOption] = useState('popular');
-
-  const handleSortChange = (event) => {
-    const option = event.target.value;
-    setSortOption(option);
-    const sortedProducts = sortProducts(products, option);
-    setProducts(sortedProducts);
-  };
-
-  const sortProducts = (products, option) => {
-    const sortedProducts = [...products];
-
-    if (option === 'latest') {
-      sortedProducts.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-    } else if (option === 'popular') {
-      sortedProducts.sort((a, b) => b.sales - a.sales);
-    } else if (option === 'high-price') {
-      sortedProducts.sort((a, b) => b.price - a.price);
-    } else {
-      sortedProducts.sort((a, b) => a.price - b.price);
-    }
-
-    return sortedProducts;
-  };
-
-  // 모든 상품 조회
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await API.get('/api/products');
-
-      const productsWithImages = await Promise.all(
-        response.data.data.map(async (product) => {
-          try {
-            const storageRef = ref(storage, product.image);
-            const imageUrl = await getDownloadURL(storageRef);
-            return {
-              ...product,
-              image: imageUrl,
-            };
-          } catch (error) {
-            console.error('상품 이미지 로드 실패:', error);
-            return product;
-          }
-        })
-      );
-
-      setProducts(productsWithImages);
-      const sortedProducts = sortProducts(productsWithImages, sortOption);
-      setProducts(sortedProducts);
-    } catch (error) {
-      console.error('상품 목록 조회 실패:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { logout, products, loadProducts, sortOption, setSortOption, loading, selectedCategory, setSelectedCategory } = useProductStore((state) => state);
 
   useEffect(() => {
-    fetchProducts();
+    loadProducts();
   }, []);
+
+  const handleSortChange = (event) => {
+    setSortOption(event.target.value);
+  };
 
   const filteredItems = selectedCategory === 0 ? products : products.filter((product) => product.category_id === selectedCategory);
 
@@ -78,6 +22,7 @@ const ShopMain = () => {
       <div className="">
         <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
       </div>
+
       {/* 카테고리별 조회 */}
       <div className="p-5 flex justify-end mr-10 text-sm">
         <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">
@@ -87,6 +32,8 @@ const ShopMain = () => {
           <option value="low-price">가격 낮은순</option>
         </select>
       </div>
+
+      <button onClick={logout}>상품 초기화</button>
 
       {/* 전체 상품 목룍 */}
       {loading ? (
