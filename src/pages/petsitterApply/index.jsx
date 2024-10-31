@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import Dropdown from '../../components/DropDown';
 import axios from 'axios';
+import Modal from '../../components/Modal';
 import { storage } from '../../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 
 const index = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [formData, setFormData] = useState({
     selectedImage: defaultProfileImage,
@@ -56,6 +58,12 @@ const index = () => {
   const regionList = ['경기도 고양시', '서울특별시', '경기도 수원시', '경기도 화성시', '경기도 성남시'];
   const dropDownTime = ['09:00', '08:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
   const handleChange = (name, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -76,8 +84,7 @@ const index = () => {
   };
 
   const handleDayClick = (dayName) => {
-    const userData = JSON.parse(sessionStorage.getItem('userData'));
-    console.log(userData);
+    openModal();
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
@@ -107,6 +114,7 @@ const index = () => {
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/apply', params);
       console.log(res);
+      openModal();
     } catch (error) {
       console.log(error);
     }
@@ -114,6 +122,26 @@ const index = () => {
 
   return (
     <div className="p-5">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={
+          <div>
+            <span className="text-lg font-bold mr-2">펫시터 지원 완성!</span>
+          </div>
+        }
+      >
+        <div className="my-10 flex justify-center">
+          <span className="text-black font-bold text-lg">
+            지원서 검토 후 승인이 되면 펫시터로 활동하실 수 있습니다. 지원서 승인까지는 평균 2~3일 정도 소요됩니다.
+          </span>
+        </div>
+        <div className="flex justify-center">
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[100px]" onClick={closeModal}>
+            확인
+          </button>
+        </div>
+      </Modal>
       <div className="mt-3 flex justify-center items-center flex-col">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
           {formData.selectedImage !== defaultProfileImage ? (
