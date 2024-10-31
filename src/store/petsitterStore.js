@@ -18,17 +18,14 @@ const usePetSitterStore = create((set) => ({
 
   resetPetsitter: () =>
     set({
-      reservation: {
-        user_id: null,
-        sitter_id: null,
-        requestDate: '',
+      petsitter: {
+        name: '',
+        imageUrl: '',
+        weekdays: '',
         startTime: '',
         endTime: '',
-        status: 'reserved',
-        request: '',
-        dogSize: '',
-        workingTime: '',
-        price: 0,
+        description: '',
+        experience: '',
       },
     }),
 }));

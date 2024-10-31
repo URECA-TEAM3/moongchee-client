@@ -8,7 +8,7 @@ const index = () => {
   const { petsitter } = usePetSitterStore();
 
   const handleReservationClick = () => {
-    navigate('/petsitter/reservation', { state: { name: petsitter.name } });
+    navigate('/petsitter/reservation');
   };
 
   return (
