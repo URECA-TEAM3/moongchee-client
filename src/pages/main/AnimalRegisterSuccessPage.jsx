@@ -10,7 +10,7 @@ const AnimalRegisterSuccessPage = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start items-center min-h-screen bg-white pt-12">
+    <div className="flex flex-col justify-start items-center h-full bg-white pt-12">
       {' '}
       <img src={successImage} alt="반려동물 등록하기 완료" className="w-[300px] h-[300px] mb-6" />
       <h2 className="text-lg font-bold text-gray-800">반려동물 등록이 완료되었습니다</h2>
