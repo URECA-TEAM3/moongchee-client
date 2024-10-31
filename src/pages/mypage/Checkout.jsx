@@ -11,9 +11,9 @@ export default function CheckoutPage() {
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
-  const [name, setname] = useState(parseData.name);
-  const [phone, setPhone] = useState(parseData.phone);
-  const [email, setEmail] = useState(parseData.email);
+  const [name, setname] = useState(parsedData.name);
+  const [phone, setPhone] = useState(parsedData.phone);
+  const [email, setEmail] = useState(parsedData.email);
   const [searchParams] = useSearchParams();
   const [amount, setAmount] = useState({
     currency: 'KRW',
