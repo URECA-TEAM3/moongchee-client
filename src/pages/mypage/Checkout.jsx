@@ -11,6 +11,9 @@ export default function CheckoutPage() {
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
+  const [name, setname] = useState(parsedData.name);
+  const [phone, setPhone] = useState(parsedData.phone);
+  const [email, setEmail] = useState(parsedData.email);
   const [searchParams] = useSearchParams();
   const [amount, setAmount] = useState({
     currency: 'KRW',
@@ -79,7 +82,6 @@ export default function CheckoutPage() {
           className="button h-12 w-[70%] bg-primary text-white text-lg rounded-lg"
           style={{ marginTop: '30px' }}
           disabled={!ready}
-          // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
           onClick={async () => {
             try {
               // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
@@ -94,12 +96,12 @@ export default function CheckoutPage() {
 
               await widgets.requestPayment({
                 orderId: orderId,
-                orderName: '뭉치 쇼핑몰 결제',
+                orderName: '뭉치 포인트 충전',
                 successUrl: window.location.origin + '/success',
                 failUrl: window.location.origin + '/fail',
-                customerEmail: 'customer123@gmail.com',
-                customerName: '뭉치',
-                customerMobilePhone: '01012341234',
+                customerEmail: email,
+                customerName: name,
+                customerMobilePhone: phone,
               });
             } catch (error) {
               console.error(error);
