@@ -13,6 +13,7 @@ import ShopMain from '../pages/shoppingMall/ShopMain';
 import ShopDetail from '../pages/shoppingMall/ShopDetail';
 
 import PetSitter from '../pages/petsitter';
+import PetSitterApply from '../pages/petsitterApply';
 import PetSitterDetail from '../pages/petsitterDetail';
 import PetSitterReservation from '../pages/petsitterReservation';
 import PetSitterReservationList from '../pages/petsitterReservationList';
@@ -119,6 +120,14 @@ const PetSitterScreens = {
     element: (
       <PrivateRoute>
         <PetSitter />
+      </PrivateRoute>
+    ),
+  },
+  PetSitterApply: {
+    path: '/petsitter/apply',
+    element: (
+      <PrivateRoute>
+        <PetSitterApply />
       </PrivateRoute>
     ),
   },
