@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 const usePetSitterStore = create((set) => ({
   petsitter: {
+    id: '',
     name: '',
     imageUrl: '',
     weekdays: '',
@@ -19,6 +20,7 @@ const usePetSitterStore = create((set) => ({
   resetPetsitter: () =>
     set({
       petsitter: {
+        id: '',
         name: '',
         imageUrl: '',
         weekdays: '',
