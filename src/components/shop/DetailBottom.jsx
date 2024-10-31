@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CiCircleMinus } from 'react-icons/ci';
-import { CiCirclePlus } from 'react-icons/ci';
-import DogChew from '../DogChew';
-import { IoCloseOutline } from 'react-icons/io5';
 import BottomSheet from '../BottomSheet';
 import API from '../../api/axiosInstance';
 import { useUserStore } from '../../store/user';
@@ -19,7 +15,6 @@ const DetailBottom = ({ product }) => {
   const [productItem, setProductItem] = useState(product);
   const navigate = useNavigate();
 
-  // 전역 함수로 ... 쓰고싶은디 ..
   const handleNavigate = async (quantity) => {
     try {
       await API.post('/api/cart', {

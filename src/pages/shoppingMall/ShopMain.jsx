@@ -4,13 +4,21 @@ import ItemBox from '../../components/shop/ItemBox';
 import { CgSearchLoading } from 'react-icons/cg';
 import { useProductStore } from '../../store/products';
 import ScrollToTop from '../../components/ScrollToTop';
+import { useLocation } from 'react-router-dom';
 
 const ShopMain = () => {
   const { products, loadProducts, sortOption, setSortOption, loading, selectedCategory, setSelectedCategory } = useProductStore((state) => state);
   const scrollContainerRef = useRef(null);
+  const location = useLocation();
 
   useEffect(() => {
     loadProducts();
+
+    if (location.pathname === '/shoppingmall/category') {
+      setSelectedCategory(1);
+    } else {
+      setSelectedCategory(0);
+    }
 
     const scrollPosition = sessionStorage.getItem('scrollPosition');
     if (scrollPosition && scrollContainerRef.current) {
