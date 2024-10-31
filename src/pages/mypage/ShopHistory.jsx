@@ -95,11 +95,7 @@ const ShopHistory = () => {
             )}
           </div>
         </div>
-            </div>
-            </div>
-            
       </div>
-            
     </div>
   );
 };

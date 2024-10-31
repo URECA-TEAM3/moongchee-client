@@ -20,7 +20,7 @@ export default function SuccessPage() {
 
   async function confirm() {
     try {
-      const response = await axios.post('http://localhost:3000/api/members/', requestData);
+      const response = await axios.post('http://localhost:3000/api/payments/confirm', requestData);
 
       if (response.status !== 200) {
         navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
