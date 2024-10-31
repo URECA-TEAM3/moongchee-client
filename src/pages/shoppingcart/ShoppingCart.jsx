@@ -10,6 +10,7 @@ import API from '../../api/axiosInstance';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { IoMdClose } from 'react-icons/io';
+import { useUserStore } from '../../store/user';
 
 function ShoppingCart() {
   const navigate = useNavigate();
@@ -18,10 +19,11 @@ function ShoppingCart() {
   const [payment, setPayment] = useState(true); // 결제가능여부
   const [cartItems, setCartItems] = useState([]);
   const [showItems, setShowItems] = useState(true);
+  const { id } = useUserStore((state) => state);
 
   const getCartItemsList = async () => {
     try {
-      const response = await API.get('/api/cart/1');
+      const response = await API.get(`/api/cart/${id}`);
 
       const productsWithImages = await Promise.all(
         response.data.data.map(async (product) => {
@@ -118,8 +120,9 @@ function ShoppingCart() {
 
   const uploadLocalCart = async () => {
     const cartToSend = JSON.parse(localStorage.getItem('cart')) || [];
-    const user_id = JSON.parse(localStorage.getItem('userId')) || [];
+    const user_id = id;
 
+    console.log();
     await API.post(
       '/api/cart/save',
       { cartData: { cartToSend, user_id } },
@@ -143,6 +146,7 @@ function ShoppingCart() {
   return (
     <div className="bg-white flex flex-col min-h-full">
       <div className="px-10 py-6 font-bold text-xl">장바구니</div>
+
       {/* 장바구니 담긴 상품 조회 */}
       <div className="mb-5">
         <ul>

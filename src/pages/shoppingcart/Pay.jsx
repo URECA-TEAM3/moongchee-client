@@ -5,13 +5,14 @@ import PayInfo from '../../components/shop/PayInfo';
 import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
+import { useUserStore } from '../../store/user';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { id, name, phone, address } = useUserStore((state) => state);
 
   const openModal = () => {
     setIsModalOpen(true);
-    console.log('모달 오픈');
   };
 
   const closeModal = () => setIsModalOpen(false);
@@ -20,7 +21,7 @@ const Pay = () => {
   const location = useLocation();
   const [selectedItems, setSelectItems] = useState([]);
   const [orderData, setOrderData] = useState({
-    userId: 1,
+    userId: id,
     status: 'paid',
     total: 0,
     productData: [],
@@ -66,15 +67,18 @@ const Pay = () => {
       <div className="px-10 border border-b-divider py-8">
         <h1 className="font-bold text-lg">배송지 정보</h1>
         <div className="flex justify-between items-start">
-          <div>
+          <div className="w-9/12 break-keep">
             <div>
-              <span className="text-[#9c9c9c]">이름 :</span> 홍길동
+              <span className="text-[#9c9c9c]">이름 : </span>
+              {name}
             </div>
             <div>
-              <span className="text-[#9c9c9c]">전화번호 :</span> 010-2937-2333
+              <span className="text-[#9c9c9c]">전화번호 : </span>
+              {phone}
             </div>
             <div>
-              <span className="text-[#9c9c9c]">주소 :</span> 울산광역시 북구 연암동
+              <span className="text-[#9c9c9c]">주소 : </span>
+              {address}
             </div>
           </div>
           <div>

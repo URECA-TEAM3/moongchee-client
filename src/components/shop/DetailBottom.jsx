@@ -6,9 +6,11 @@ import DogChew from '../DogChew';
 import { IoCloseOutline } from 'react-icons/io5';
 import BottomSheet from '../BottomSheet';
 import API from '../../api/axiosInstance';
+import { useUserStore } from '../../store/user';
 
 const DetailBottom = ({ product }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const { id } = useUserStore((state) => state);
 
   const toggleBottomSheet = () => {
     setIsVisible(!isVisible);
@@ -22,7 +24,7 @@ const DetailBottom = ({ product }) => {
     try {
       await API.post('/api/cart', {
         product_id: product.id,
-        user_id: 1,
+        user_id: id,
         quantity: quantity,
         checked: true,
       });

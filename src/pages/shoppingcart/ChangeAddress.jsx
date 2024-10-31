@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
+import { useUserStore } from '../../store/user';
 
 const ChangeAddress = () => {
+  const { id, name, phone, address } = useUserStore((state) => state);
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [roadAddress, setRoadAddress] = useState('');
-  const [detailedAddress, setDetailedAddress] = useState('');
   const [errors, setErrors] = useState({});
+
+  const [changeInfo, setChangeInfo] = useState({
+    name: name,
+    phone: phone,
+    roadAddress: address,
+    detailedAddress: '상세주소',
+  });
 
   const openPostcodePopup = () => {
     const popupWidth = 500;
@@ -63,7 +68,14 @@ const ChangeAddress = () => {
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
 
-    setRoadAddress(fullAddress);
+    setChangeInfo((prev) => ({
+      ...prev,
+      roadAddress: fullAddress,
+    }));
+  };
+
+  const handleChangeInfo = () => {
+    console.log(changeInfo);
   };
 
   return (
@@ -82,8 +94,13 @@ const ChangeAddress = () => {
           <input
             type="text"
             placeholder="이름"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={changeInfo.name}
+            onChange={(e) => {
+              setChangeInfo((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }));
+            }}
             className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
           />
         </div>
@@ -94,8 +111,13 @@ const ChangeAddress = () => {
             <input
               type="tel"
               placeholder="휴대폰번호"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              value={changeInfo.phone}
+              onChange={(e) => {
+                setChangeInfo((prev) => ({
+                  ...prev,
+                  phone: e.target.value,
+                }));
+              }}
               className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
             />
           </div>
@@ -107,7 +129,7 @@ const ChangeAddress = () => {
             type="text"
             placeholder="도로명 주소 (필수)"
             className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
-            value={roadAddress}
+            value={changeInfo.roadAddress}
             readOnly
             onClick={openPostcodePopup}
           />
@@ -115,16 +137,21 @@ const ChangeAddress = () => {
           <input
             type="text"
             placeholder="상세 주소 입력 (선택)"
-            value={detailedAddress}
-            onChange={(e) => setDetailedAddress(e.target.value)}
+            value={changeInfo.detailedAddress}
+            onChange={(e) => {
+              setChangeInfo((prev) => ({
+                ...prev,
+                detailedAddress: e.target.value,
+              }));
+            }}
             className="block w-full p-2 border border-gray-300 rounded mb-6"
           />
         </div>
       </form>
 
-      <Link to="/payment">
+      <button onClick={handleChangeInfo}>
         <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">저장</div>
-      </Link>
+      </button>
     </div>
   );
 };

@@ -56,7 +56,7 @@ const KakaoLoginBtn = () => {
     window.Kakao.Auth.login({
       success: async (authObj) => {
         try {
-          const response = await axios.post('http://localhost:3306/api/auth/kakao-login', {
+          const response = await axios.post('http://localhost:3000/api/auth/kakao-login', {
             token: authObj.access_token,
           });
 
