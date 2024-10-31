@@ -10,7 +10,6 @@ const LoginPage = () => {
   const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
-      console.error('리프레시 토큰이 없습니다.');
       return null;
     }
 
