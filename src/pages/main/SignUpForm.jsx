@@ -40,7 +40,7 @@ const SignUpForm = () => {
   useEffect(() => {
     const handleUnload = () => {
       sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
+      localStorage.removeItem('refreshToken');
     };
 
     window.addEventListener('beforeunload', handleUnload);
@@ -299,7 +299,7 @@ const SignUpForm = () => {
 
       if (accessToken && refreshToken) {
         sessionStorage.setItem('accessToken', accessToken);
-        sessionStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('refreshToken', refreshToken);
 
         const userData = {
           id: responseUserId,

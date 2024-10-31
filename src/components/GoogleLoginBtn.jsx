@@ -8,7 +8,7 @@ const GoogleLoginBtn = () => {
   const navigate = useNavigate();
 
   const refreshAccessToken = async () => {
-    const refreshToken = sessionStorage.getItem('refreshToken');
+    const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       console.error('리프레시 토큰이 없습니다.');
       return null;
@@ -114,7 +114,7 @@ const GoogleLoginBtn = () => {
 
       if (exists) {
         sessionStorage.setItem('accessToken', accessToken);
-        sessionStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('refreshToken', refreshToken);
         sessionStorage.setItem('userData', JSON.stringify(userData));
         console.log('유저 데이터:', userData);
         navigate('/main');

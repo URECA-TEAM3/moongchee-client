@@ -12,7 +12,7 @@ const KakaoLoginBtn = () => {
   }, []);
 
   const refreshAccessToken = async () => {
-    const refreshToken = sessionStorage.getItem('refreshToken');
+    const refreshToken = localStorage.getItem('refreshToken');
     console.log('저장된 리프레시 토큰:', refreshToken);
     try {
       const response = await axios.post(
@@ -64,7 +64,7 @@ const KakaoLoginBtn = () => {
 
           if (exists) {
             sessionStorage.setItem('accessToken', accessToken);
-            sessionStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('refreshToken', refreshToken);
 
             sessionStorage.setItem('userData', JSON.stringify(userData));
 
