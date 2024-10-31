@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import Dropdown from '../../components/DropDown';
 import DogChew from '../../components/DogChew';
 import ToolTip from '../../components/ToolTip';
 import useReservationStore from '../../store/reservationStore';
+import usePetSitterStore from '../../store/petsitterStore';
 
 const index = ({ handleNextStep }) => {
   const { setReservationData } = useReservationStore();
+  const { petsitter } = usePetSitterStore();
   const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const [formData, setFormData] = useState({
     user_id: '',
@@ -22,8 +23,6 @@ const index = ({ handleNextStep }) => {
     price: 0,
   });
   const petList = ['말티즈', '시츄', '리트리버', '푸들'];
-  const location = useLocation();
-  const { name } = location.state || '';
 
   const getTime = (time) => {
     if (time === '선택') {
@@ -89,7 +88,6 @@ const index = ({ handleNextStep }) => {
       alert(`${str}은 필수 입력 란입니다.`);
       return null;
     }
-    console.log(formData);
     setReservationData(formData);
     handleNextStep();
   };
@@ -100,7 +98,7 @@ const index = ({ handleNextStep }) => {
       <div className="profile flex items-center mt-3">
         <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
         <div className="personal ml-5">
-          <span className="text-xl text-slate-900 font-medium">{name}</span>
+          <span className="text-xl text-slate-900 font-medium">{petsitter.name}</span>
         </div>
       </div>
       <div className="mt-3">

@@ -1,28 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { convertWeekDay } from '../utils/petSitterHelper';
+import usePetSitterStore from '../store/petsitterStore';
 
 const PetSitterInfo = ({ info }) => {
   const navigate = useNavigate();
+  const { setPetsitterData } = usePetSitterStore();
 
   const handleInfoClick = () => {
-    navigate(`/petsitter/detail/${info.name}`, { state: { info: info } });
-  };
-
-  const convertWeekDay = () => {
-    const daysInKorean = {
-      MON: '월요일',
-      TUE: '화요일',
-      WED: '수요일',
-      THU: '목요일',
-      FRI: '금요일',
-      SAT: '토요일',
-      SUN: '일요일',
-    };
-    const str = info.weekdays
-      .split(',')
-      .map((day) => daysInKorean[day])
-      .join(', ');
-    return str;
+    setPetsitterData(info);
+    navigate(`/petsitter/detail/${info.name}`);
   };
 
   return (
@@ -35,7 +22,7 @@ const PetSitterInfo = ({ info }) => {
         <div className="personal ml-5">
           <span className="text-xl text-slate-900 font-medium">{info.name}</span>
           <div className="weekday">
-            <div className="holiday text-text">{convertWeekDay()} 근무</div>
+            <div className="holiday text-text">{convertWeekDay(info.weekdays)} 근무</div>
             <span className="workTime text-text">{`${info.startTime} ~ ${info.endTime}`}</span>
           </div>
         </div>
