@@ -31,7 +31,7 @@ const PetSitterInfo = ({ info }) => {
       onClick={() => handleInfoClick(info.name)}
     >
       <div className="profile flex items-center">
-        <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
+        <img src={info.imageUrl} className="object-cover object-center w-24 h-24 rounded-full " />
         <div className="personal ml-5">
           <span className="text-xl text-slate-900 font-medium">{info.name}</span>
           <div className="weekday">

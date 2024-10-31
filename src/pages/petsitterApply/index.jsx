@@ -89,7 +89,7 @@ const index = () => {
       if (dayList[i].target === true) str += `${dayList[i].value},`;
     }
 
-    const storageRef = ref(storage, `petsitter/${userId}`);
+    const storageRef = ref(storage, `petsitter/${userData.id}`);
     await uploadBytes(storageRef, selectedImageFile);
     const downloadURL = await getDownloadURL(storageRef);
 
@@ -105,7 +105,7 @@ const index = () => {
     };
 
     try {
-      const res = await axios.post('http://localhost:3000/api/petsitter/apply', { params });
+      const res = await axios.post('http://localhost:3000/api/petsitter/apply', params);
       console.log(res);
     } catch (error) {
       console.log(error);
