@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import backButtonIcon from '/src/assets/icons/backbtn.svg';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
+import axios from 'axios';
 
 const ChargePage = () => {
+  const userData = sessionStorage.getItem('userData');
+  const parsedData = userData ? JSON.parse(userData) : null;
+  const [id, setId] = useState(parsedData.id);
   const [selectedAmount, setSelectedAmount] = useState(0);
-  const [currentBones, setCurrentBones] = useState(100);
+  const [currentBones, setCurrentBones] = useState(0);
   const navigate = useNavigate();
-
+  const amounts = [1, 3, 5, 7, 10];
   const additionalBones = {
     1: 0,
     3: 10,
@@ -16,7 +20,23 @@ const ChargePage = () => {
     10: 100,
   };
 
-  const amounts = [1, 3, 5, 7, 10];
+  const getPoint = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/members/point/${id}`);
+
+      if (response.status !== 200) {
+        console.error('Error retrieving point', response);
+        return;
+      }
+      setCurrentBones(response.data.data.point);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getPoint();
+  }, []);
 
   const getButtonClass = (amount) => {
     return selectedAmount === amount
