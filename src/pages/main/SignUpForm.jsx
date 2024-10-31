@@ -288,13 +288,16 @@ const SignUpForm = () => {
         name,
         phone,
         email,
-        address: `${roadAddress} ${detailedAddress}`,
+        address: roadAddress,
+        detailAddress: detailedAddress,
         birthDate: formattedBirthDate,
         provider,
         token: userId,
         nickname,
         profileImageUrl: downloadURL,
       });
+      console.log('디테일 주소', detailedAddress);
+
       const { userId: responseUserId, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
@@ -306,13 +309,15 @@ const SignUpForm = () => {
           name,
           phone,
           email,
-          address: `${roadAddress} ${detailedAddress}`,
+          address: roadAddress,
+          detailAddress: detailedAddress, // 세션 데이터에 추가
           birthDate: formattedBirthDate,
           provider,
           userId,
           nickname,
           profile_image_url: downloadURL,
         };
+
         sessionStorage.setItem('userData', JSON.stringify(userData));
         console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
       }
