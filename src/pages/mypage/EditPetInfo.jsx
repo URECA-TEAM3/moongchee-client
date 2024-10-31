@@ -22,8 +22,11 @@ const EditPetInfo = () => {
     const [neutered, setNeutered] = useState('');
     const [profileImage, setProfileImage] = useState(petProfileImage);
     const [selectedImageFile, setSelectedImageFile] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false); // 삭제 여부 모달
     const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false); // 삭제 완료 모달
+    const [isSavedConfirmModal, setIsSavedConfirmModal] = useState(false); // 저장 여부 모달
+    const [isSavedModalOpen, setIsSavedModalOpen] = useState(false); // 저장 완료 모달
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -80,6 +83,30 @@ const EditPetInfo = () => {
         setIsModalOpen(false); // 모달 닫기
     }
 
+    const closeConfirmModal = () => {
+        setIsSavedConfirmModal(false); // 모달 닫기
+    }
+
+    const validateFields = () => {
+        if (!name || !age || !weight) {
+            toast.error('항목을 모두 입력해주세요.');
+            return false;
+        }
+
+        if (parseInt(age,10) < 0) {
+            toast.error('올바른 값을 입력해주세요.');
+            return false;
+        }
+        return true;
+    };
+
+    const validateSingleField = (field, value) => {
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [field]: value ? '' : prevErrors[field],
+        }));
+    };
+
     const handleSave = async () => {
 
         try {
@@ -89,17 +116,18 @@ const EditPetInfo = () => {
                 await uploadBytes(storageRef, selectedImageFile);
                 profileImageUrl = await getDownloadURL(storageRef);
             }
-
             const updatedData = {
                 id: petId,
                 name,
                 age,
+                gender,
                 surgery: neutered === 'yes'? 1 : 0,
                 weight: weight,
                 animal_image_url: profileImageUrl,
             }
 
             const response = await axios.put('http://localhost:3000/api/pets/update-profile', updatedData);
+            setIsSavedModalOpen(true);
 
         } catch (error) {
             console.error(error);
@@ -108,9 +136,14 @@ const EditPetInfo = () => {
         }
     }
 
+    const handleSaveModal = () => {
+        setIsSavedModalOpen(false);
+        navigate('/mypage');
+    }
+
     return (
         <div className="flex flex-col items-center bg-white h-full">
-            <Toaster position="bottom-center" reverseOrder={false} />
+            <Toaster position="top-center" reverseOrder={false} />
             <div className="relative w-full flex items-center mb-6 mt-6">
                 <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
                     <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
@@ -160,8 +193,7 @@ const EditPetInfo = () => {
 
                 <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">성별</label>
                 <div className="flex justify-between mb-4 w-full max-w-md space-x-2">
-                    <button
-                    disabled
+                    <button onClick={() => setGender('male')}
                     className={`w-1/2 py-2 border-2 rounded-[10px] ${
                         gender === 'male' ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
                     } hover:border-blue-500 hover:text-blue-500 transition-colors`}
@@ -169,7 +201,7 @@ const EditPetInfo = () => {
                     남아
                     </button>
                     <button
-                    disabled
+                    onClick={() => setGender('female')}
                     className={`w-1/2 py-2 border-2 rounded-[10px] ${
                         gender === 'female' ? 'border-blue-500 text-blue-500' : 'border-gray-200 text-black'
                     } hover:border-blue-500 hover:text-blue-500 transition-colors`}
@@ -214,23 +246,29 @@ const EditPetInfo = () => {
                     />
                     <span className={`absolute right-3 top-1/3 transform -translate-y-1/2 ${weight ? 'text-black' : 'text-gray-400'}`}>kg</span>
                 </div>
+                
                 <div className='flex justify-between p-5 w-full'>
                     <button onClick={handleDelete} className='py-2 bg-delete text-white rounded-lg w-48'>삭제하기</button>
-                    <button onClick={handleSave} className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
+                    <button onClick={() => {
+                        if (!validateFields()) {
+                            return;
+                        }
+                        setIsSavedConfirmModal(true)
+                    }} className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
                 </div>
 
                 {/* Confirm Delete Modal */}
                 {isModalOpen && (
-                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-                    <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
-                        <h2 className='text-base font-extrabold mb-6'>반려견 정보를 삭제하시겠습니까?</h2>
-                        <h3 className='text-sm m-10 p-2'>삭제 후 복구가 불가능합니다.</h3>
-                        <div className='flex justify-center space-x-4'>
-                            <button onClick={closeModal} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
-                            <button onClick={confirmDelete} className='px-12 py-2 bg-delete text-white rounded-lg'>확인</button>
+                    <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+                        <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                            <h2 className='text-base font-extrabold mb-6'>반려동물 정보를 삭제하시겠습니까?</h2>
+                            <h3 className='text-sm m-10 p-2'>삭제 후 복구가 불가능합니다.</h3>
+                            <div className='flex justify-center space-x-4'>
+                                <button onClick={closeModal} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
+                                <button onClick={confirmDelete} className='px-12 py-2 bg-delete text-white rounded-lg'>확인</button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 )}
 
                 {/* Delete Completed Modal */}
@@ -239,6 +277,29 @@ const EditPetInfo = () => {
                         <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
                             <h2 className='text-base font-extrabold mb-6'>삭제되었습니다.</h2>
                             <button onClick={handleCloseDeletedModal} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Save Confirm Modal */}
+                {isSavedConfirmModal && (
+                    <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+                        <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                            <h2 className='text-base font-extrabold mb-6'>반려동물 정보를 수정하시겠습니까?</h2>
+                            <div className='flex justify-center space-x-4'>
+                                <button onClick={closeConfirmModal} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
+                                <button onClick={handleSave} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Save Success Modal */}
+                {isSavedModalOpen && (
+                    <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+                        <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                            <h2 className='text-base font-extrabold mb-6'>반려동물 정보가 수정되었습니다.</h2>
+                            <button onClick={handleSaveModal} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
                         </div>
                     </div>
                 )}

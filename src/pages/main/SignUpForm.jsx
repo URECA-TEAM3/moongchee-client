@@ -40,7 +40,7 @@ const SignUpForm = () => {
   useEffect(() => {
     const handleUnload = () => {
       sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
+      localStorage.removeItem('refreshToken');
     };
 
     window.addEventListener('beforeunload', handleUnload);
@@ -60,6 +60,7 @@ const SignUpForm = () => {
       }, 1000);
     } else if (timer === 0) {
       clearInterval(interval);
+      setShowVerificationInput(false);
     }
     return () => clearInterval(interval);
   }, [showVerificationInput, timer]);
@@ -295,17 +296,20 @@ const SignUpForm = () => {
         name,
         phone,
         email,
-        address: `${roadAddress} ${detailedAddress}`,
+        address: roadAddress,
+        detailAddress: detailedAddress,
         birthDate: formattedBirthDate,
         provider,
         token: userId,
         nickname,
         profileImageUrl: downloadURL ,
       });
+      console.log('디테일 주소', detailedAddress);
+
       const { userId: responseUserId, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
-        localStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
 
         const userData = {
@@ -313,13 +317,15 @@ const SignUpForm = () => {
           name,
           phone,
           email,
-          address: `${roadAddress} ${detailedAddress}`,
+          address: roadAddress,
+          detailAddress: detailedAddress, // 세션 데이터에 추가
           birthDate: formattedBirthDate,
           provider,
           userId,
           nickname,
           profile_image_url: downloadURL,
         };
+
         sessionStorage.setItem('userData', JSON.stringify(userData));
         console.log('유저 데이터가 세션 스토리지에 저장되었습니다.');
       }
@@ -405,7 +411,7 @@ const SignUpForm = () => {
         </div>
         {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email}</span>}
 
-        {showVerificationInput && (
+        {showVerificationInput && timer > 0 && (
           <div className="flex space-x-2 mb-1 items-center">
             <div className="relative flex-1">
               <input

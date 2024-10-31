@@ -1,35 +1,35 @@
-import Main from '../pages/main';
+import React from 'react';
+import PrivateRoute from './PrivateRoute';
 
-//Login
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
+
+import Main from '../pages/main';
+import AnimalInfo from '../pages/main/AnimalInfo';
+import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
+
 import ShopMain from '../pages/shoppingMall/ShopMain';
 import ShopDetail from '../pages/shoppingMall/ShopDetail';
-import AnimalInfo from '../pages/main/AnimalInfo';
 
-//PetSitter
 import PetSitter from '../pages/petsitter';
 import PetSitterDetail from '../pages/petsitterDetail';
 import PetSitterReservation from '../pages/petsitterReservation';
 import PetSitterReservationList from '../pages/petsitterReservationList';
 import PetSitterReservDetail from '../pages/petsitterReservDetail';
 
-import AnimalRegisterSuccessPage from '../pages/main/AnimalRegisterSuccessPage';
-
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
-
-// Mypage
-import Mypage from '../pages/mypage/Mypage';
-import EditUserInfo from '../pages/mypage/EditUserInfo';
-import EditPetInfo from '../pages/mypage/EditPetInfo';
-import ShopHistory from '../pages/mypage/ShopHistory';
 import ChargePage from '../pages/mypage/ChargePage';
 import PetRegister from '../pages/mypage/PetRegister';
 import CheckoutPage from '../pages/mypage/Checkout';
 import SuccessPage from '../pages/mypage/Success';
 import FailPage from '../pages/mypage/Fail';
+
+import Mypage from '../pages/mypage/Mypage';
+import EditUserInfo from '../pages/mypage/EditUserInfo';
+import EditPetInfo from '../pages/mypage/EditPetInfo';
+import ShopHistory from '../pages/mypage/ShopHistory';
 
 const MainScreens = {
   LoginPage: {
@@ -50,84 +50,156 @@ const MainScreens = {
   },
   Main: {
     path: '/main',
-    element: <Main />,
+    element: (
+      <PrivateRoute>
+        <Main />
+      </PrivateRoute>
+    ),
   },
   AnimalInfo: {
     path: '/animalinfo',
-    element: <AnimalInfo />,
+    element: (
+      <PrivateRoute>
+        <AnimalInfo />
+      </PrivateRoute>
+    ),
   },
   ShoppingCart: {
     path: '/shoppingcart',
-    element: <ShoppingCart />,
+    element: (
+      <PrivateRoute>
+        <ShoppingCart />
+      </PrivateRoute>
+    ),
   },
   Chat: {
     path: '/chat',
-    element: <Chat />,
+    element: (
+      <PrivateRoute>
+        <Chat />
+      </PrivateRoute>
+    ),
   },
-  ChargePage: {
+  Chargepage: {
     path: '/chargepage',
-    element: <ChargePage />,
+    element: (
+      <PrivateRoute>
+        <ChargePage />
+      </PrivateRoute>
+    ),
   },
   Checkout: {
     path: '/checkout',
-    element: <CheckoutPage />,
+    element: (
+      <PrivateRoute>
+        <CheckoutPage />
+      </PrivateRoute>
+    ),
   },
   Success: {
     path: '/success',
-    element: <SuccessPage />,
+    element: (
+      <PrivateRoute>
+        <SuccessPage />
+      </PrivateRoute>
+    ),
   },
   Fail: {
     path: '/fail',
-    element: <FailPage />,
+    element: (
+      <PrivateRoute>
+        <FailPage />
+      </PrivateRoute>
+    ),
   },
 };
 
 const PetSitterScreens = {
   Petsitter: {
     path: '/petsitter',
-    element: <PetSitter />,
+    element: (
+      <PrivateRoute>
+        <PetSitter />
+      </PrivateRoute>
+    ),
   },
   PetSitterDetail: {
     path: '/petsitter/detail/:name',
-    element: <PetSitterDetail />,
+    element: (
+      <PrivateRoute>
+        <PetSitterDetail />
+      </PrivateRoute>
+    ),
   },
   PetSitterReservation: {
     path: '/petsitter/reservation',
-    element: <PetSitterReservation />,
+    element: (
+      <PrivateRoute>
+        <PetSitterReservation />
+      </PrivateRoute>
+    ),
   },
   PetSitterReservationList: {
     path: '/petsitter/reservation/list',
-    element: <PetSitterReservationList />,
+    element: (
+      <PrivateRoute>
+        <PetSitterReservationList />
+      </PrivateRoute>
+    ),
   },
   PetSitterReservDetail: {
     path: '/petsitter/reservation/detail',
-    element: <PetSitterReservDetail />,
+    element: (
+      <PrivateRoute>
+        <PetSitterReservDetail />
+      </PrivateRoute>
+    ),
   },
 };
 
 const ShoppingMallScreens = {
   ShopMain: {
     path: '/shoppingmall',
-    element: <ShopMain />,
+    element: (
+      <PrivateRoute>
+        <ShopMain />
+      </PrivateRoute>
+    ),
   },
   ShopDetail: {
     path: '/shoppingmall/:id',
-    element: <ShopDetail />,
+    element: (
+      <PrivateRoute>
+        <ShopDetail />
+      </PrivateRoute>
+    ),
   },
   ShopCategory: {
     path: '/shoppingmall/category',
-    element: <ShopMain />,
+    element: (
+      <PrivateRoute>
+        <ShopMain />
+      </PrivateRoute>
+    ),
   },
 };
 
 const MypageScreens = {
   Mypage: {
     path: '/mypage',
-    element: <Mypage />,
+    element: (
+      <PrivateRoute>
+        <Mypage />
+      </PrivateRoute>
+    ),
   },
   EditUserInfo: {
     path: '/mypage/edituser',
-    element: <EditUserInfo />,
+    element: (
+      <PrivateRoute>
+        <EditUserInfo />
+      </PrivateRoute>
+    ),
   },
   PetRegister: {
     path: '/mypage/petregister',
@@ -135,11 +207,19 @@ const MypageScreens = {
   },
   EditPetInfo: {
     path: '/mypage/editpet/:id',
-    element: <EditPetInfo />,
+    element: (
+      <PrivateRoute>
+        <EditPetInfo />
+      </PrivateRoute>
+    ),
   },
   ShopHistory: {
     path: 'mypage/shophistory/:id',
-    element: <ShopHistory />,
+    element: (
+      <PrivateRoute>
+        <ShopHistory />
+      </PrivateRoute>
+    ),
   },
 };
 

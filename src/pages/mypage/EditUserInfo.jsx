@@ -18,7 +18,7 @@ const EditUserInfo = () => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [roadAddress, setRoadAddress] = useState('');
-    const [detailedAddress, setDetailedAddress] = useState('');
+    const [detailAddress, setDetailAddress] = useState('');
     const [email, setEmail] = useState('');
     const [birthDate, setBirthDate] = useState(null);
     const [errors, setErrors] = useState({});
@@ -28,7 +28,10 @@ const EditUserInfo = () => {
     const [socialProvider, setSocialProvider] = useState('');
     const [isNicknameChecked, setIsNicknameChecked] = useState(false);
     const [selectedImageFile, setSelectedImageFile] = useState(null);
-    const [showModal, setShowModal] = useState(false); // 모달 표시 여부
+    const [showModal, setShowModal] = useState(false); // 프로필 사진 변경 모달 표시 여부
+    const [isSavedConfirmModal, setIsSavedConfirmModal] = useState(false); // 수정 여부 모달
+    const [saveModal, setSaveModal] = useState(false); // 저장 확인 모달
+    const [currentNickname, setCurrentNickname] = useState('');
 
     useEffect(() => {
         const userData = sessionStorage.getItem('userData');
@@ -41,11 +44,13 @@ const EditUserInfo = () => {
             setPhone(parsedData.phone);
             setBirthDate(parsedData.birthDate);
             setRoadAddress(parsedData.address);
+            setDetailAddress(parsedData.detailaddress);
             setSelectedImage(parsedData.profile_image_url);
             setEmail(parsedData.email);
             setIsPetsitter(parsedData.petsitter);
             setSocialProvider(parsedData.social_provider);
             setUniqueId(parsedData.unique_id);
+            setCurrentNickname(parsedData.nickname);
         }
     }, []);
 
@@ -99,24 +104,56 @@ const EditUserInfo = () => {
                 phone,
                 birthDate: formattedBirthDate,
                 address: roadAddress,
-                detailedAddress,
+                detailaddress : detailAddress,
                 profile_image_url: profileImageUrl,
             };
 
             const response = await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
             // Session Storage update
-            sessionStorage.setItem('userData', JSON.stringify(response.data));
+            sessionStorage.setItem('userData', JSON.stringify(updatedData));
 
-            alert('프로필이 수정되었습니다.');
-            navigate('/mypage');
+            setSaveModal(true);
         } catch (error) {
             console.error(error);
             alert('프로필 수정 실패')
         }
     }
 
+    const validateFields = () => {
+        
+
+        if (!nickname || !phone || !roadAddress) {
+            toast.error('항목을 모두 입력해주세요.');
+            return false;
+        }
+
+        if (((nickname !== currentNickname ) && !isNicknameChecked)) {
+            toast.error('닉네임 중복 확인을 해주세요.');
+            return false;
+        }
+
+        return true;
+    };
+    
+    const handleSaveVerified = () => {
+        if (!validateFields()) {
+            return;
+        }
+        setIsSavedConfirmModal(true);
+    }
+
+    const handleSaveModal = () => {
+        setSaveModal(false);
+        navigate('/mypage');
+    }
 
     const handleNicknameCheck = async () => {
+
+        if (nickname == currentNickname) {
+            toast.error('현재와 동일한 닉네임입니다.');
+            return;
+        }
+        
         if (!nickname) {
             toast.error('닉네임을 입력해주세요.');
             return;
@@ -150,6 +187,7 @@ const EditUserInfo = () => {
         const validPattern = /^(?!.*[._]{2})(?![._])[가-힣a-zA-Z0-9._]+(?<![._])$/;
         return validPattern.test(nickname);
     };
+
 
     const handleDateChange = (date) => {
         setBirthDate(date);
@@ -218,8 +256,11 @@ const EditUserInfo = () => {
                         type="text"
                         placeholder="닉네임"
                         value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
-                        className="flex-1 p-2 p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded"
+                        onChange={(e) => {
+                            setNickname(e.target.value);
+                            setIsNicknameChecked(false);
+                        }}
+                        className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded`}
                     />
                     <button
                         type="button"
@@ -262,7 +303,6 @@ const EditUserInfo = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     className={`w-full mb-4 p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
                 />
-                {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
                 <label className="block text-sm font-medium mb-1">생년월일</label>
                 <div className="flex items-center mb-4">
@@ -281,7 +321,6 @@ const EditUserInfo = () => {
                     locale={ko}
                 />
                 </div>
-                {errors.birthDate && <span className="text-red-500 text-xs mt-1">{errors.birthDate}</span>}
 
                 <label className="block text-sm font-medium mb-1">주소*</label>
                 <input
@@ -292,19 +331,18 @@ const EditUserInfo = () => {
                     readOnly
                     onClick={openPostcodePopup}
                 />
-                {errors.address && <span className="text-red-500 text-xs mt-1">{errors.address}</span>}
 
                 <input
                     type="text"
                     placeholder="상세 주소 입력 (선택)"
-                    value={detailedAddress}
-                    onChange={(e) => setDetailedAddress(e.target.value)}
+                    value={detailAddress}
+                    onChange={(e) => setDetailAddress(e.target.value)}
                     className="block w-full p-2 border border-gray-300 rounded mb-6"
                 />
 
                 <div className='flex justify-between p-5 w-full'>
                     <button onClick={() => navigate('/mypage')} className='py-2 bg-divider text-gray-400 rounded-lg w-48'>취소</button>
-                    <button type='button' onClick={handleSave} className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
+                    <button type='button' onClick={handleSaveVerified} className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
                 </div>
             </form>
 
@@ -335,6 +373,28 @@ const EditUserInfo = () => {
                 </div>
             )}
 
+            {/* Save Confirm Modal */}
+            {isSavedConfirmModal && (
+                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+                    <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                        <h2 className='text-base font-extrabold mb-6'>프로필 정보를 수정하시겠습니까?</h2>
+                        <div className='flex justify-center space-x-4'>
+                            <button onClick={() => setIsSavedConfirmModal(false)} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
+                            <button onClick={handleSave} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Save Success Modal */}
+            {saveModal && (
+                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+                    <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
+                        <h2 className='text-base font-extrabold mb-6'>프로필이 수정되었습니다.</h2>
+                        <button onClick={handleSaveModal} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
+                    </div>
+                </div>
+            )}
         </div>
 
     );

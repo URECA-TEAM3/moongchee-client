@@ -12,6 +12,7 @@ function Mypage(props) {
   const [profileImageUrl, setProfileImageUrl] = useState('');
   const [pets, setPets] = useState([]);
   const [isPetsitter, setIsPetsitter] = useState(true);
+  const [point, setPoint] = useState(0);
 
   useEffect(() => {
     const userData = sessionStorage.getItem('userData');
@@ -23,6 +24,7 @@ function Mypage(props) {
       // setPoint(parsedData.point);
       // 반려동물 리스트 출력 함수 호출
       fetchPets(parsedData.id);
+      fetchPoints(parsedData.id);
     }
   }, []);
 
@@ -33,6 +35,16 @@ function Mypage(props) {
       setPets(response.data);
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  // 포인트 조회
+  const fetchPoints = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/members/point/${userId}`);
+      setPoint(response.data.data.point);
+    } catch (error) {
+      console.error(error);
     }
   }
   
@@ -130,7 +142,7 @@ function Mypage(props) {
             <div className="flex items-center space-x-4">
               <DogChew />
               <p className="text-lg">
-                <span className="font-bold">500</span> 개
+                <span className="font-bold">{point}</span> 개
               </p>
             </div>
             <button
