@@ -23,7 +23,6 @@ const Pay = () => {
   const [selectedItems, setSelectItems] = useState([]);
   const [orderData, setOrderData] = useState({
     userId: id,
-    status: 'paid',
     total: 0,
     productData: [],
   });
