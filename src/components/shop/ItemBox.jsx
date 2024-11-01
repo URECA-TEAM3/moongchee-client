@@ -2,9 +2,26 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import DogChew from '../DogChew';
+import API from '../../api/axiosInstance';
 
 const ItemBox = ({ item }) => {
   const navigate = useNavigate();
+
+  const handleNavigate = async () => {
+    try {
+      await API.post('/api/cart', {
+        product_id: item.id,
+        user_id: 1,
+        quantity: 1,
+        checked: true,
+      });
+      console.log(item.id);
+      navigate('/shoppingcart');
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      alert('There was an error adding the product to the cart.');
+    }
+  };
 
   return (
     <div key={item.id}>
@@ -14,7 +31,10 @@ const ItemBox = ({ item }) => {
         </div>
       </button>
 
-      <button className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50">
+      <button
+        onClick={() => handleNavigate()}
+        className="flex justify-center items-center border border-divider w-full rounded-lg mt-2 p-1 text-sm hover:bg-divider/50"
+      >
         <ShoppingCartIcon stroke="currentColor" className="size-5 mr-1" />
         담기
       </button>

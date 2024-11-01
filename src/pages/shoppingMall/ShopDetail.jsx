@@ -10,7 +10,7 @@ function ShopDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState({});
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -42,33 +42,35 @@ function ShopDetail() {
   }, [id]);
 
   return (
-    <div className="bg-white">
-      <div className="flex items-center justify-between p-5">
-        <button onClick={() => navigate(-1)}>
-          <IoIosArrowBack />
-        </button>
-        <div>상품정보</div>
-        <div></div>
-      </div>
-
-      {loading ? (
-        <div>로딩 중...</div>
-      ) : (
-        <div className="max-h-[78vh] overflow-y-scroll">
-          <img src={product.image} alt={product.name} />
-          <div className="p-7">
-            <h1 className="text-xl break-keep">{product.name}</h1>
-            <p className="flex items-center mt-3">
-              <img className="w-8 mr-1" src="/src/assets/images/dogChew.svg" alt="" />
-              <span className="font-bold">{product.price}개</span>
-            </p>
-          </div>
-          <img src={product.description} alt={product.name} />
+    <>
+      <div className="bg-white relative">
+        <div className="flex items-center justify-between p-5">
+          <button onClick={() => navigate(-1)}>
+            <IoIosArrowBack />
+          </button>
+          <div>상품정보</div>
+          <div></div>
         </div>
-      )}
 
-      <DetailBottom id={id} />
-    </div>
+        {loading ? (
+          <div className="flex justify-center items-center">로딩 중...</div>
+        ) : (
+          <div>
+            <img src={product.image} alt={product.name} />
+            <div className="p-7">
+              <h1 className="text-xl break-keep">{product.name}</h1>
+              <p className="flex items-center mt-3">
+                <img className="w-8 mr-1" src="/src/assets/images/dogChew.svg" alt="" />
+                <span className="font-bold">{product.price}개</span>
+              </p>
+            </div>
+            <img src={product.description} alt={product.name} />
+          </div>
+        )}
+
+        <DetailBottom id={id} product={product} />
+      </div>
+    </>
   );
 }
 

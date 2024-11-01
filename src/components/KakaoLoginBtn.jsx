@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../store/user';
 
 const KakaoLoginBtn = () => {
   const navigate = useNavigate();
+  const { login } = useUserStore.getState();
 
   useEffect(() => {
     if (!window.Kakao.isInitialized()) {
@@ -67,6 +69,7 @@ const KakaoLoginBtn = () => {
             localStorage.setItem('refreshToken', refreshToken);
 
             sessionStorage.setItem('userData', JSON.stringify(userData));
+            login(userData);
 
             console.log('유저 데이터:', userData);
             navigate('/main');

@@ -1,16 +1,21 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/locale';
 import Dropdown from '../../components/DropDown';
 import DogChew from '../../components/DogChew';
 import ToolTip from '../../components/ToolTip';
 import useReservationStore from '../../store/reservationStore';
+import usePetSitterStore from '../../store/petsitterStore';
 
 const index = ({ handleNextStep }) => {
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
   const { setReservationData } = useReservationStore();
+  const { petsitter } = usePetSitterStore();
   const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const [formData, setFormData] = useState({
-    user_id: '',
-    sitter_id: '',
+    user_id: userData.id,
+    sitter_id: petsitter.id,
     requestDate: '',
     startTime: '선택',
     endTime: '선택',
@@ -22,8 +27,6 @@ const index = ({ handleNextStep }) => {
     price: 0,
   });
   const petList = ['말티즈', '시츄', '리트리버', '푸들'];
-  const location = useLocation();
-  const { name } = location.state || '';
 
   const getTime = (time) => {
     if (time === '선택') {
@@ -41,6 +44,7 @@ const index = ({ handleNextStep }) => {
   };
 
   const handleChange = (name, value) => {
+    console.log(value);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -89,7 +93,6 @@ const index = ({ handleNextStep }) => {
       alert(`${str}은 필수 입력 란입니다.`);
       return null;
     }
-    console.log(formData);
     setReservationData(formData);
     handleNextStep();
   };
@@ -98,19 +101,33 @@ const index = ({ handleNextStep }) => {
     <div className="p-5">
       <h1>펫시터</h1>
       <div className="profile flex items-center mt-3">
-        <img src="/src/assets/images/dog.jpeg" className="object-cover object-center w-24 h-24 rounded-full " />
+        <img src={petsitter.imageUrl} className="object-cover object-center w-24 h-24 rounded-full " />
         <div className="personal ml-5">
-          <span className="text-xl text-slate-900 font-medium">{name}</span>
+          <span className="text-xl text-slate-900 font-medium">{petsitter.name}</span>
         </div>
       </div>
       <div className="mt-3">
         <label className="block mb-2 text-sm font-medium text-gray-900">날짜 *</label>
-        <input
-          type="text"
-          className="block w-full p-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
-          required
-          onChange={(e) => handleChange('requestDate', e.target.value)}
-        />
+        <div className="flex items-center space-x-2 mb-1">
+          <DatePicker
+            selected={formData.requestDate}
+            onChange={(date) =>
+              handleChange(
+                'requestDate',
+                `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+              )
+            }
+            dateFormat="yyyy/MM/dd"
+            placeholderText="YYYY/MM/DD"
+            className={`block w-full p-2 border rounded`}
+            showYearDropdown
+            showMonthDropdown
+            dropdownMode="select"
+            maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
+            yearDropdownItemNumber={100}
+            locale={ko}
+          />
+        </div>
       </div>
       <div className="mt-3">
         <label className="block mb-2 text-sm font-medium text-gray-900">시간 *</label>
