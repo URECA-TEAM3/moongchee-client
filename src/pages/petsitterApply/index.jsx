@@ -5,8 +5,10 @@ import Modal from '../../components/Modal';
 import { storage } from '../../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import { useNavigate } from 'react-router-dom';
 
 const index = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [formData, setFormData] = useState({
@@ -62,7 +64,10 @@ const index = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    navigate('/petsitter');
+  };
 
   const handleChange = (name, value) => {
     setFormData((prevData) => ({
@@ -84,7 +89,6 @@ const index = () => {
   };
 
   const handleDayClick = (dayName) => {
-    openModal();
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
@@ -109,6 +113,7 @@ const index = () => {
       region: formData.region,
       image: downloadURL,
       name: userData.name,
+      userId: userData.id,
     };
 
     try {

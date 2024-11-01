@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
+import { useUserStore } from '../../store/user';
 
 const index = () => {
   const [sitterList, setSitterList] = useState([]);
@@ -46,7 +47,8 @@ const index = () => {
       target: false,
     },
   ]);
-  const dropDownTime = ['09:00', '08:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+  const dropDownTime = ['10:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+  const { id } = useUserStore();
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
@@ -72,6 +74,7 @@ const index = () => {
     }
 
     const params = {
+      userId: id,
       weekdays: str.slice(0, -1),
       startTime: startTime,
       endTime: endTime,
