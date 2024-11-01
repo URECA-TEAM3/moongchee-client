@@ -8,8 +8,9 @@ export const useUserStore = create(
     (set) => ({
       ...initialUserState,
       login: (userData) => {
-        sessionStorage.setItem('userData', JSON.stringify(userData));
-        set(set(userData));
+        console.log('Logging in with user data:', userData);
+        // sessionStorage.setItem('userData', JSON.stringify(userData));
+        set(userData);
       },
       logout: () => {
         sessionStorage.removeItem('userData');

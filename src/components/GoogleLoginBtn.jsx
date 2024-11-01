@@ -2,10 +2,12 @@ import React from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../store/user';
 
 const GoogleLoginBtn = () => {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const navigate = useNavigate();
+  const { login } = useUserStore.getState();
 
   const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -117,6 +119,8 @@ const GoogleLoginBtn = () => {
         localStorage.setItem('refreshToken', refreshToken);
         sessionStorage.setItem('userData', JSON.stringify(userData));
         console.log('유저 데이터:', userData);
+
+        login(userData);
         navigate('/main');
       } else {
         navigate('/signup', { state: { provider: 'google', userId: response.data.userId, accessToken } });

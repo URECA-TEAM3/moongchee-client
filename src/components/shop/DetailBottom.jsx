@@ -58,7 +58,7 @@ const DetailBottom = ({ product }) => {
 
         {isVisible ? (
           <div className="flex grow">
-            <button className="grow" onClick={() => handleNavigate(productItem.quantity)}>
+            <button className="grow" onClick={() => navigate('/payment')}>
               <div className="bg-primary text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
             </button>
           </div>

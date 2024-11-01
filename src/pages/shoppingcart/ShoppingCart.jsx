@@ -122,7 +122,6 @@ function ShoppingCart() {
     const cartToSend = JSON.parse(localStorage.getItem('cart')) || [];
     const user_id = id;
 
-    console.log();
     await API.post(
       '/api/cart/save',
       { cartData: { cartToSend, user_id } },

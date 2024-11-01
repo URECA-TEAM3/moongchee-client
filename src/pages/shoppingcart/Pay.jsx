@@ -39,6 +39,7 @@ const Pay = () => {
 
   useEffect(() => {
     const cartItems = location.state.cartItems || {};
+    console.log(cartItems);
     const filteredItems = cartItems.filter((item) => item.checked);
     setSelectItems(filteredItems);
     setOrderData((prev) => ({

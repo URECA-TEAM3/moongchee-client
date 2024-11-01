@@ -23,6 +23,9 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
     setTimeout(() => setIsVisible(false), 200);
   };
 
+  const totalPrice = productItem.price * productItem.quantity;
+  const finalAmount = 500 - totalPrice;
+
   return (
     <>
       {/* 배경 블러 처리 */}
@@ -31,7 +34,7 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
       <div
         className={`
           ${isAnimating ? 'translate-y-0' : 'translate-y-full'} transform transition-transform duration-300
-        absolute bottom-[60px] bg-white w-full shadow-inner pb-10 rounded-t-3xl`}
+        absolute bottom-[60px] bg-white w-full shadow-inner pb-4 rounded-t-3xl`}
       >
         <div className="flex justify-end pt-3 pr-5">
           <button onClick={handleClose}>
@@ -57,16 +60,27 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
                     <CiCirclePlus size={25} color={'#2589E7'} />
                   </button>
                 </div>
+                <div className="flex mb-1 text-sm mt-1">
+                  총 상품 금액 :
+                  <div className="mx-2">
+                    <DogChew />
+                  </div>
+                  <span className="font-bold">{productItem.price * productItem.quantity}개</span>
+                </div>
               </div>
             </div>
           </div>
         </li>
-        <div className="flex justify-end pr-10">
-          최종 금액 :
-          <div className="mx-2">
-            <DogChew />
+        <div className="flex flex-col items-end justify-center pr-10 mt-4">
+          <div className="flex">
+            결제 후 잔여
+            <div className="mx-1 flex">
+              <DogChew />
+            </div>
+            <span className={`font-bold`}>
+              : 500 - {totalPrice} =<span className={`ml-1 ${finalAmount > 0 ? 'text-primary' : 'text-red-500'}`}>{finalAmount}개</span>
+            </span>
           </div>
-          <span className="font-bold">{productItem.price * productItem.quantity}개</span>
         </div>
       </div>
       <div className="h-[86px]"></div>
