@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import successImage from '../../assets/images/white-curve.png';
 import axios from 'axios';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 export default function SuccessPage() {
   const { getPoint } = useUserStore((state) => state);

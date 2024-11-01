@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 const ChangeAddress = () => {
   const { id, name, phone, address } = useUserStore((state) => state);

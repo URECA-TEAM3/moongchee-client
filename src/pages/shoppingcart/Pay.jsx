@@ -5,13 +5,14 @@ import PayInfo from '../../components/shop/PayInfo';
 import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { id, name, phone, address } = useUserStore((state) => state);
 
   const openModal = () => {
+    console.log(orderData);
     setIsModalOpen(true);
   };
 
@@ -38,20 +39,29 @@ const Pay = () => {
   };
 
   useEffect(() => {
-    const cartItems = location.state.cartItems || {};
-    console.log(cartItems);
-    const filteredItems = cartItems.filter((item) => item.checked);
-    setSelectItems(filteredItems);
+    const cartItems = location.state.cartItems || '';
+    const buyNowItems = location.state.buyNowData || '';
+
+    if (Boolean(cartItems)) {
+      const filteredItems = cartItems.filter((item) => item.checked);
+      setSelectItems(filteredItems);
+    } else if (Boolean(buyNowItems)) {
+      setSelectItems([buyNowItems]);
+    }
+  }, []);
+
+  useEffect(() => {
+    // selectedItems가 변경될 때마다 orderData 업데이트
     setOrderData((prev) => ({
       ...prev,
-      total: filteredItems.reduce((acc, item) => acc + item.quantity * item.price, 0),
-      productData: filteredItems.map((item) => ({
+      total: selectedItems.reduce((acc, item) => acc + item.quantity * item.price, 0),
+      productData: selectedItems.map((item) => ({
         product_id: item.product_id,
         quantity: item.quantity,
         price: item.price,
       })),
     }));
-  }, []);
+  }, [selectedItems]);
 
   return (
     <div className="bg-white flex flex-col min-h-full">
@@ -94,7 +104,7 @@ const Pay = () => {
       <div className="mb-10">
         <ul>
           {selectedItems.map((item) => (
-            <li key={item.cart_id} className="cart-item text-lg">
+            <li key={item.cart_id || item.product_id} className="cart-item text-lg">
               <div className="flex items-start border-b-[1px] border-divider  w-full mx-auto py-5 px-10">
                 <div className="flex grow">
                   <img src={item.image} alt={item.name} className="mr-7 cart-item-image w-[150px]" />

@@ -3,32 +3,52 @@ import { CiCircleMinus } from 'react-icons/ci';
 import { CiCirclePlus } from 'react-icons/ci';
 import { IoCloseOutline } from 'react-icons/io5';
 import DogChew from './DogChew';
-import { useUserStore } from '../store/user';
+import { useUserStore } from '../store/userStore';
 
-const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
-  const { points } = useUserStore((state) => state);
+const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
+  const { points, id } = useUserStore((state) => state);
+
   const [isAnimating, setIsAnimating] = useState(false);
-  const [price, setPrice] = useState({
-    ProductTotal: 0,
-    UserTotal: 0,
-  });
-
   const handleQuantityChange = (id, delta) => {
-    setProductItem((prevItem) => ({
-      ...prevItem,
-      quantity: Math.max(1, (prevItem.quantity || 1) + delta),
-    }));
+    setProductItem((prevItem) => {
+      const newQuantity = Math.max(1, (prevItem.quantity || 1) + delta);
+      const ProductTotalPrice = prevItem.price * newQuantity;
+
+      // 상품 전체 가격과 유저의 최종 금액 업데이트
+      setPrice({
+        ProductTotal: ProductTotalPrice,
+        UserTotal: points - ProductTotalPrice,
+      });
+
+      // buyNowData 업데이트
+      setBuyNowData((prevData) => ({
+        ...prevData,
+        quantity: newQuantity, // 수량 업데이트
+        total: ProductTotalPrice, // 전체 금액 업데이트
+      }));
+
+      // 버튼 활성화 상태 업데이트
+      const newUserTotal = points - ProductTotalPrice;
+      setDisabledBtn(newUserTotal < 0); // 유저 총액이 0보다 작으면 버튼 비활성화
+
+      return {
+        ...prevItem,
+        quantity: newQuantity,
+      };
+    });
   };
 
   useEffect(() => {
     setIsAnimating(true);
-    const productTotalPrice = productItem.price * productItem.quantity;
-    const finalAmount = points - totalPrice;
+    const ProductTotalPrice = productItem.price * productItem.quantity;
+    const UserTotalPrice = points - ProductTotalPrice;
 
     setPrice({
-      ProductTotal: totalPrice,
-      UserTotal: finalAmount,
+      ProductTotal: ProductTotalPrice,
+      UserTotal: UserTotalPrice,
     });
+
+    console.log(price);
   }, []);
 
   const handleClose = () => {
@@ -75,7 +95,7 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
                   <div className="mx-2">
                     <DogChew />
                   </div>
-                  <span className="font-bold">{productItem.price * productItem.quantity}개</span>
+                  <span className="font-bold">{price.ProductTotal}개</span>
                 </div>
               </div>
             </div>
@@ -88,7 +108,7 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
               <DogChew />
             </div>
             <span className={`font-bold`}>
-              : {points} - {totalPrice} = <span className={`ml-1 ${finalAmount > 0 ? 'text-primary' : 'text-red-500'}`}>{finalAmount}개</span>
+              : {points} - {price.ProductTotal} = <span className={`ml-1 ${price.UserTotal > 0 ? 'text-primary' : 'text-red-500'}`}>{price.UserTotal}개</span>
             </span>
           </div>
         </div>

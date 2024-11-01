@@ -10,7 +10,7 @@ import API from '../../api/axiosInstance';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { IoMdClose } from 'react-icons/io';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 function ShoppingCart() {
   const navigate = useNavigate();
@@ -214,7 +214,7 @@ function ShoppingCart() {
               <div className="flex">
                 <span className="mr-2">결제 후 </span> <DogChew />
               </div>
-              <div>{afterPayment}개</div>
+              <div className="font-bold">{afterPayment}개</div>
             </div>
           )}
 

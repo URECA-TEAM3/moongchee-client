@@ -2,7 +2,7 @@ import React from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '../store/user';
+import { useUserStore } from '../store/userStore';
 
 const GoogleLoginBtn = () => {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
