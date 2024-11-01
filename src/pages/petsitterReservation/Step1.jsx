@@ -2,23 +2,25 @@ import React, { useState, useMemo, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
+import axios from 'axios';
 import Dropdown from '../../components/DropDown';
 import DogChew from '../../components/DogChew';
 import ToolTip from '../../components/ToolTip';
 import useReservationStore from '../../store/reservationStore';
 import usePetSitterStore from '../../store/petsitterStore';
+import { useUserStore } from '../../store/user';
 
 const index = ({ handleNextStep }) => {
-  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const { id } = useUserStore();
   const { setReservationData } = useReservationStore();
   const { petsitter } = usePetSitterStore();
   const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const [formData, setFormData] = useState({
-    user_id: userData.id,
+    user_id: id,
     sitter_id: petsitter.id,
     requestDate: '',
-    startTime: '선택',
-    endTime: '선택',
+    startTime: petsitter.startTime,
+    endTime: petsitter.endTime,
     status: 'reserved',
     request: '',
     pet: '선택',
@@ -26,7 +28,7 @@ const index = ({ handleNextStep }) => {
     workingTime: '',
     price: 0,
   });
-  const petList = ['말티즈', '시츄', '리트리버', '푸들'];
+  const [petList, setPetList] = useState([]);
 
   const getTime = (time) => {
     if (time === '선택') {
@@ -44,11 +46,36 @@ const index = ({ handleNextStep }) => {
   };
 
   const handleChange = (name, value) => {
-    console.log(value);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handlePetList = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/pets/${id}`);
+      const petList = res.data.map((pet) => pet.name);
+      setPetList(petList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const isWeekday = (date) => {
+    const dayMapping = {
+      SUN: 0,
+      MON: 1,
+      TUE: 2,
+      WED: 3,
+      THU: 4,
+      FRI: 5,
+      SAT: 6,
+    };
+
+    const allowedDays = petsitter.weekdays.split(',');
+    const day = date.getDay();
+    return allowedDays.map((day) => dayMapping[day]).includes(day);
   };
 
   const calculateTimeDifference = useMemo(() => {
@@ -61,6 +88,18 @@ const index = ({ handleNextStep }) => {
     const timeDifference = calculateTimeDifference;
     return handleSizeCost() * timeDifference + 150 * timeDifference;
   }, [formData.startTime, formData.endTime, formData.dogSize]);
+
+  const availableStartTimes = useMemo(() => {
+    const startIndex = dropDownTime.indexOf(petsitter.startTime);
+    const endIndex = dropDownTime.indexOf(petsitter.endTime);
+    return dropDownTime.slice(startIndex, endIndex + 1);
+  }, [petsitter.startTime, petsitter.endTime]);
+
+  const availableEndTimes = useMemo(() => {
+    const startIndex = Math.max(dropDownTime.indexOf(formData.startTime), dropDownTime.indexOf(petsitter.startTime));
+    const endIndex = dropDownTime.indexOf(petsitter.endTime);
+    return startIndex >= 0 ? dropDownTime.slice(startIndex + 1, endIndex + 1) : [];
+  }, [formData.startTime, petsitter.startTime, petsitter.endTime]);
 
   useEffect(() => {
     handleChange('price', handlePrice);
@@ -97,6 +136,10 @@ const index = ({ handleNextStep }) => {
     handleNextStep();
   };
 
+  useEffect(() => {
+    handlePetList();
+  }, []);
+
   return (
     <div className="p-5">
       <h1>펫시터</h1>
@@ -123,6 +166,7 @@ const index = ({ handleNextStep }) => {
             showYearDropdown
             showMonthDropdown
             dropdownMode="select"
+            filterDate={isWeekday}
             maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
             yearDropdownItemNumber={100}
             locale={ko}
@@ -134,7 +178,7 @@ const index = ({ handleNextStep }) => {
         <div className="flex justify-center items-center gap-5 mt-3">
           <Dropdown
             label={formData.startTime}
-            options={dropDownTime}
+            options={availableStartTimes}
             title={'Start Time'}
             onSelect={(option) => {
               handleChange('startTime', option);
@@ -143,7 +187,7 @@ const index = ({ handleNextStep }) => {
           ~
           <Dropdown
             label={formData.endTime}
-            options={dropDownTime}
+            options={availableEndTimes}
             title={'Start Time'}
             onSelect={(option) => {
               handleChange('endTime', option);

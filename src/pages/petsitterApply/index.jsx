@@ -150,9 +150,9 @@ const index = () => {
       <div className="mt-3 flex justify-center items-center flex-col">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
           {formData.selectedImage !== defaultProfileImage ? (
-            <img src={formData.selectedImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
+            <img src={formData.selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
           ) : (
-            <img src={defaultProfileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+            <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
           )}
         </div>
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />

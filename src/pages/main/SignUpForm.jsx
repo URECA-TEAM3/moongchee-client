@@ -73,7 +73,7 @@ const SignUpForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log(file)
+    console.log(file);
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       setSelectedImageFile(file);
@@ -290,7 +290,6 @@ const SignUpForm = () => {
       } else {
         downloadURL = defaultProfileImage;
       }
-      
 
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
@@ -302,7 +301,7 @@ const SignUpForm = () => {
         provider,
         token: userId,
         nickname,
-        profileImageUrl: downloadURL ,
+        profileImageUrl: downloadURL,
       });
       console.log('디테일 주소', detailedAddress);
 
@@ -321,6 +320,7 @@ const SignUpForm = () => {
           detailAddress: detailedAddress, // 세션 데이터에 추가
           birthDate: formattedBirthDate,
           provider,
+          petsitter,
           userId,
           nickname,
           profile_image_url: downloadURL,

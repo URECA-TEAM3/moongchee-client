@@ -3,13 +3,12 @@ import ReservationCard from '../../components/ReservationCard';
 import Modal from '../../components/Modal';
 import axios from 'axios';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../store/user';
 
 const index = () => {
   const navigate = useNavigate();
-  const userData = sessionStorage.getItem('userData');
-  const parsedData = userData ? JSON.parse(userData) : null;
-  const [id, setId] = useState(parsedData.id);
+  const location = useLocation();
   const [reservationList, setReservationList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
@@ -18,12 +17,13 @@ const index = () => {
     reservationId: '',
     price: '',
   });
+  const { id } = useUserStore();
 
   const handleReservationList = async () => {
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
         user_id: id,
-        user_type: 'user', // 마찬가지
+        user_type: location.state.type,
       });
 
       const reservationList = res.data.data.map((item) => {

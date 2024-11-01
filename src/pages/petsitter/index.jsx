@@ -47,16 +47,16 @@ const index = () => {
       target: false,
     },
   ]);
-  const dropDownTime = ['10:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
-  const { id } = useUserStore();
+  const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+  const { id, petsitter } = useUserStore();
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
     navigate('/petsitter/apply');
   };
 
-  const handleReservationClick = () => {
-    navigate('/petsitter/reservation');
+  const handleReservationClick = (type) => {
+    navigate('/petsitter/reservation/list', { state: { type: type } });
   };
 
   const handleProfileClick = () => {
@@ -104,22 +104,56 @@ const index = () => {
     handleSearchClick();
   }, [dayList, startTime, endTime]);
 
+  useEffect(() => {
+    console.log(petsitter);
+    if (petsitter) {
+      setIsPetSitter(true);
+    } else {
+      setIsPetSitter(false);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col gap-y-5 px-5 py-4 justify-center w-full">
       <h1 className="text-2xl subpixel-antialiased w-full">펫시터</h1>
-      <div className="flex items-center container gap-5 w-full">
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleApplyClick}>
-          펫시터 지원하기
-        </button>
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleReservationClick}>
-          예약 / 취소 내역
-        </button>
-        {isPetSitter && (
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal" onClick={handleProfileClick}>
-            나의 펫시터 프로필
+      {isPetSitter ? (
+        <div className="flex items-center container gap-5 w-full">
+          <button
+            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
+            onClick={() => handleReservationClick('user')}
+          >
+            예약 / 취소 내역
           </button>
-        )}
-      </div>
+          {isPetSitter && (
+            <button
+              className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
+              onClick={() => handleReservationClick('petsitter')}
+            >
+              요청 목록
+            </button>
+          )}
+          {isPetSitter && (
+            <button
+              className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
+              onClick={handleProfileClick}
+            >
+              나의 펫시터 프로필
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center container gap-5 w-full">
+          <button className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white" onClick={handleApplyClick}>
+            펫시터 지원하기
+          </button>
+          <button
+            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
+            onClick={handleReservationClick}
+          >
+            예약 / 취소 내역
+          </button>
+        </div>
+      )}
       <div className="w-full">
         <div className="search">
           <span className="text-text text-sm">펫시터가 필요한 요일과 시간을 선택해보세요</span>

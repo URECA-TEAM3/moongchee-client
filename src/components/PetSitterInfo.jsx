@@ -8,6 +8,7 @@ const PetSitterInfo = ({ info }) => {
   const { setPetsitterData } = usePetSitterStore();
 
   const handleInfoClick = () => {
+    console.log(info);
     setPetsitterData(info);
     navigate(`/petsitter/detail/${info.name}`);
   };
