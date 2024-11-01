@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useUserStore } from '../store/user';
 
 const ReservationCard = ({ info, openModal }) => {
+  console.log(info);
   const [isPetSitter, setIsPetSitter] = useState(true);
-
+  const { petsitter } = useUserStore();
   const navigate = useNavigate();
 
   const openModalAction = (value) => {
@@ -12,7 +14,8 @@ const ReservationCard = ({ info, openModal }) => {
   };
 
   const handleStatusCode = () => {
-    if (info.status === 'reserved') return '예약 완료';
+    if (info.status === 'reserved') return '예약 대기';
+    else if (info.status === 'confirmed') return '예약 완료';
     else if (info.status === 'cancelled') return '취소 완료';
     else if (info.status === 'completed') return '펫시팅 완료';
     else return '';
@@ -20,11 +23,19 @@ const ReservationCard = ({ info, openModal }) => {
 
   const handleDetailClick = () => navigate('/petsitter/reservation/detail');
 
+  useEffect(() => {
+    if (petsitter) {
+      setIsPetSitter(true);
+    } else {
+      setIsPetSitter(false);
+    }
+  }, []);
+
   return (
     <div className={`rounded-lg shadow-sm p-5 ${info.status === 'reserved' ? 'bg-paleblue' : 'bg-gray-100'}`}>
       <div className="profile flex items-center">
         <img
-          src="/src/assets/images/dog.jpeg"
+          src={info.profile_image}
           className={`object-cover object-center w-16 h-16 rounded-full ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`}
         />
         <div className="personal ml-5">
@@ -39,12 +50,14 @@ const ReservationCard = ({ info, openModal }) => {
             <span className="font-semibold mr-3">📅 {info.requestDate}</span> 🕟 {`${info.startTime} - ${info.endTime}`}
           </span>
         </div>
-        <button onClick={handleDetailClick} className="cursor-pointer -mt-16">
-          <ChevronRightIcon className="h-6 w-6 ml-5" />
-        </button>
+        {info.status !== 'cancelled' && (
+          <button onClick={handleDetailClick} className="cursor-pointer -mt-16">
+            <ChevronRightIcon className="h-6 w-6 ml-5" />
+          </button>
+        )}
       </div>
       <div className="flex gap-5 mt-3">
-        {!isPetSitter ? (
+        {isPetSitter ? (
           <div className="flex gap-5 mt-3 w-full">
             <button className="text-white bg-delete px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModalAction('reject')}>
               거절

@@ -105,7 +105,6 @@ const index = () => {
   }, [dayList, startTime, endTime]);
 
   useEffect(() => {
-    console.log(petsitter);
     if (petsitter) {
       setIsPetSitter(true);
     } else {
@@ -148,7 +147,7 @@ const index = () => {
           </button>
           <button
             className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={handleReservationClick}
+            onClick={() => handleReservationClick('user')}
           >
             예약 / 취소 내역
           </button>

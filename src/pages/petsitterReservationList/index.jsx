@@ -34,6 +34,7 @@ const index = () => {
           endTime: item.endTime,
           status: item.status,
           price: item.price,
+          profile_image: item.profile_image,
           reservationId: item.reservation_id,
         };
       });
@@ -42,12 +43,16 @@ const index = () => {
     } catch (error) {}
   };
 
-  const handleReservationCancel = async () => {
+  const handleReservationUpdate = async (type) => {
     try {
-      const res = await axios.post('http://localhost:3000/api/petsitter/reservation/cancel', { reservation_id: selectedReservation.reservationId });
-      console.log('Cancellation response:', res.data);
+      const res = await axios.post(`http://localhost:3000/api/petsitter/reservation/${type === 'confirm' ? 'confirm' : 'cancel'}`, {
+        reservation_id: selectedReservation.reservationId,
+      });
+      console.log('response:', res.data);
       closeModal();
-      refundPoint();
+      if (!type === 'confirm') {
+        refundPoint();
+      }
       handleReservationList();
     } catch (error) {
       console.error('Error cancelling reservation:', error);
@@ -128,7 +133,10 @@ const index = () => {
             <button onClick={closeModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
               취소
             </button>
-            <button onClick={handleReservationCancel} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
+            <button
+              onClick={() => handleReservationUpdate(status === 'confirm' ? 'confirm' : 'cancel')}
+              className="px-8 py-2 w-full bg-delete text-white rounded-lg"
+            >
               확인
             </button>
           </div>
