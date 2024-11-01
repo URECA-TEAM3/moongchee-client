@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { ShoppingCartIcon, IdentificationIcon, HomeIcon, ChatBubbleLeftEllipsisIcon, UserIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, IdentificationIcon, HomeIcon, BuildingStorefrontIcon, UserIcon } from '@heroicons/react/24/outline';
 
 function Navbar(props) {
   const location = useLocation();
@@ -16,10 +16,10 @@ function Navbar(props) {
           </button>
         </a>
 
-        <a href="/petsitter">
+        <a href="/shoppingmall">
           <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
-            <IdentificationIcon className="size-6" color={curr == '/petsitter' ? '#404040' : '#D9D9D9'} />
-            <span>펫시팅</span>
+            <BuildingStorefrontIcon className="size-6" color={curr == '/shoppingmall' ? '#404040' : '#D9D9D9'} />
+            <span>쇼핑몰</span>
           </button>
         </a>
 
@@ -30,10 +30,10 @@ function Navbar(props) {
           </button>
         </a>
 
-        <a href="/chat">
+        <a href="/petsitter">
           <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
-            <ChatBubbleLeftEllipsisIcon className="size-6" color={curr == '/chat' ? '#404040' : '#D9D9D9'} />
-            <span>채팅</span>
+            <IdentificationIcon className="size-6" color={curr == '/petsitter' ? '#404040' : '#D9D9D9'} />
+            <span>펫시팅</span>
           </button>
         </a>
 

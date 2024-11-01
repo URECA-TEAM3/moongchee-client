@@ -18,11 +18,10 @@ const LoginSuccessPage = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start items-center min-h-screen bg-white pt-12">
-      {' '}
-      <img src={successImage} alt="회원가입 성공" className="w-[300px] h-[300px] mb-6" />
+    <div className="flex flex-col justify-start items-center h-full bg-white overflow-y-auto p-5">
+      <img src={successImage} alt="회원가입 성공" className="w-[300px]" />
       <h2 className="text-lg font-bold text-gray-800">회원가입이 완료되었습니다</h2>
-      <button onClick={handleRegisterClick} className="mt-6 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none">
+      <button onClick={handleRegisterClick} className="mt-6 py-2 px-4 bg-primary text-white rounded-lg focus:outline-none">
         바로 반려동물 등록하기
       </button>
       <div className="flex flex-col items-center mt-4">
