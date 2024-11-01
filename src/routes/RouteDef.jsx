@@ -26,6 +26,8 @@ import SuccessPage from '../pages/mypage/Success';
 import FailPage from '../pages/mypage/Fail';
 
 import Mypage from '../pages/mypage/Mypage';
+import Pay from '../pages/shoppingcart/Pay';
+import ChangeAddress from '../pages/shoppingcart/ChangeAddress';
 import EditUserInfo from '../pages/mypage/EditUserInfo';
 import EditPetInfo from '../pages/mypage/EditPetInfo';
 import ShopHistory from '../pages/mypage/ShopHistory';
@@ -172,6 +174,14 @@ const ShoppingMallScreens = {
         <ShopDetail />
       </PrivateRoute>
     ),
+  },
+  Pay: {
+    path: '/payment',
+    element: <Pay />,
+  },
+  ChangeAddress: {
+    path: 'changeAddress',
+    element: <ChangeAddress />,
   },
   ShopCategory: {
     path: '/shoppingmall/category',

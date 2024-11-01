@@ -1,107 +1,91 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Category from '../../components/shop/Category';
 import ItemBox from '../../components/shop/ItemBox';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../../firebase';
-import API from '../../api/axiosInstance';
 import { CgSearchLoading } from 'react-icons/cg';
+import { useProductStore } from '../../store/products';
+import ScrollToTop from '../../components/ScrollToTop';
+import { useLocation } from 'react-router-dom';
 
 const ShopMain = () => {
-  const [selectedCategory, setSelectedCategory] = useState(0);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [sortOption, setSortOption] = useState('popular');
-
-  const handleSortChange = (event) => {
-    const option = event.target.value;
-    setSortOption(option);
-    const sortedProducts = sortProducts(products, option);
-    setProducts(sortedProducts);
-  };
-
-  const sortProducts = (products, option) => {
-    const sortedProducts = [...products];
-
-    if (option === 'latest') {
-      sortedProducts.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-    } else if (option === 'popular') {
-      sortedProducts.sort((a, b) => b.sales - a.sales);
-    } else if (option === 'high-price') {
-      sortedProducts.sort((a, b) => b.price - a.price);
-    } else {
-      sortedProducts.sort((a, b) => a.price - b.price);
-    }
-
-    return sortedProducts;
-  };
-
-  // 모든 상품 조회
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await API.get('/api/products');
-
-      const productsWithImages = await Promise.all(
-        response.data.data.map(async (product) => {
-          try {
-            const storageRef = ref(storage, product.image);
-            const imageUrl = await getDownloadURL(storageRef);
-            return {
-              ...product,
-              image: imageUrl, // URL로 업데이트
-            };
-          } catch (error) {
-            console.error('상품 이미지 로드 실패:', error);
-            return product;
-          }
-        })
-      );
-
-      setProducts(productsWithImages);
-      const sortedProducts = sortProducts(productsWithImages, sortOption);
-      setProducts(sortedProducts);
-    } catch (error) {
-      console.error('상품 목록 조회 실패:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { products, loadProducts, sortOption, setSortOption, loading, selectedCategory, setSelectedCategory } = useProductStore((state) => state);
+  const scrollContainerRef = useRef(null);
+  const location = useLocation();
 
   useEffect(() => {
-    fetchProducts();
+    loadProducts();
+
+    if (location.pathname === '/shoppingmall/category') {
+      setSelectedCategory(1);
+    } else {
+      setSelectedCategory(0);
+    }
+
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = Number(scrollPosition);
+      sessionStorage.removeItem('scrollPosition');
+    }
   }, []);
+
+  const handleItemClick = () => {
+    if (scrollContainerRef.current) {
+      sessionStorage.setItem('scrollPosition', scrollContainerRef.current.scrollTop);
+    }
+  };
+
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategory(categoryId);
+
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleSortChange = (event) => {
+    setSortOption(event.target.value);
+
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const filteredItems = selectedCategory === 0 ? products : products.filter((product) => product.category_id === selectedCategory);
 
   return (
-    <div className="bg-white container inline-grid h-full py-5">
-      <div className="">
-        <Category selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-      </div>
-      {/* 카테고리별 조회 */}
-      <div className="p-5 flex justify-end mr-10 text-sm">
-        <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">
-          <option value="latest">최신순</option>
-          <option value="popular">인기순</option>
-          <option value="high-price">가격 높은순</option>
-          <option value="low-price">가격 낮은순</option>
-        </select>
-      </div>
+    <>
+      <div className="bg-white container inline-grid h-full py-5 relative">
+        <div className="">
+          <Category selectedCategory={selectedCategory} setSelectedCategory={handleCategoryClick} />
+        </div>
 
-      {/* 전체 상품 목룍 */}
-      {loading ? (
-        <div className="flex justify-center items-center">
-          상품 정보 불러오는 중 ...
-          <CgSearchLoading size={20} />
+        {/* 카테고리별 조회 */}
+        <div className="p-5 flex justify-end mr-10 text-sm">
+          <select id="sort-dropdown" value={sortOption} onChange={handleSortChange} className="text-end">
+            <option value="latest">최신순</option>
+            <option value="popular">인기순</option>
+            <option value="high-price">가격 높은순</option>
+            <option value="low-price">가격 낮은순</option>
+          </select>
         </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
-          {filteredItems.map((item) => (
-            <ItemBox item={item} key={item.id} />
-          ))}
-        </div>
-      )}
-    </div>
+
+        {/* 전체 상품 목룍 */}
+        {loading ? (
+          <div className="flex justify-center items-center">
+            상품 정보 불러오는 중 ...
+            <CgSearchLoading size={20} />
+          </div>
+        ) : (
+          <div ref={scrollContainerRef} className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
+            {filteredItems.map((item) => (
+              <div key={item.id} className="border rounded-2xl p-3" onClick={handleItemClick}>
+                <ItemBox item={item} />
+              </div>
+            ))}
+          </div>
+        )}
+        <ScrollToTop scrollContainerRef={scrollContainerRef} />
+      </div>
+    </>
   );
 };
 
