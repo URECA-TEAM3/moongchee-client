@@ -2,20 +2,27 @@ import React, { useEffect, useState } from 'react';
 import ReservationCard from '../../components/ReservationCard';
 import Modal from '../../components/Modal';
 import axios from 'axios';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 
 const index = () => {
+  const navigate = useNavigate();
+  const userData = sessionStorage.getItem('userData');
+  const parsedData = userData ? JSON.parse(userData) : null;
+  const [id, setId] = useState(parsedData.id);
   const [reservationList, setReservationList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [selectedReservation, setSelectedReservation] = useState({
     name: '',
     reservationId: '',
+    price: '',
   });
 
   const handleReservationList = async () => {
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
-        user_id: 1, // 나중에 user 에서 가져옴
+        user_id: id,
         user_type: 'user', // 마찬가지
       });
 
@@ -26,6 +33,7 @@ const index = () => {
           startTime: item.startTime,
           endTime: item.endTime,
           status: item.status,
+          price: item.price,
           reservationId: item.reservation_id,
         };
       });
@@ -38,13 +46,31 @@ const index = () => {
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/cancel', { reservation_id: selectedReservation.reservationId });
       console.log('Cancellation response:', res.data);
-      alert('예약이 취소되었습니다.');
       closeModal();
+      refundPoint();
       handleReservationList();
     } catch (error) {
       console.error('Error cancelling reservation:', error);
-      alert('예약 취소에 실패했습니다.');
       closeModal();
+    }
+  };
+
+  const refundPoint = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/members/update-points', {
+        userId: id,
+        amount: selectedReservation.price,
+      });
+
+      console.log('Updated points successfully:', response);
+    } catch (error) {
+      if (error.response) {
+        console.error('Error updating points:', error.response.data.message || error.message);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error in setup:', error.message);
+      }
     }
   };
 
@@ -53,6 +79,7 @@ const index = () => {
     setSelectedReservation({
       name: info.name,
       reservationId: info.reservationId,
+      price: info.price,
     });
     setStatus(value);
   };
@@ -64,41 +91,49 @@ const index = () => {
   }, []);
 
   return (
-    <div className="px-10 flex flex-col gap-10">
-      {reservationList.map((item, index) => (
-        <ReservationCard key={item.name + index} info={item} openModal={openModal} />
-      ))}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title={
-          status === 'confirm' ? (
-            <div>
-              <span className="text-lg font-bold mr-2">{selectedReservation.name}</span>님의 요청을 수락하시겠습니까?
-            </div>
-          ) : status === 'reject' ? (
-            <div>
-              <span className="text-lg font-bold mr-2">{selectedReservation.name}</span>님의 요청을 거절하시겠습니까?
-            </div>
-          ) : (
-            <div>
-              <span className="text-lg font-bold mr-2">{selectedReservation.name}</span>님에게 예약된 예약건을 취소하시겠습니까?
-            </div>
-          )
-        }
-      >
-        <div className="my-10 flex justify-center">
-          <span className="text-alert font-bold text-lg">* 승인을 하면 취소 할 수 없습니다.</span>
-        </div>
-        <div className="flex gap-4 mt-3">
-          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
-            취소
-          </button>
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={handleReservationCancel}>
-            수락
-          </button>
-        </div>
-      </Modal>
+    <div className="bg-white pb-10">
+      <div className="relative w-full flex items-center pb-4 pt-6">
+        <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+          <ChevronLeftIcon className="h-6 w-6 ml-5" />
+        </button>
+        <h1 className="mx-auto">예약 / 취소 내역</h1>
+      </div>
+      <div className="px-10 pt-5 flex flex-col gap-10 ">
+        {reservationList.map((item, index) => (
+          <ReservationCard key={item.name + index} info={item} openModal={openModal} />
+        ))}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={
+            status === 'confirm' ? (
+              <div>
+                <p className="text-lg font-bold">{selectedReservation.name}</p>님의 요청을 수락하시겠습니까?
+              </div>
+            ) : status === 'reject' ? (
+              <div>
+                <p className="text-lg font-bold">{selectedReservation.name}</p>님의 요청을 거절하시겠습니까?
+              </div>
+            ) : (
+              <div>
+                <p className="text-lg font-bold">{selectedReservation.name}</p>님에게 예약된 예약건을 취소하시겠습니까?
+              </div>
+            )
+          }
+        >
+          <div className="my-10 flex justify-center">
+            <span className="text-alert font-bold">이 과정은 돌이킬 수 없습니다.</span>
+          </div>
+          <div className="flex gap-4 mt-3">
+            <button onClick={closeModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
+              취소
+            </button>
+            <button onClick={handleReservationCancel} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
+              확인
+            </button>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };

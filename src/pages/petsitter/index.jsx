@@ -81,8 +81,9 @@ const index = () => {
       const res = await axios.get('http://localhost:3000/api/petsitter/list', { params });
       const sitterList = res.data.data.map((item) => {
         return {
+          id: item.id,
           name: item.name,
-          imageUrl: '',
+          imageUrl: item.image,
           weekdays: item.weekdays,
           startTime: item.startTime,
           endTime: item.endTime,

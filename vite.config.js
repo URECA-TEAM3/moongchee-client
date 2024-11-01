@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [react(), eslintPlugin()],
   server: {
     hmr: true, // HMR 활성화 여부
+    watch: {
+      usePolling: true,
+    },
   },
 });

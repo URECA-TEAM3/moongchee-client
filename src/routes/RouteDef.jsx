@@ -13,6 +13,7 @@ import ShopMain from '../pages/shoppingMall/ShopMain';
 import ShopDetail from '../pages/shoppingMall/ShopDetail';
 
 import PetSitter from '../pages/petsitter';
+import PetSitterApply from '../pages/petsitterApply';
 import PetSitterDetail from '../pages/petsitterDetail';
 import PetSitterReservation from '../pages/petsitterReservation';
 import PetSitterReservationList from '../pages/petsitterReservationList';
@@ -27,6 +28,8 @@ import SuccessPage from '../pages/mypage/Success';
 import FailPage from '../pages/mypage/Fail';
 
 import Mypage from '../pages/mypage/Mypage';
+import Pay from '../pages/shoppingcart/Pay';
+import ChangeAddress from '../pages/shoppingcart/ChangeAddress';
 import EditUserInfo from '../pages/mypage/EditUserInfo';
 import EditPetInfo from '../pages/mypage/EditPetInfo';
 import ShopHistory from '../pages/mypage/ShopHistory';
@@ -123,6 +126,14 @@ const PetSitterScreens = {
       </PrivateRoute>
     ),
   },
+  PetSitterApply: {
+    path: '/petsitter/apply',
+    element: (
+      <PrivateRoute>
+        <PetSitterApply />
+      </PrivateRoute>
+    ),
+  },
   PetSitterDetail: {
     path: '/petsitter/detail/:name',
     element: (
@@ -173,6 +184,14 @@ const ShoppingMallScreens = {
         <ShopDetail />
       </PrivateRoute>
     ),
+  },
+  Pay: {
+    path: '/payment',
+    element: <Pay />,
+  },
+  ChangeAddress: {
+    path: 'changeAddress',
+    element: <ChangeAddress />,
   },
   ShopCategory: {
     path: '/shoppingmall/category',
