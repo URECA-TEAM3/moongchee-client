@@ -15,7 +15,6 @@ const ItemBox = ({ item }) => {
         quantity: 1,
         checked: true,
       });
-      console.log(item.id);
       navigate('/shoppingcart');
     } catch (error) {
       console.error('Error adding product to cart:', error);

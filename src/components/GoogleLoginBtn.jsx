@@ -119,7 +119,6 @@ const GoogleLoginBtn = () => {
         localStorage.setItem('refreshToken', refreshToken);
         sessionStorage.setItem('userData', JSON.stringify(userData));
         console.log('유저 데이터:', userData);
-
         login(userData);
         navigate('/main');
       } else {

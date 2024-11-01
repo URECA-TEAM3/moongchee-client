@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import API from '../api/axiosInstance';
 
 const initialUserState = {};
 
@@ -8,13 +9,22 @@ export const useUserStore = create(
     (set) => ({
       ...initialUserState,
       login: (userData) => {
-        console.log('Logging in with user data:', userData);
-        // sessionStorage.setItem('userData', JSON.stringify(userData));
         set(userData);
       },
       logout: () => {
         sessionStorage.removeItem('userData');
         set({ ...initialUserState });
+      },
+      getPoint: async (id) => {
+        try {
+          const response = await API.get(`/api/members/point/${id}`);
+          const points = response.data.data.point;
+
+          set({ points }); // Zustand 상태에 포인트 값 저장
+          console.log('포인트 요청 성공:', points);
+        } catch (error) {
+          console.error('포인트 요청 실패:', error);
+        }
       },
     }),
     {

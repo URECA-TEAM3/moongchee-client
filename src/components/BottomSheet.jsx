@@ -3,9 +3,15 @@ import { CiCircleMinus } from 'react-icons/ci';
 import { CiCirclePlus } from 'react-icons/ci';
 import { IoCloseOutline } from 'react-icons/io5';
 import DogChew from './DogChew';
+import { useUserStore } from '../store/user';
 
 const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
+  const { points } = useUserStore((state) => state);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [price, setPrice] = useState({
+    ProductTotal: 0,
+    UserTotal: 0,
+  });
 
   const handleQuantityChange = (id, delta) => {
     setProductItem((prevItem) => ({
@@ -16,15 +22,19 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
 
   useEffect(() => {
     setIsAnimating(true);
+    const productTotalPrice = productItem.price * productItem.quantity;
+    const finalAmount = points - totalPrice;
+
+    setPrice({
+      ProductTotal: totalPrice,
+      UserTotal: finalAmount,
+    });
   }, []);
 
   const handleClose = () => {
     setIsAnimating(false);
     setTimeout(() => setIsVisible(false), 200);
   };
-
-  const totalPrice = productItem.price * productItem.quantity;
-  const finalAmount = 500 - totalPrice;
 
   return (
     <>
@@ -78,7 +88,7 @@ const BottomSheet = ({ toggleBottomSheet, productItem, setIsVisible, setProductI
               <DogChew />
             </div>
             <span className={`font-bold`}>
-              : 500 - {totalPrice} =<span className={`ml-1 ${finalAmount > 0 ? 'text-primary' : 'text-red-500'}`}>{finalAmount}개</span>
+              : {points} - {totalPrice} = <span className={`ml-1 ${finalAmount > 0 ? 'text-primary' : 'text-red-500'}`}>{finalAmount}개</span>
             </span>
           </div>
         </div>
