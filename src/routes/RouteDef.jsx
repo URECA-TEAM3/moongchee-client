@@ -22,6 +22,7 @@ import PetSitterReservDetail from '../pages/petsitterReservDetail';
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
 import Chat from '../pages/chat/Chat';
 import ChargePage from '../pages/mypage/ChargePage';
+import PetRegister from '../pages/mypage/PetRegister';
 import CheckoutPage from '../pages/mypage/Checkout';
 import SuccessPage from '../pages/mypage/Success';
 import FailPage from '../pages/mypage/Fail';
@@ -218,6 +219,10 @@ const MypageScreens = {
         <EditUserInfo />
       </PrivateRoute>
     ),
+  },
+  PetRegister: {
+    path: '/mypage/petregister',
+    element: <PetRegister />,
   },
   EditPetInfo: {
     path: '/mypage/editpet/:id',
