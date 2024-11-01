@@ -9,10 +9,9 @@ import { useUserStore } from '../../store/userStore';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { id, name, phone, address } = useUserStore((state) => state);
+  const { id, name, phone, address, detailaddress } = useUserStore((state) => state);
 
   const openModal = () => {
-    console.log(orderData);
     setIsModalOpen(true);
   };
 
@@ -29,6 +28,7 @@ const Pay = () => {
 
   const confirmOrder = async () => {
     try {
+      console.log(orderData, 'send Data');
       const response = await API.post('/api/cart/pay', orderData);
       console.log(response);
       navigate('/main');
@@ -89,6 +89,7 @@ const Pay = () => {
             <div>
               <span className="text-[#9c9c9c]">주소 : </span>
               {address}
+              <span className="ml-2">{detailaddress}</span>
             </div>
           </div>
           <div>

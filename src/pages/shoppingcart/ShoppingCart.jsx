@@ -14,12 +14,13 @@ import { useUserStore } from '../../store/userStore';
 
 function ShoppingCart() {
   const navigate = useNavigate();
+  const { id, getPoint } = useUserStore((state) => state);
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
-  const [payment, setPayment] = useState(true); // 결제가능여부
+  const [payment, setPayment] = useState(true);
   const [cartItems, setCartItems] = useState([]);
   const [showItems, setShowItems] = useState(true);
-  const { id } = useUserStore((state) => state);
+  const [points, setPoints] = useState(0);
 
   const getCartItemsList = async () => {
     try {
@@ -47,8 +48,19 @@ function ShoppingCart() {
   };
 
   useEffect(() => {
-    getCartItemsList();
-  }, []);
+    const fetchPoints = async () => {
+      try {
+        const userPoints = await getPoint(id); // getPoint 함수 호출
+        console.log(userPoints);
+        setPoints(userPoints); // 상태 업데이트
+      } catch (error) {
+        console.error('Error fetching points:', error); // 에러 처리
+      }
+    };
+
+    fetchPoints(); // 비동기 함수 호출
+    getCartItemsList(); // 장바구니 아이템 리스트 가져오기
+  }, [id]); // 의존성 배열에 id 추가
 
   // 최종 결제 금액 계산
   const calculateTotal = () => {
@@ -112,9 +124,9 @@ function ShoppingCart() {
   useEffect(() => {
     const total = calculateTotal();
     setTotalPrice(total);
-    setAfterPayment(1000 - total);
+    setAfterPayment(points - total);
 
-    setPayment(1000 - total >= 0);
+    setPayment(points - total >= 0);
     setShowItems(cartItems.length > 0);
   }, [cartItems]);
 
@@ -191,7 +203,7 @@ function ShoppingCart() {
             </div>
             {payment ? (
               <div className="w-24 flex flex-col items-end gap-1">
-                <div>1000개</div>
+                <div>{points}개</div>
                 <div className="flex justify-between w-full pl-2">
                   <AiOutlineMinus />
                   <div>{totalPrice}개</div>
@@ -204,7 +216,7 @@ function ShoppingCart() {
                   잔액이 부족합니다.
                   <GoInfo className="ml-1" />
                 </div>
-                <div>{afterPayment}개</div>
+                <div>{points - totalPrice}개</div>
               </div>
             )}
           </div>

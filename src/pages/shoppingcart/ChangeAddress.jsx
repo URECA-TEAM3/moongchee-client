@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
+import API from '../../api/axiosInstance';
 
 const ChangeAddress = () => {
-  const { id, name, phone, address } = useUserStore((state) => state);
+  const { id, name, phone, address, detailaddress, updateProfile } = useUserStore((state) => state);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const [changeInfo, setChangeInfo] = useState({
+    id: id,
     name: name,
     phone: phone,
-    roadAddress: address,
-    detailedAddress: '상세주소',
+    address: address,
+    detailaddress: detailaddress,
   });
 
   const openPostcodePopup = () => {
@@ -70,12 +72,18 @@ const ChangeAddress = () => {
 
     setChangeInfo((prev) => ({
       ...prev,
-      roadAddress: fullAddress,
+      address: fullAddress,
     }));
   };
 
-  const handleChangeInfo = () => {
-    console.log(changeInfo);
+  const handleChangeInfo = async () => {
+    try {
+      const response = await API.post('/api/members/update-profile-in-cart', changeInfo);
+      updateProfile(response.data);
+      navigate(-1);
+    } catch (error) {
+      console.error();
+    }
   };
 
   return (
@@ -129,7 +137,7 @@ const ChangeAddress = () => {
             type="text"
             placeholder="도로명 주소 (필수)"
             className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
-            value={changeInfo.roadAddress}
+            value={changeInfo.address}
             readOnly
             onClick={openPostcodePopup}
           />
@@ -137,11 +145,11 @@ const ChangeAddress = () => {
           <input
             type="text"
             placeholder="상세 주소 입력 (선택)"
-            value={changeInfo.detailedAddress}
+            value={changeInfo.detailaddress}
             onChange={(e) => {
               setChangeInfo((prev) => ({
                 ...prev,
-                detailedAddress: e.target.value,
+                detailaddress: e.target.value,
               }));
             }}
             className="block w-full p-2 border border-gray-300 rounded mb-6"

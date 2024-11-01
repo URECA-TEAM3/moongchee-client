@@ -15,10 +15,6 @@ const DetailBottom = ({ product }) => {
     UserTotal: 0,
   });
 
-  useEffect(() => {
-    console.log(product);
-  });
-
   const [buyNowData, setBuyNowData] = useState({
     product_id: '',
     name: '',

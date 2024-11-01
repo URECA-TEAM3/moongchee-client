@@ -47,8 +47,6 @@ const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBot
       ProductTotal: ProductTotalPrice,
       UserTotal: UserTotalPrice,
     });
-
-    console.log(price);
   }, []);
 
   const handleClose = () => {
