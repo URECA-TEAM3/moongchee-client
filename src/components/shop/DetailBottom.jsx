@@ -6,7 +6,7 @@ import { useUserStore } from '../../store/userStore';
 
 const DetailBottom = ({ product }) => {
   const navigate = useNavigate();
-  const { id } = useUserStore((state) => state);
+  const { id, getPoint } = useUserStore((state) => state);
   const [isVisible, setIsVisible] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(false);
   const [productItem, setProductItem] = useState(product);
@@ -23,9 +23,9 @@ const DetailBottom = ({ product }) => {
     quantity: 1,
     checked: true,
   });
-
   const toggleBottomSheet = () => {
     setIsVisible(!isVisible);
+    getPoint(id);
   };
 
   const handleNavigate = async (quantity) => {
@@ -65,6 +65,7 @@ const DetailBottom = ({ product }) => {
 
   return (
     <>
+      {/* 바로 구매하기 > 바텀시트 */}
       <div className="fixed bottom-0 flex items-center justify-between w-[600px] bg-white ">
         {isVisible && (
           <BottomSheet
@@ -79,6 +80,8 @@ const DetailBottom = ({ product }) => {
           />
         )}
       </div>
+
+      {/* 기본 바텀바 */}
       <div className="fixed bottom-0 flex items-center justify-between w-[600px] bg-white z-20">
         <Link to="/shoppingcart">
           <div className="p-3 flex flex-col justify-center items-center">
@@ -104,6 +107,7 @@ const DetailBottom = ({ product }) => {
             )}
           </>
         ) : (
+          // 기본 바텀바
           <div className="flex grow">
             <button className="grow" onClick={() => handleNavigate(1)}>
               <div className={`p-3 mx-2 text-primary rounded-2xl text-center border border-primary`}>장바구니에 담기</div>

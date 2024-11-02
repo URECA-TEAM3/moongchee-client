@@ -1,9 +1,10 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import axios from 'axios';
 import Modal from '../../components/Modal';
+import toast, { Toaster } from 'react-hot-toast';
 
 const ShopHistory = () => {
   const userData = sessionStorage.getItem('userData');
@@ -13,11 +14,18 @@ const ShopHistory = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelPrice, setCancelPrice] = useState(0);
+  const location = useLocation();
+  const { pay } = location.state || {};
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
+  useEffect(() => {
+    if (pay === 'done') {
+      toast.success('결제 완료');
+    }
+  }, []);
   // 구매 내역 데이터 (예시)
   const items = [
     { id: 1, name: '순우리 국산 개껌 (4개입)', quantity: 1, price: 50 },
@@ -49,6 +57,7 @@ const ShopHistory = () => {
 
   return (
     <div>
+      <Toaster />
       <div>
         <div className="relative w-full flex items-center mb-4 mt-6">
           <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">

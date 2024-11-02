@@ -6,6 +6,7 @@ import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
 import { useUserStore } from '../../store/userStore';
+import toast, { Toaster } from 'react-hot-toast';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,10 +25,12 @@ const Pay = () => {
     userId: id,
     total: 0,
     productData: [],
+    status: 'paid',
   });
 
   const confirmOrder = async () => {
     try {
+      console.log(orderData);
       // 현재 날짜 orderData에 추가
       const currentDate = new Date().toISOString().split('T')[0];
       const updatedOrderData = {
@@ -36,8 +39,7 @@ const Pay = () => {
       };
 
       const response = await API.post('/cart/pay', updatedOrderData);
-      console.log(response);
-      navigate('/main');
+      navigate(`/mypage/shophistory/${id}`, { state: { pay: 'done', payId: id } });
     } catch (error) {
       console.error();
     }

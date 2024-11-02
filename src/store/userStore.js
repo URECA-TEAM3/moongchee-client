@@ -18,7 +18,7 @@ export const useUserStore = create(
       // 포인트 얻어오는 함수
       getPoint: async (id) => {
         try {
-          const response = await API.get(`/api/members/point/${id}`);
+          const response = await API.get(`/members/point/${id}`);
           const points = response.data.data.point;
 
           return points;

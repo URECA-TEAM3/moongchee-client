@@ -78,7 +78,7 @@ const ChangeAddress = () => {
 
   const handleChangeInfo = async () => {
     try {
-      const response = await API.post('/api/members/update-profile-in-cart', changeInfo);
+      const response = await API.put('/members/update-profile-in-cart', changeInfo);
       updateProfile(response.data);
       navigate(-1);
     } catch (error) {

@@ -51,16 +51,15 @@ function ShoppingCart() {
     const fetchPoints = async () => {
       try {
         const userPoints = await getPoint(id); // getPoint 함수 호출
-        console.log(userPoints);
-        setPoints(userPoints); // 상태 업데이트
+        setPoints(userPoints);
       } catch (error) {
         console.error('Error fetching points:', error); // 에러 처리
       }
     };
 
-    fetchPoints(); // 비동기 함수 호출
+    fetchPoints();
     getCartItemsList(); // 장바구니 아이템 리스트 가져오기
-  }, [id]); // 의존성 배열에 id 추가
+  }, [id]);
 
   // 최종 결제 금액 계산
   const calculateTotal = () => {
