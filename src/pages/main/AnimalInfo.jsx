@@ -49,6 +49,21 @@ const AnimalInfo = () => {
     { option: 'no', label: '안했어요' },
   ];
 
+  const fetchPet = async (petId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/pets/detail/${petId}`);
+      setName(response.data[0].name);
+      setAge(response.data[0].age);
+      setSpecies(response.data[0].species);
+      setGender(response.data[0].gender);
+      setNeutered(response.data[0].surgery == 1 ? 'yes' : 'no');
+      setWeight(response.data[0].weight);
+      setProfileImage(response.data[0].animal_image_url);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const storedUser = JSON.parse(sessionStorage.getItem('userData'));
     if (storedUser && storedUser.id) {
@@ -57,21 +72,6 @@ const AnimalInfo = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPet = async (petId) => {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/pets/detail/${petId}`);
-        setName(response.data[0].name);
-        setAge(response.data[0].age);
-        setSpecies(response.data[0].species);
-        setGender(response.data[0].gender);
-        setNeutered(response.data[0].surgery == 1 ? 'yes' : 'no');
-        setWeight(response.data[0].weight);
-        setProfileImage(response.data[0].animal_image_url);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     if (petId) fetchPet(petId);
   }, [petId]);
 
