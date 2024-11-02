@@ -66,12 +66,6 @@ const SignUpForm = () => {
     return () => clearInterval(interval);
   }, [showVerificationInput, timer]);
 
-  const formatTime = (seconds) => {
-    const min = String(Math.floor(seconds / 60)).padStart(2, '0');
-    const sec = String(seconds % 60).padStart(2, '0');
-    return `${min}:${sec}`;
-  };
-
   const handlePhoneChange = (e) => {
     const value = e.target.value;
     if (/^[0-9\b]+$/.test(value) || value === '') {
