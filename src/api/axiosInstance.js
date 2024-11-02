@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = sessionStorage.getItem('accessToken');
   if (accessToken) {
+    console.log('여기들어오냐');
     config.headers['Authorization'] = `Bearer ${accessToken}`;
   }
   return config;
@@ -23,6 +24,7 @@ axiosInstance.interceptors.response.use(
 
       if (newAccessToken) {
         sessionStorage.setItem('accessToken', newAccessToken);
+        console.log('여기들어오냐');
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       }
