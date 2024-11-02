@@ -105,7 +105,7 @@ const index = () => {
       </div>
       <div className="px-10 pt-5 flex flex-col gap-10 ">
         {reservationList.map((item, index) => (
-          <ReservationCard key={item.name + index} info={item} openModal={openModal} />
+          <ReservationCard key={item.name + index} info={item} openModal={openModal} userType={location.state.type} />
         ))}
         <Modal
           isOpen={isModalOpen}

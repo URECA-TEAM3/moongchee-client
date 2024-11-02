@@ -3,23 +3,27 @@ import axios from 'axios';
 import DogChew from '../../components/DogChew';
 import { useNavigate } from 'react-router-dom';
 import useReservationStore from '../../store/reservationStore';
+import { useUserStore } from '../../store/user';
 
 const Step3 = () => {
-  const userData = JSON.parse(sessionStorage.getItem('userData'));
   const { reservation } = useReservationStore();
   const navigate = useNavigate();
+  const { name, address, point } = useUserStore();
 
   const handleReservationClick = async () => {
-    console.log(reservation);
-
-    try {
-      const res = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
-      if (res) {
-        navigate('/petsitter/reservation/list');
+    if (reservation.price > point) {
+      alert('결제 실패');
+      return;
+    } else {
+      try {
+        const res = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
+        if (res) {
+          navigate('/petsitter/reservation/list');
+        }
+        console.log(res);
+      } catch (error) {
+        console.log(error);
       }
-      console.log(res);
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -30,11 +34,11 @@ const Step3 = () => {
         <div className="px-5">
           <div className="flex mt-3">
             <p className="font-semibold text-gray-600">이름:</p>
-            <span>{userData.name}</span>
+            <span>{name}</span>
           </div>
           <div className="flex mt-3">
             <p className="font-semibold text-gray-600">주소:</p>
-            <span>{userData.address}</span>
+            <span>{address}</span>
           </div>
         </div>
         <div className="flex flex-col">
@@ -43,7 +47,7 @@ const Step3 = () => {
               <p className="mr-2">차감될</p>
               <DogChew />
             </div>
-            <span className="px-5">650개</span>
+            <span className="px-5">{`${reservation.price}개`}</span>
           </div>
           <div className="flex w-full justify-between mt-5 px-5 h-[50px] items-center">
             <div className="flex">
@@ -51,8 +55,8 @@ const Step3 = () => {
               <DogChew />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <span className="text-gray-500">{`${1000}개`}</span>
-              <span className="text-gray-500"> {`- ${reservation.price}개`}</span>
+              <span className="text-gray-500">{`${point}개`}</span>
+              <span className="text-gray-500">{`- ${reservation.price}개`}</span>
             </div>
           </div>
           <div className="flex w-full justify-between mt-5 px-5 h-[50px] items-center">
@@ -60,7 +64,7 @@ const Step3 = () => {
               <p className="mr-2">결제 후</p>
               <DogChew />
             </div>
-            <span>{`${1000 - reservation.price}개`}</span>
+            <span>{`${point - reservation.price}개`}</span>
           </div>
         </div>
         <div className="flex justify-center mt-10">
