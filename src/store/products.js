@@ -20,7 +20,7 @@ export const useProductStore = create(
         set({ loading: true });
 
         try {
-          const response = await API.get('/api/products');
+          const response = await API.get('/products');
 
           const productsWithImages = await Promise.all(
             response.data.data.map(async (product) => {

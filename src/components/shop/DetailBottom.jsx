@@ -17,7 +17,7 @@ const DetailBottom = ({ product }) => {
 
   const handleNavigate = async (quantity) => {
     try {
-      await API.post('/api/cart', {
+      await API.post('/cart', {
         product_id: product.id,
         user_id: id,
         quantity: quantity,
