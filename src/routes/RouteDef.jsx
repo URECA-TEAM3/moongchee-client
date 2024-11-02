@@ -20,9 +20,7 @@ import PetSitterReservationList from '../pages/petsitterReservationList';
 import PetSitterReservDetail from '../pages/petsitterReservDetail';
 
 import ShoppingCart from '../pages/shoppingcart/ShoppingCart';
-import Chat from '../pages/chat/Chat';
 import ChargePage from '../pages/mypage/ChargePage';
-import PetRegister from '../pages/mypage/PetRegister';
 import CheckoutPage from '../pages/mypage/Checkout';
 import SuccessPage from '../pages/mypage/Success';
 import FailPage from '../pages/mypage/Fail';
@@ -31,7 +29,6 @@ import Mypage from '../pages/mypage/Mypage';
 import Pay from '../pages/shoppingcart/Pay';
 import ChangeAddress from '../pages/shoppingcart/ChangeAddress';
 import EditUserInfo from '../pages/mypage/EditUserInfo';
-import EditPetInfo from '../pages/mypage/EditPetInfo';
 import ShopHistory from '../pages/mypage/ShopHistory';
 
 const MainScreens = {
@@ -72,14 +69,6 @@ const MainScreens = {
     element: (
       <PrivateRoute>
         <ShoppingCart />
-      </PrivateRoute>
-    ),
-  },
-  Chat: {
-    path: '/chat',
-    element: (
-      <PrivateRoute>
-        <Chat />
       </PrivateRoute>
     ),
   },
@@ -222,13 +211,17 @@ const MypageScreens = {
   },
   PetRegister: {
     path: '/mypage/petregister',
-    element: <PetRegister />,
+    element: (
+      <PrivateRoute>
+        <AnimalInfo />
+      </PrivateRoute>
+    ),
   },
   EditPetInfo: {
     path: '/mypage/editpet/:id',
     element: (
       <PrivateRoute>
-        <EditPetInfo />
+        <AnimalInfo />
       </PrivateRoute>
     ),
   },
