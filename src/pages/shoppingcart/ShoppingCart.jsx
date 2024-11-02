@@ -23,7 +23,7 @@ function ShoppingCart() {
 
   const getCartItemsList = async () => {
     try {
-      const response = await API.get(`/api/cart/${id}`);
+      const response = await API.get(`/cart/${id}`);
 
       const productsWithImages = await Promise.all(
         response.data.data.map(async (product) => {
@@ -98,7 +98,7 @@ function ShoppingCart() {
   // 장바구니 상품 삭제
   const handleDelete = async (id) => {
     try {
-      const response = await API.delete(`/api/cart/${id}`);
+      const response = await API.delete(`/cart/${id}`);
 
       if (response.status === 200) {
         setCartItems((prevItems) => prevItems.filter((item) => item.cart_id !== id));
@@ -123,7 +123,7 @@ function ShoppingCart() {
     const user_id = id;
 
     await API.post(
-      '/api/cart/save',
+      '/cart/save',
       { cartData: { cartToSend, user_id } },
       {
         headers: {
