@@ -9,7 +9,7 @@ const ItemBox = ({ item }) => {
 
   const handleNavigate = async () => {
     try {
-      await API.post('/api/cart', {
+      await API.post('/cart', {
         product_id: item.id,
         user_id: 1,
         quantity: 1,

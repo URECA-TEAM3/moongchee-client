@@ -37,7 +37,7 @@ const Pay = () => {
         date: currentDate,
       };
 
-      const response = await API.post('/api/cart/pay', updatedOrderData);
+      const response = await API.post('/cart/pay', updatedOrderData);
       console.log(response);
       navigate('/main');
     } catch (error) {
