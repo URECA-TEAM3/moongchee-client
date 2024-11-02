@@ -28,8 +28,14 @@ const Pay = () => {
 
   const confirmOrder = async () => {
     try {
-      console.log(orderData, 'send Data');
-      const response = await API.post('/api/cart/pay', orderData);
+      // 현재 날짜 orderData에 추가
+      const currentDate = new Date().toISOString().split('T')[0];
+      const updatedOrderData = {
+        ...orderData,
+        date: currentDate,
+      };
+
+      const response = await API.post('/cart/pay', updatedOrderData);
       console.log(response);
       navigate('/main');
     } catch (error) {

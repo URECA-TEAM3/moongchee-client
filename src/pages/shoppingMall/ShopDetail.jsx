@@ -15,7 +15,7 @@ function ShopDetail() {
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        const response = await API.get(`/api/products/${id}`);
+        const response = await API.get(`/products/${id}`);
         setProduct(response.data.data);
         const productData = response.data.data;
 

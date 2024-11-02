@@ -73,7 +73,7 @@ const SignUpForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log(file)
+    console.log(file);
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       setSelectedImageFile(file);
@@ -290,7 +290,6 @@ const SignUpForm = () => {
       } else {
         downloadURL = defaultProfileImage;
       }
-      
 
       const response = await axios.post('http://localhost:3000/api/members/signup', {
         name,
@@ -302,7 +301,7 @@ const SignUpForm = () => {
         provider,
         token: userId,
         nickname,
-        profileImageUrl: downloadURL ,
+        profileImageUrl: downloadURL,
       });
       console.log('디테일 주소', detailedAddress);
 
@@ -343,13 +342,12 @@ const SignUpForm = () => {
   return (
     <div className="flex flex-col items-center bg-white h-full overflow-y-auto">
       <Toaster />
-      <h1 className="text-center text-lg font-bold mb-4 mt-6">회원정보</h1>
-      <hr className="border-gray-300 w-[450px] mb-6" />
+      <h1 className="text-center font-bold mb-4 mt-6">회원가입</h1>
 
-      <div className="w-full max-w-md">
-        <label className="block text-sm font-medium mb-1">프로필 등록(선택)</label>
+      <div className="w-full px-10">
+        <label className="text-sm font-medium mb-1">프로필 등록(선택)</label>
         <div className="flex items-center space-x-4 mb-4">
-          <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
+          <div className="relative w-20 h-20 ml-2 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
             {selectedImage ? (
               <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
             ) : (
@@ -359,14 +357,14 @@ const SignUpForm = () => {
           <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
 
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">닉네임*</label>
+            <label className="block text-sm font-medium mb-1 ml-2">닉네임*</label>
             <div className="flex space-x-2">
               <input
                 type="text"
                 placeholder="닉네임 입력"
                 value={nickname}
                 onChange={(e) => handleInputChange('nickname', e.target.value)}
-                className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-primary'} rounded`}
+                className={`flex-1 p-2 ml-2 border ${errors.nickname ? 'border-red-500' : 'border-primary'} rounded-lg`}
               />
               <button
                 type="button"
@@ -381,25 +379,25 @@ const SignUpForm = () => {
         </div>
       </div>
 
-      <form className="w-full max-w-md" onSubmit={handleSubmit}>
-        <label className="block text-sm font-medium mb-1">이름*</label>
+      <form className="w-full px-10" onSubmit={handleSubmit}>
+        <label className="block text-sm font-medium my-1">이름*</label>
         <input
           type="text"
           placeholder="이름"
           value={name}
           onChange={(e) => handleInputChange('name', e.target.value)}
-          className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+          className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
         />
         {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
-        <label className="block text-sm font-medium mb-1">이메일 주소*</label>
+        <label className="block text-sm font-medium my-1 mt-4">이메일 주소*</label>
         <div className="flex space-x-2 mb-1">
           <input
             type="email"
             placeholder="이메일 주소"
             value={email}
             onChange={(e) => handleInputChange('email', e.target.value)}
-            className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded`}
+            className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-divider'} rounded-lg`}
           />
           <button
             type="button"
@@ -419,7 +417,7 @@ const SignUpForm = () => {
                 placeholder="인증번호 입력"
                 value={verificationCode}
                 onChange={(e) => handleInputChange('verificationCode', e.target.value)}
-                className="w-full p-2 pr-12 border border-gray-300 rounded"
+                className="w-full p-2 pr-12 border border-divider rounded-lg"
               />
               <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">{formatTime(timer)}</span>
             </div>
@@ -433,24 +431,24 @@ const SignUpForm = () => {
           </div>
         )}
 
-        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <label className="block text-sm font-medium my-1 mt-4">휴대폰 번호*</label>
         <input
           type="tel"
           placeholder="휴대폰번호"
           value={phone}
           onChange={handlePhoneChange}
-          className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+          className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-divider'} rounded-lg`}
         />
         {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
-        <label className="block text-sm font-medium mb-1">생년월일*</label>
+        <label className="block text-sm font-medium my-1 mt-4">생년월일*</label>
         <div className="flex items-center space-x-2 mb-1">
           <DatePicker
             selected={birthDate}
             onChange={handleDateChange}
             dateFormat="yyyy/MM/dd"
             placeholderText="YYYY/MM/DD"
-            className={`block w-full p-2 border ${errors.birthDate ? 'border-red-500' : 'border-gray-300'} rounded`}
+            className={`block w-full p-2 border ${errors.birthDate ? 'border-red-500' : 'border-divider'} rounded-lg`}
             showYearDropdown
             showMonthDropdown
             dropdownMode="select"
@@ -461,11 +459,11 @@ const SignUpForm = () => {
         </div>
         {errors.birthDate && <span className="text-red-500 text-xs mt-1">{errors.birthDate}</span>}
 
-        <label className="block text-sm font-medium mb-1">주소*</label>
+        <label className="block text-sm font-medium my-1 mt-4">주소*</label>
         <input
           type="text"
           placeholder="도로명 주소 (필수)"
-          className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+          className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
           value={roadAddress}
           readOnly
           onClick={() => openPostcodePopup()}
@@ -477,10 +475,10 @@ const SignUpForm = () => {
           placeholder="상세 주소 입력 (선택)"
           value={detailedAddress}
           onChange={(e) => handleInputChange('detailedAddress', e.target.value)}
-          className="block w-full p-2 border border-gray-300 rounded mb-6"
+          className="block w-full p-2 border border-divider rounded-lg mb-6"
         />
 
-        <button type="submit" className="w-full py-2 bg-primary text-white rounded-lg hover:bg-blue-600">
+        <button type="submit" className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
           회원가입
         </button>
       </form>
