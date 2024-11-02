@@ -225,11 +225,10 @@ const SignUpForm = () => {
   return (
     <div className="flex flex-col items-center bg-white h-full overflow-y-auto">
       <Toaster />
-      <h1 className="text-center text-lg font-bold mb-4 mt-6">회원정보</h1>
-      <hr className="border-gray-300 w-[450px] mb-6" />
+      <h1 className="text-center font-bold mb-4 mt-6">회원가입</h1>
 
-      <div className="w-full max-w-md">
-        <label className="block text-sm font-medium mb-1">프로필 등록(선택)</label>
+      <div className="w-full px-10">
+        <label className="text-sm font-medium mb-1">프로필 등록(선택)</label>
         <div className="flex items-center space-x-4 mb-4">
           <ProfileImageUpload selectedImage={selectedImage} setSelectedImage={setSelectedImage} setSelectedImageFile={setSelectedImageFile} />
 
@@ -237,37 +236,37 @@ const SignUpForm = () => {
         </div>
       </div>
 
-      <form className="w-full max-w-md" onSubmit={handleSubmit}>
-        <label className="block text-sm font-medium mb-1">이름*</label>
+      <form className="w-full px-10" onSubmit={handleSubmit}>
+        <label className="block text-sm font-medium my-1">이름*</label>
         <input
           type="text"
           placeholder="이름"
           value={name}
           onChange={(e) => handleInputChange('name', e.target.value)}
-          className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+          className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
         />
         {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
         <EmailVerification email={email} setEmail={setEmail} setIsEmailVerified={setIsEmailVerified} />
 
-        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <label className="block text-sm font-medium my-1 mt-4">휴대폰 번호*</label>
         <input
           type="tel"
           placeholder="휴대폰번호"
           value={phone}
           onChange={handlePhoneChange}
-          className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+          className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-divider'} rounded-lg`}
         />
         {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
-        <label className="block text-sm font-medium mb-1">생년월일*</label>
+        <label className="block text-sm font-medium my-1 mt-4">생년월일*</label>
         <div className="flex items-center space-x-2 mb-1">
           <DatePicker
             selected={birthDate}
             onChange={handleDateChange}
             dateFormat="yyyy/MM/dd"
             placeholderText="YYYY/MM/DD"
-            className={`block w-full p-2 border ${errors.birthDate ? 'border-red-500' : 'border-gray-300'} rounded`}
+            className={`block w-full p-2 border ${errors.birthDate ? 'border-red-500' : 'border-divider'} rounded-lg`}
             showYearDropdown
             showMonthDropdown
             dropdownMode="select"
@@ -287,10 +286,10 @@ const SignUpForm = () => {
           placeholder="상세 주소 입력 (선택)"
           value={detailedAddress}
           onChange={(e) => handleInputChange('detailedAddress', e.target.value)}
-          className="block w-full p-2 border border-gray-300 rounded mb-6"
+          className="block w-full p-2 border border-divider rounded-lg mb-6"
         />
 
-        <button type="submit" className="w-full py-2 bg-primary text-white rounded-lg hover:bg-blue-600">
+        <button type="submit" className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
           회원가입
         </button>
       </form>

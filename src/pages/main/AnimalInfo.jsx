@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import Modal from '../../components/Modal';
 
 const AnimalInfo = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const petId = location.state?.petId;
+  const uponSignup = location.pathname.includes('/animalinfo');
+  const newPet = location.pathname.includes('/petregister');
+  const editPet = location.pathname.includes('/editpet');
+
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
@@ -18,7 +27,11 @@ const AnimalInfo = () => {
   const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [confirmDeletedOpen, setConfirmDeletedOpen] = useState(false);
+  const closeDeleteModal = () => setDeleteModalOpen(false);
 
   const inputFields = [
     { label: '이름*', value: name, setter: setName, errorKey: 'name', type: 'text' },
@@ -36,12 +49,31 @@ const AnimalInfo = () => {
     { option: 'no', label: '안했어요' },
   ];
 
+  const fetchPet = async (petId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/pets/detail/${petId}`);
+      setName(response.data[0].name);
+      setAge(response.data[0].age);
+      setSpecies(response.data[0].species);
+      setGender(response.data[0].gender);
+      setNeutered(response.data[0].surgery == 1 ? 'yes' : 'no');
+      setWeight(response.data[0].weight);
+      setProfileImage(response.data[0].animal_image_url);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const storedUser = JSON.parse(sessionStorage.getItem('userData'));
     if (storedUser && storedUser.id) {
       setUserId(storedUser.id);
     }
   }, []);
+
+  useEffect(() => {
+    if (petId) fetchPet(petId);
+  }, [petId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -111,8 +143,9 @@ const AnimalInfo = () => {
         animalImageUrl,
       });
       toast.dismiss(toastId);
-      toast.success('반려동물 정보가 성공적으로 저장되었습니다!');
-      navigate('/animalRegisterSuccess');
+
+      uponSignup && navigate('/animalRegisterSuccess');
+      newPet && setIsModalOpen(true);
     } catch (error) {
       console.error('반려동물 정보 저장 오류:', error);
       toast.dismiss(toastId);
@@ -120,13 +153,61 @@ const AnimalInfo = () => {
     }
   };
 
-  return (
-    <div className="flex flex-col items-center bg-white h-full overflow-y-auto p-5">
-      <Toaster position="top-center" reverseOrder={false} />
-      <h1 className="text-center text-lg font-bold mb-4">반려동물 정보</h1>
-      <hr className="border-gray-300 w-[450px] mb-6" />
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:3000/api/pets/${petId}`);
 
-      <div className="mb-6">
+      setDeleteModalOpen(false);
+      setConfirmDeletedOpen(true);
+    } catch (error) {
+      console.error(error);
+      toast.error('반려동물 정보 삭제에 실패했습니다.');
+    }
+  };
+
+  const handleEdit = async () => {
+    try {
+      let profileImageUrl = profileImage;
+
+      if (selectedImageFile) {
+        const storageRef = ref(storage, `animals/${petId}_${Date.now()}`);
+        await uploadBytes(storageRef, selectedImageFile);
+        profileImageUrl = await getDownloadURL(storageRef);
+      }
+
+      const updatedData = {
+        id: petId,
+        name,
+        age,
+        gender,
+        surgery: neutered === 'yes' ? 1 : 0,
+        weight: weight,
+        animal_image_url: profileImageUrl,
+      };
+
+      const response = await axios.put('http://localhost:3000/api/pets/update-profile', updatedData);
+
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error(error);
+      toast.dismiss(toastId);
+      toast.error('반려동물 정보 저장에 실패했습니다.');
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center bg-white h-full overflow-y-auto">
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="relative w-full flex items-center mb-4 mt-6">
+        {!uponSignup && (
+          <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+            <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
+          </button>
+        )}
+        <h1 className="mx-auto font-bold">반려동물 정보</h1>
+      </div>
+
+      <div className="mb-2">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
           {profileImage !== registerPetProfileImage ? (
             <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
@@ -138,8 +219,8 @@ const AnimalInfo = () => {
       </div>
 
       {inputFields.map(({ label, value, setter, errorKey, type }) => (
-        <div key={label} className="w-full max-w-md mb-4">
-          <label className="block text-sm font-medium mb-2 text-left">{label}</label>
+        <div key={label} className="w-full px-10">
+          <label className="block text-sm font-medium mb-2 mt-4 text-left">{label}</label>
           <input
             type={type}
             placeholder={label.replace('*', '')}
@@ -148,14 +229,14 @@ const AnimalInfo = () => {
               setter(e.target.value);
               validateSingleField(errorKey, e.target.value);
             }}
-            className={`block w-full p-2 border ${errors[errorKey] ? 'border-red-500' : 'border-gray-300'} rounded`}
+            className={`block w-full p-2 border ${errors[errorKey] ? 'border-red-500' : 'border-divider'} rounded-lg`}
           />
           {errors[errorKey] && <span className="text-red-500 text-xs">{errors[errorKey]}</span>}
         </div>
       ))}
 
-      <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">성별*</label>
-      <div className="flex justify-between mb-1 w-full max-w-md">
+      <label className="block text-sm font-medium mb-2 mt-4 text-left w-full px-10">성별*</label>
+      <div className="flex justify-between mb-1 w-full px-10 space-x-2">
         {genderOptions.map(({ type, label }) => (
           <button
             key={type}
@@ -163,18 +244,18 @@ const AnimalInfo = () => {
               setGender(type);
               validateSingleField('gender', type);
             }}
-            className={`w-1/2 py-2 border-2 rounded-[10px] ${
-              gender === type ? 'border-primary text-primary' : 'border-gray-200 text-black'
+            className={`w-1/2 py-2 border rounded-lg ${
+              gender === type ? 'border-primary text-primary' : 'border-divider text-black'
             } hover:border-primary hover:text-primary transition-colors`}
           >
             {label}
           </button>
         ))}
       </div>
-      {errors.gender && <span className="text-red-500 text-xs w-full max-w-md text-left">{errors.gender}</span>}
+      {errors.gender && <span className="text-red-500 text-xs w-full px-10 text-left">{errors.gender}</span>}
 
-      <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">중성화 수술 여부*</label>
-      <div className="flex justify-between mb-1 w-full max-w-md">
+      <label className="block text-sm font-medium mb-2 mt-4 text-left w-full px-10">중성화 수술 여부*</label>
+      <div className="flex justify-between mb-1 w-full px-10 space-x-2">
         {neuteredOptions.map(({ option, label }) => (
           <button
             key={option}
@@ -182,39 +263,89 @@ const AnimalInfo = () => {
               setNeutered(option);
               validateSingleField('neutered', option);
             }}
-            className={`w-1/2 py-2 border-2 rounded-[10px] ${
-              neutered === option ? 'border-primary text-primary' : 'border-gray-200 text-black'
+            className={`w-1/2 py-2 border rounded-lg ${
+              neutered === option ? 'border-primary text-primary' : 'border-divider text-black'
             } hover:border-primary hover:text-primary transition-colors`}
           >
             {label}
           </button>
         ))}
       </div>
+      {errors.neutered && <span className="text-red-500 text-xs w-full px-10 text-left">{errors.neutered}</span>}
 
-      {errors.neutered && <span className="text-red-500 text-xs w-full max-w-md text-left">{errors.neutered}</span>}
-
-      <label className="block text-sm font-medium mb-2 text-left w-full max-w-md">몸무게*</label>
-      <div className="relative w-full max-w-md">
+      <label className="block text-sm font-medium mb-2 mt-4 text-left w-full px-10">몸무게*</label>
+      <div className="relative w-full px-10">
         <input
           type="text"
           placeholder="몸무게"
-          className={`block w-full p-2 pr-12 border ${errors.weight ? 'border-red-500' : 'border-gray-300'} rounded`}
+          className={`block w-full p-2 pr-12 border ${errors.weight ? 'border-red-500' : 'border-divider'} rounded-lg`}
           value={weight}
           onChange={(e) => {
             handleWeightChange(e);
             validateSingleField('weight', e.target.value);
           }}
         />
-        <span className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${weight ? 'text-black' : 'text-gray-400'}`}>kg</span>
+        <span className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${weight ? 'text-black' : 'text-divider'}`}>kg</span>
       </div>
-      {errors.weight && <span className="text-red-500 text-xs w-full max-w-md text-left">{errors.weight}</span>}
+      {errors.weight && <span className="text-red-500 text-xs w-full px-10 text-left">{errors.weight}</span>}
 
-      <div className="flex justify-between w-full max-w-md my-5">
-        <button className="py-2 px-4 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white">스킵하기</button>
-        <button onClick={handleSave} className="py-2 px-4 bg-primary text-white rounded-lg hover:bg-primary">
-          저장하고 홈으로
-        </button>
-      </div>
+      {uponSignup && (
+        <div className="flex justify-between space-x-2 px-10 my-8 w-full">
+          <button className="py-2 h-12 w-1/2 rounded-lg bg-divider text-gray-400">스킵하기</button>
+          <button onClick={handleSave} className="py-2 h-12 w-1/2 bg-primary text-white rounded-lg">
+            저장하고 홈으로
+          </button>
+        </div>
+      )}
+
+      {newPet && (
+        <div className="flex justify-between space-x-2 px-10 my-8 w-full">
+          <button type="button" onClick={handleSave} className="w-full h-12 py-2 h-12 bg-primary text-white rounded-lg">
+            저장
+          </button>
+        </div>
+      )}
+
+      {editPet && (
+        <div className="flex justify-between space-x-2 px-10 my-8 w-full">
+          <button onClick={() => setDeleteModalOpen(true)} className="py-2 h-12 w-1/2 rounded-lg bg-delete text-white">
+            삭제하기
+          </button>
+          <button onClick={handleEdit} className="py-2 h-12 w-1/2 bg-primary text-white rounded-lg">
+            수정 내용 저장
+          </button>
+        </div>
+      )}
+
+      <Modal isOpen={isModalOpen} title={<div className="font-bold mb-6">반려동물이 저장되었습니다.</div>}>
+        <div className="flex mt-3">
+          <button onClick={() => navigate('/mypage')} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
+            확인
+          </button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={deleteModalOpen} title={<div className="font-bold">이 반려동물의 정보를 삭제하시겠습니까?</div>}>
+        <div className="my-10 flex justify-center">
+          <span className="">삭제 후 복구가 불가능합니다.</span>
+        </div>
+        <div className="flex gap-4 mt-3">
+          <button onClick={closeDeleteModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
+            아니요
+          </button>
+          <button onClick={handleDelete} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
+            삭제
+          </button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={confirmDeletedOpen} title={<div className="font-bold mb-6">삭제되었습니다.</div>}>
+        <div className="flex mt-3">
+          <button onClick={() => navigate('/mypage')} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
+            확인
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

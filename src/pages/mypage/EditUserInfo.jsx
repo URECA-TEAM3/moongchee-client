@@ -1,4 +1,3 @@
-
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -11,197 +10,186 @@ import { ko } from 'date-fns/locale';
 import axios from 'axios';
 
 const EditUserInfo = () => {
+  const navigate = useNavigate();
+  const [id, setId] = useState(0);
+  const [uniqueId, setUniqueId] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [roadAddress, setRoadAddress] = useState('');
+  const [detailAddress, setDetailAddress] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthDate, setBirthDate] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [nickname, setNickname] = useState('');
+  const [isPetsitter, setIsPetsitter] = useState(0);
+  const [socialProvider, setSocialProvider] = useState('');
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [showModal, setShowModal] = useState(false); // 프로필 사진 변경 모달 표시 여부
+  const [saveModal, setSaveModal] = useState(false); // 저장 확인 모달
+  const [currentNickname, setCurrentNickname] = useState('');
 
-    const navigate = useNavigate();
-    const [id, setId] = useState(0);
-    const [uniqueId, setUniqueId] = useState('');
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [roadAddress, setRoadAddress] = useState('');
-    const [detailAddress, setDetailAddress] = useState('');
-    const [email, setEmail] = useState('');
-    const [birthDate, setBirthDate] = useState(null);
-    const [errors, setErrors] = useState({});
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [nickname, setNickname] = useState('');
-    const [isPetsitter, setIsPetsitter] = useState(0);
-    const [socialProvider, setSocialProvider] = useState('');
-    const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-    const [selectedImageFile, setSelectedImageFile] = useState(null);
-    const [showModal, setShowModal] = useState(false); // 프로필 사진 변경 모달 표시 여부
-    const [isSavedConfirmModal, setIsSavedConfirmModal] = useState(false); // 수정 여부 모달
-    const [saveModal, setSaveModal] = useState(false); // 저장 확인 모달
-    const [currentNickname, setCurrentNickname] = useState('');
+  useEffect(() => {
+    const userData = sessionStorage.getItem('userData');
+    if (userData) {
+      const parsedData = JSON.parse(userData); // JSON 파싱
+      console.log(parsedData);
+      setId(parsedData.id);
+      setNickname(parsedData.nickname);
+      setName(parsedData.name);
+      setPhone(parsedData.phone);
+      setBirthDate(parsedData.birthDate);
+      setRoadAddress(parsedData.address);
+      setDetailAddress(parsedData.detailaddress ? parsedData.detailaddress : '');
+      setSelectedImage(parsedData.profile_image_url);
+      setEmail(parsedData.email);
+      setIsPetsitter(parsedData.petsitter);
+      setSocialProvider(parsedData.social_provider);
+      setUniqueId(parsedData.unique_id);
+      setCurrentNickname(parsedData.nickname);
+    }
+  }, []);
 
-    useEffect(() => {
-        const userData = sessionStorage.getItem('userData');
-        if (userData) {
-            const parsedData = JSON.parse(userData); // JSON 파싱
-            console.log(parsedData)
-            setId(parsedData.id);
-            setNickname(parsedData.nickname);
-            setName(parsedData.name);
-            setPhone(parsedData.phone);
-            setBirthDate(parsedData.birthDate);
-            setRoadAddress(parsedData.address);
-            setDetailAddress(parsedData.detailaddress);
-            setSelectedImage(parsedData.profile_image_url);
-            setEmail(parsedData.email);
-            setIsPetsitter(parsedData.petsitter);
-            setSocialProvider(parsedData.social_provider);
-            setUniqueId(parsedData.unique_id);
-            setCurrentNickname(parsedData.nickname);
-        }
-    }, []);
+  const formattedBirthDate = birthDate ? (birthDate instanceof Date ? birthDate : new Date(birthDate)).toISOString().split('T')[0] : null;
 
-    const formattedBirthDate = birthDate
-        ? (birthDate instanceof Date
-            ? birthDate
-            : new Date(birthDate)
-        ).toISOString().split('T')[0]
-        : null;
+  // 모달 창에서 '기본 이미지로 변경' 선택 시
+  const handleSetDefaultImage = () => {
+    setSelectedImage(defaultProfileImage);
+    setSelectedImageFile(null); // 파일 업로드 초기화
+    setShowModal(false); // 모달 닫기
+  };
 
-    // 모달 창에서 '기본 이미지로 변경' 선택 시
-    const handleSetDefaultImage = () => {
-        setSelectedImage(defaultProfileImage);
-        setSelectedImageFile(null); // 파일 업로드 초기화
-        setShowModal(false); // 모달 닫기
-    };
+  // 모달 창에서 '사진 선택' 선택 시
+  const handleSelectImage = () => {
+    document.getElementById('profileImageUpload').click(); // 파일 선택창 열기
+    setShowModal(false); // 모달 닫기
+  };
 
-    // 모달 창에서 '사진 선택' 선택 시
-    const handleSelectImage = () => {
-        document.getElementById('profileImageUpload').click(); // 파일 선택창 열기
-        setShowModal(false); // 모달 닫기
-    };
+  // 파일 선택 시 호출
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file)); // 이미지 미리보기
+      setSelectedImageFile(file); // Firebase 업로드용 파일 설정
+    }
+  };
 
-    // 파일 선택 시 호출
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setSelectedImage(URL.createObjectURL(file)); // 이미지 미리보기
-            setSelectedImageFile(file); // Firebase 업로드용 파일 설정
-        }
-    };
+  const handleSave = async () => {
+    try {
+      let profileImageUrl = selectedImage;
+      // 이미지 파일이 선택된 경우 Firebase에 업로드
+      if (selectedImageFile) {
+        const storageRef = ref(storage, `profiles/${id}_${Date.now()}`);
+        await uploadBytes(storageRef, selectedImageFile);
+        profileImageUrl = await getDownloadURL(storageRef);
+      }
 
-    const handleSave = async() => {
-        try {
-            let profileImageUrl = selectedImage;
-            // 이미지 파일이 선택된 경우 Firebase에 업로드
-            if (selectedImageFile) {
-                const storageRef = ref(storage, `profiles/${id}_${Date.now()}`);
-                await uploadBytes(storageRef, selectedImageFile);
-                profileImageUrl = await getDownloadURL(storageRef);
-            }
+      const updatedData = {
+        id,
+        petsitter: isPetsitter,
+        social_provider: socialProvider,
+        unique_id: uniqueId,
+        name,
+        email,
+        nickname,
+        phone,
+        birthDate: formattedBirthDate,
+        address: roadAddress,
+        detailaddress: detailAddress,
+        profile_image_url: profileImageUrl,
+      };
 
-            const updatedData = {
-                id,
-                petsitter: isPetsitter,
-                social_provider: socialProvider,
-                unique_id: uniqueId,
-                name,
-                email,
-                nickname,
-                phone,
-                birthDate: formattedBirthDate,
-                address: roadAddress,
-                detailaddress : detailAddress,
-                profile_image_url: profileImageUrl,
-            };
+      await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
+      // Session Storage update
+      sessionStorage.setItem('userData', JSON.stringify(updatedData));
 
-            const response = await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
-            // Session Storage update
-            sessionStorage.setItem('userData', JSON.stringify(updatedData));
+      setSaveModal(true);
+    } catch (error) {
+      console.error(error);
+      alert('프로필 수정 실패');
+    }
+  };
 
-            setSaveModal(true);
-        } catch (error) {
-            console.error(error);
-            alert('프로필 수정 실패')
-        }
+  const validateFields = () => {
+    if (!nickname || !phone || !roadAddress) {
+      toast.error('항목을 모두 입력해주세요.');
+      return false;
     }
 
-    const validateFields = () => {
-        
-
-        if (!nickname || !phone || !roadAddress) {
-            toast.error('항목을 모두 입력해주세요.');
-            return false;
-        }
-
-        if (((nickname !== currentNickname ) && !isNicknameChecked)) {
-            toast.error('닉네임 중복 확인을 해주세요.');
-            return false;
-        }
-
-        return true;
-    };
-    
-    const handleSaveVerified = () => {
-        if (!validateFields()) {
-            return;
-        }
-        setIsSavedConfirmModal(true);
+    if (nickname !== currentNickname && !isNicknameChecked) {
+      toast.error('닉네임 중복 확인을 해주세요.');
+      return false;
     }
 
-    const handleSaveModal = () => {
-        setSaveModal(false);
-        navigate('/mypage');
+    return true;
+  };
+
+  const handleSaveVerified = () => {
+    if (!validateFields()) {
+      return;
+    }
+    handleSave();
+  };
+
+  const handleSaveModal = () => {
+    setSaveModal(false);
+    navigate('/mypage');
+  };
+
+  const handleNicknameCheck = async () => {
+    if (nickname == currentNickname) {
+      toast.error('현재와 동일한 닉네임입니다.');
+      return;
     }
 
-    const handleNicknameCheck = async () => {
+    if (!nickname) {
+      toast.error('닉네임을 입력해주세요.');
+      return;
+    }
 
-        if (nickname == currentNickname) {
-            toast.error('현재와 동일한 닉네임입니다.');
-            return;
-        }
-        
-        if (!nickname) {
-            toast.error('닉네임을 입력해주세요.');
-            return;
-        }
-    
-        if (!validateNickname(nickname)) {
-            toast.error('닉네임에 자음이나 모음만 사용할 수 없습니다.');
-            return;
-        }
-    
-        if (nickname.length > 15) {
-            toast.error('닉네임은 15자 이하여야 합니다.');
-            return;
-        }
-    
-        try {
-            const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
-            if (response.data.available) {
-                toast.success('사용 가능한 닉네임입니다.');
-                setIsNicknameChecked(true);
-            } else {
-                toast.error('이미 사용 중인 닉네임입니다.');
-            }
-        } catch (error) {
-        toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
-        console.error('닉네임 중복 확인 오류:', error);
-        }
-    };
+    if (!validateNickname(nickname)) {
+      toast.error('닉네임에 자음이나 모음만 사용할 수 없습니다.');
+      return;
+    }
 
-    const validateNickname = (nickname) => {
-        const validPattern = /^(?!.*[._]{2})(?![._])[가-힣a-zA-Z0-9._]+(?<![._])$/;
-        return validPattern.test(nickname);
-    };
+    if (nickname.length > 15) {
+      toast.error('닉네임은 15자 이하여야 합니다.');
+      return;
+    }
 
+    try {
+      const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
+      if (response.data.available) {
+        toast.success('사용 가능한 닉네임입니다.');
+        setIsNicknameChecked(true);
+      } else {
+        toast.error('이미 사용 중인 닉네임입니다.');
+      }
+    } catch (error) {
+      toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
+      console.error('닉네임 중복 확인 오류:', error);
+    }
+  };
 
-    const handleDateChange = (date) => {
-        setBirthDate(date);
-    };
+  const validateNickname = (nickname) => {
+    const validPattern = /^(?!.*[._]{2})(?![._])[가-힣a-zA-Z0-9._]+(?<![._])$/;
+    return validPattern.test(nickname);
+  };
 
-    const openPostcodePopup = () => {
-        const popupWidth = 500;
-        const popupHeight = 600;
-        const popupX = window.screen.width / 2 - popupWidth / 2;
-        const popupY = window.screen.height / 2 - popupHeight / 2;
-    
-        const popup = window.open('', '우편번호검색', `width=${popupWidth},height=${popupHeight},left=${popupX},top=${popupY}`);
-    
-        const htmlContent = `
+  const handleDateChange = (date) => {
+    setBirthDate(date);
+  };
+
+  const openPostcodePopup = () => {
+    const popupWidth = 500;
+    const popupHeight = 600;
+    const popupX = window.screen.width / 2 - popupWidth / 2;
+    const popupY = window.screen.height / 2 - popupHeight / 2;
+
+    const popup = window.open('', '우편번호검색', `width=${popupWidth},height=${popupHeight},left=${popupX},top=${popupY}`);
+
+    const htmlContent = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -222,182 +210,156 @@ const EditUserInfo = () => {
             </body>
             </html>
         `;
-        
-        popup.document.write(htmlContent);
-    };
 
-    return (
-        // <div>
-        // </div>
-        <div className="flex flex-col items-center bg-white min-h-screen">
-            <Toaster />
-            <div className="relative w-full flex items-center mb-4 mt-6">
-                <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
-                    <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
-                </button>
-                <h1 className="mx-auto text-lg font-bold">프로필 수정</h1>
-            </div>
-            {/* <hr className="border-gray-300 w-full mb-6" /> */}
+    popup.document.write(htmlContent);
+  };
 
-            <div className="w-full max-w-md mt-5">
-                <div className="flex items-center space-x-4 mb-4">
-                <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={() => setShowModal(true)}>
-                    {selectedImage ? (
-                    <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
-                    ) : (
-                    <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
-                    )}
-                </div>
-                <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
+  return (
+    <div className="flex flex-col items-center bg-white h-full overflow-y-auto">
+      <Toaster />
+      <div className="relative w-full flex items-center mb-4 mt-6">
+        <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+          <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
+        </button>
+        <h1 className="mx-auto font-bold">프로필 수정</h1>
+      </div>
 
-                <div className="flex-1">
-                    <div className="flex space-x-2">
-                    <input
-                        type="text"
-                        placeholder="닉네임"
-                        value={nickname}
-                        onChange={(e) => {
-                            setNickname(e.target.value);
-                            setIsNicknameChecked(false);
-                        }}
-                        className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded`}
-                    />
-                    <button
-                        type="button"
-                        onClick={handleNicknameCheck}
-                        className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
-                    >
-                        중복확인
-                    </button>
-                    </div>
-                </div>
-                </div>
-            </div>
+      <div className="w-full px-10">
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={() => setShowModal(true)}>
+            {selectedImage ? (
+              <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
+            ) : (
+              <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
+            )}
+          </div>
+          <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
 
-            <form className="w-full max-w-md">
-                <label className="block text-sm font-medium mb-1">이름</label>
-                <input
+          <div className="flex-1">
+            <div className="flex space-x-2">
+              <input
                 type="text"
-                placeholder="이름"
-                value={name}
-                readOnly
-                onChange={(e) => setName(e.target.value)}
-                className={`mb-4 block w-full p-2 border border-gray-300 text-gray-400 rounded mb-1`}
-                />
+                placeholder="닉네임"
+                value={nickname}
+                onChange={(e) => {
+                  setNickname(e.target.value);
+                  setIsNicknameChecked(false);
+                }}
+                className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-divider'} rounded-lg`}
+              />
+              <button
+                type="button"
+                onClick={handleNicknameCheck}
+                className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
+              >
+                중복확인
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                <label className="block text-sm font-medium mb-1">이메일</label>
-                <input
-                    type="text"
-                    placeholder="이메일"
-                    value={email}
-                    readOnly
-                    onChange={(e) => setPhone(e.target.value)}
-                    className={`mb-4 block w-full p-2 border border-gray-300 text-gray-400 rounded mb-1`}
-                />
+      <form className="w-full px-10">
+        <label className="block text-sm font-medium mb-1">이름</label>
+        <input
+          type="text"
+          placeholder="이름"
+          value={name}
+          readOnly
+          onChange={(e) => setName(e.target.value)}
+          className={`mb-4 block w-full p-2 border border-divider text-gray-400 rounded-lg mb-1`}
+        />
 
-                <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
-                <input
-                    type="tel"
-                    placeholder="휴대폰번호"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className={`w-full mb-4 p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
-                />
+        <label className="block text-sm font-medium mb-1">이메일</label>
+        <input
+          type="text"
+          placeholder="이메일"
+          value={email}
+          readOnly
+          onChange={(e) => setPhone(e.target.value)}
+          className={`mb-4 block w-full p-2 border border-divider text-gray-400 rounded-lg mb-1`}
+        />
 
-                <label className="block text-sm font-medium mb-1">생년월일</label>
-                <div className="flex items-center mb-4">
-                <DatePicker
-                    selected={birthDate}
-                    onChange={handleDateChange}
-                    dateFormat="yyyy/MM/dd"
-                    placeholderText="YYYY/MM/DD"
-                    readOnly
-                    className={`block w-full p-2 border border-gray-300 text-gray-400 rounded`}
-                    showYearDropdown
-                    showMonthDropdown
-                    dropdownMode="select"
-                    maxDate={new Date()}
-                    yearDropdownItemNumber={100}
-                    locale={ko}
-                />
-                </div>
+        <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+        <input
+          type="tel"
+          placeholder="휴대폰번호"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className={`w-full mb-4 p-2 border ${errors.phone ? 'border-red-500' : 'border-divider'} rounded-lg`}
+        />
 
-                <label className="block text-sm font-medium mb-1">주소*</label>
-                <input
-                    type="text"
-                    placeholder="도로명 주소 (필수)"
-                    className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
-                    value={roadAddress}
-                    readOnly
-                    onClick={openPostcodePopup}
-                />
-
-                <input
-                    type="text"
-                    placeholder="상세 주소 입력 (선택)"
-                    value={detailAddress}
-                    onChange={(e) => setDetailAddress(e.target.value)}
-                    className="block w-full p-2 border border-gray-300 rounded mb-6"
-                />
-
-                <div className='flex justify-between p-5 w-full'>
-                    <button onClick={() => navigate('/mypage')} className='py-2 bg-divider text-gray-400 rounded-lg w-48'>취소</button>
-                    <button type='button' onClick={handleSaveVerified} className='py-2 bg-primary rounded-lg w-48 text-white'>저장</button>
-                </div>
-            </form>
-
-            {/* Profile Image Change Modal */}
-            {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-                        <h2 className="text-lg text-center font-bold mb-4">프로필 이미지 설정</h2>
-                        <button
-                            onClick={handleSetDefaultImage}
-                            className="w-full py-2 mb-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                        >
-                            기본 이미지로 변경
-                        </button>
-                        <button
-                            onClick={handleSelectImage}
-                            className="w-full py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg"
-                        >
-                            사진 선택
-                        </button>
-                        <button
-                            onClick={() => setShowModal(false)}
-                            className="w-full py-2 mt-5 text-white bg-delete rounded-lg"
-                        >
-                            취소
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Save Confirm Modal */}
-            {isSavedConfirmModal && (
-                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-                    <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
-                        <h2 className='text-base font-extrabold mb-6'>프로필 정보를 수정하시겠습니까?</h2>
-                        <div className='flex justify-center space-x-4'>
-                            <button onClick={() => setIsSavedConfirmModal(false)} className='px-12 py-2 bg-divider text-gray-500 rounded-lg'>취소</button>
-                            <button onClick={handleSave} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Save Success Modal */}
-            {saveModal && (
-                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-                    <div className='bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6'>
-                        <h2 className='text-base font-extrabold mb-6'>프로필이 수정되었습니다.</h2>
-                        <button onClick={handleSaveModal} className='px-12 py-2 bg-primary text-white rounded-lg'>확인</button>
-                    </div>
-                </div>
-            )}
+        <label className="block text-sm font-medium mb-1">생년월일</label>
+        <div className="flex items-center mb-4">
+          <DatePicker
+            selected={birthDate}
+            onChange={handleDateChange}
+            dateFormat="yyyy/MM/dd"
+            placeholderText="YYYY/MM/DD"
+            readOnly
+            className={`block w-full p-2 border border-divider text-gray-400 rounded-lg`}
+            showYearDropdown
+            showMonthDropdown
+            dropdownMode="select"
+            maxDate={new Date()}
+            yearDropdownItemNumber={100}
+            locale={ko}
+          />
         </div>
 
-    );
+        <label className="block text-sm font-medium mb-1">주소*</label>
+        <input
+          type="text"
+          placeholder="도로명 주소 (필수)"
+          className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
+          value={roadAddress}
+          readOnly
+          onClick={openPostcodePopup}
+        />
+
+        <input
+          type="text"
+          placeholder="상세 주소 입력 (선택)"
+          value={detailAddress}
+          onChange={(e) => setDetailAddress(e.target.value)}
+          className="block w-full p-2 border border-divider rounded-lg mb-6"
+        />
+        <button type="button" onClick={handleSaveVerified} className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
+          저장
+        </button>
+      </form>
+
+      {/* Profile Image Change Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 className="text-lg text-center font-bold mb-4">프로필 이미지 설정</h2>
+            <button onClick={handleSetDefaultImage} className="w-full py-2 mb-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+              기본 이미지로 변경
+            </button>
+            <button onClick={handleSelectImage} className="w-full py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg">
+              사진 선택
+            </button>
+            <button onClick={() => setShowModal(false)} className="w-full py-2 mt-5 text-white bg-delete rounded-lg">
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Save Success Modal */}
+      {saveModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
+            <h2 className="text-base font-bold mb-6">프로필이 수정되었습니다.</h2>
+            <button onClick={handleSaveModal} className="px-12 py-2 bg-primary text-white rounded-lg">
+              확인
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default EditUserInfo;
