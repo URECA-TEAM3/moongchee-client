@@ -58,22 +58,21 @@ const NicknameInput = ({ nickname, setNickname, setIsNicknameChecked, errors, se
 
   return (
     <div className="flex-1">
-      <label className="block text-sm font-medium mb-1">닉네임*</label>
+      <label className="block text-sm font-medium mb-1 ml-2">닉네임*</label>
       <div className="flex space-x-2">
         <input
           type="text"
           placeholder="닉네임 입력"
           value={nickname}
           onChange={handleNicknameChange}
-          className={`flex-1 p-2 border ${errors.nickname ? 'border-red-500' : 'border-primary'} rounded`}
+          className={`flex-1 p-2 ml-2 border ${errors.nickname ? 'border-red-500' : 'border-divider'} rounded-lg`}
         />
         <button
           type="button"
           onClick={handleNicknameCheck}
-          disabled={isChecking}
           className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
         >
-          {isChecking ? '확인 중...' : '중복확인'}
+          중복확인
         </button>
       </div>
       {errors.nickname && <span className="text-red-500 text-xs mt-1">{errors.nickname}</span>}

@@ -8,10 +8,10 @@ import defaultProfileImage from '/src/assets/images/user.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import toast, { Toaster } from 'react-hot-toast';
 import { storage } from '../../../firebase';
-import AddressSearch from '../../components/AddressSearch';
-import EmailVerification from '../../components/EmailVerification';
-import NicknameInput from '../../components/NicknameInput';
-import ProfileImageUpload from '../../components/ProfileImageUpload';
+import AddressSearch from '../../components/login/AddressSearch';
+import EmailVerification from '../../components/login/EmailVerification';
+import NicknameInput from '../../components/login/NicknameInput';
+import ProfileImageUpload from '../../components/login/ProfileImageUpload';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -19,9 +19,7 @@ const SignUpForm = () => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
-  const [emailVerificationCode, setEmailVerificationCode] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [birthDate, setBirthDate] = useState(null);
@@ -31,7 +29,6 @@ const SignUpForm = () => {
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [timer, setTimer] = useState(180);
-  const [isResend, setIsResend] = useState(false);
 
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
@@ -85,9 +82,6 @@ const SignUpForm = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
     if (field === 'name') setName(value);
     if (field === 'phone') setPhone(value);
-    if (field === 'email') setEmail(value);
-    if (field === 'nickname') setNickname(value);
-    if (field === 'verificationCode') setVerificationCode(value);
     if (field === 'detailedAddress') setDetailedAddress(value);
     if (field === 'birthDate') setBirthDate(value);
   };
@@ -143,9 +137,6 @@ const SignUpForm = () => {
     e.preventDefault();
 
     if (!validateFields()) {
-      if (!isEmailVerified) {
-        toast.error('이메일 인증을 완료해주세요.');
-      }
       return;
     }
 
@@ -247,7 +238,7 @@ const SignUpForm = () => {
         />
         {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
-        <EmailVerification email={email} setEmail={setEmail} setIsEmailVerified={setIsEmailVerified} />
+        <EmailVerification email={email} setEmail={setEmail} setIsEmailVerified={setIsEmailVerified} errors={errors} setErrors={setErrors} />
 
         <label className="block text-sm font-medium my-1 mt-4">휴대폰 번호*</label>
         <input
@@ -277,8 +268,8 @@ const SignUpForm = () => {
         </div>
         {errors.birthDate && <span className="text-red-500 text-xs mt-1">{errors.birthDate}</span>}
 
-        <label className="block text-sm font-medium mb-1">주소*</label>
-        <AddressSearch onComplete={handleCompleteAddress} />
+        {/* <label className="block text-sm font-medium mb-1">주소*</label> */}
+        <AddressSearch errors={errors} onComplete={handleCompleteAddress} />
         {errors.address && <span className="text-red-500 text-xs mt-1">{errors.address}</span>}
 
         <input

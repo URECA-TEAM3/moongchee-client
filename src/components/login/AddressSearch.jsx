@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 
-const AddressSearch = ({ onComplete }) => {
+const AddressSearch = ({ onComplete, errors }) => {
   const [roadAddress, setRoadAddress] = useState('');
 
   const handleComplete = (data) => {
@@ -65,13 +65,14 @@ const AddressSearch = ({ onComplete }) => {
 
   return (
     <div>
+      <label className="block text-sm font-medium mb-1">주소*</label>
       <input
         type="text"
         placeholder="도로명 주소 (필수)"
+        className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
         value={roadAddress}
         readOnly
         onClick={openPostcodePopup}
-        className="block w-full p-2 border border-gray-300 rounded mb-1"
       />
     </div>
   );

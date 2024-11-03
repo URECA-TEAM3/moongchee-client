@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const EmailVerification = ({ email, setEmail, setIsEmailVerified }) => {
+const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErrors }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [emailVerificationCode, setEmailVerificationCode] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [timer, setTimer] = useState(180);
   const [isResend, setIsResend] = useState(false);
-  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     let interval;
@@ -70,7 +69,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified }) => {
 
   return (
     <>
-      <label className="block text-sm font-medium mb-1">이메일 주소*</label>
+      <label className="block text-sm font-medium my-1 mt-4">이메일 주소*</label>
       <div className="flex space-x-2 mb-1">
         <input
           type="email"
@@ -80,7 +79,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified }) => {
             setEmail(e.target.value);
             setErrors((prev) => ({ ...prev, email: '' }));
           }}
-          className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded`}
+          className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-divider'} rounded-lg`}
         />
         <button
           type="button"
@@ -92,7 +91,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified }) => {
       </div>
       {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email}</span>}
 
-      {showVerificationInput && timer && (
+      {showVerificationInput && timer > 0 && (
         <div className="flex space-x-2 mb-1 items-center">
           <div className="relative flex-1">
             <input
@@ -100,7 +99,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified }) => {
               placeholder="인증번호 입력"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
-              className="w-full p-2 pr-12 border border-gray-300 rounded"
+              className="w-full p-2 pr-12 border border-divider rounded-lg"
             />
             <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">{formatTime(timer)}</span>
           </div>

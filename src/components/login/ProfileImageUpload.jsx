@@ -15,7 +15,7 @@ const ProfileImageUpload = ({ selectedImage, setSelectedImage, setSelectedImageF
   };
 
   return (
-    <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
+    <div className="relative w-20 h-20 ml-2 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
       {selectedImage ? (
         <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
       ) : (
