@@ -4,38 +4,58 @@ import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
 
 const ShopHistory = () => {
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedCards, setExpandedCards] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelPrice, setCancelPrice] = useState(0);
+  const [cancelId, setCancelId] = useState(0);
   const [orderHistory, setOrderHistory] = useState([]);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  const [productMap, setProductMap] = useState({});
 
   // Fetch order_item
   useEffect(() => {
     const OrderHistory = async () => {
       try {
         const response = await API.get(`/cart/order/${id}`);
-        console.log(response.data.data);
+        const orderData = response.data.data;
 
-        // Grouping data by date
-        const groupedData = response.data.reduce((acc, order) => {
-          const date = order.order_date;
-          if (!acc[date]) {
-            acc[date] = [];
+        // Grouping data by order_id
+        const groupedData = orderData.reduce((acc, order) => {
+          const orderId = order.order_id;
+          if (!acc[orderId]) {
+            acc[orderId] = [];
           }
-          acc[date].push(order);
+          acc[orderId].push(order);
           return acc;
         }, {});
         setOrderHistory(groupedData);
+
+        // product 테이블에서 제품명(name)과 이미지 경로(image) 가져오기
+        const productResponse = await API.get('/products');
+        const products = productResponse.data.data;
+
+        const productMap = products.reduce((map, product) => {
+          map[product.id] = { name: product.name, image: product.image };
+          return map;
+        }, {});
+
+        // 이미지 URL 생성
+        // for (const product of products) {
+        //   const storageRef = ref(storage, product.image);
+        //   const imageUrl = await getDownloadURL(storageRef);
+        //   productMap[product.id] = { name: product.name, image: imageUrl };
+        // }
+        setProductMap(productMap);
+        // const storageRef = ref(storage, product.image);
+        // const imageUrl = await getDownloadURL(storageRef);
+
       } catch (error) {
         console.error(error);
       }
@@ -46,6 +66,13 @@ const ShopHistory = () => {
     }
   }, [id]);
 
+  const toggleExpand = (orderId) => {
+    setExpandedCards((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
+
   const refundPoint = async () => {
     try {
       const response = await API.post('members/update-points', {
@@ -53,8 +80,13 @@ const ShopHistory = () => {
         amount: cancelPrice,
       });
 
+      const orderItemResponse = await API.put('/cart/refund-product', {
+        orderItemId: cancelId,
+        status: 'refund',
+      })
       console.log('Updated points successfully:', response);
       setIsModalOpen(false);
+      navigate(0);
     } catch (error) {
       if (error.response) {
         console.error('Error updating points:', error.response.data.message || error.message);
@@ -80,41 +112,111 @@ const ShopHistory = () => {
       </div>
 
       <div className="pt-3 pb-7 pl-10 pr-10">
-        {Object.keys(orderHistory).map((date) => (
-          <div key={date} className="w-full bg-white rounded-lg p-5 shadow mb-5">
+        {Object.keys(orderHistory).map((orderId) => (
+          <div key={orderId} className="w-full bg-white rounded-lg p-5 shadow mb-5">
             <div className="flex justify-between items-center">
-              <div className="text-lg font-bold mb-1">{date}</div>
-              <button onClick={toggleExpand}>
-                {isExpanded ? (
-                  <ChevronUpIcon className="h-6 w-6" stroke="black" />
-                ) : (
-                  <ChevronDownIcon className="h-6 w-6" stroke="black" />
-                )}
-              </button>
+              <div className="text-lg font-bold">
+                {new Date(orderHistory[orderId][0].order_date).toLocaleDateString('ko-KR')}
+              </div>
+              {orderHistory[orderId].length > 1 && (
+                <button onClick={() => toggleExpand(orderId)}>
+                  {expandedCards[orderId] ? (
+                    <div className='flex text-sm items-center'>
+                      {/* {productMap[orderHistory[orderId][0].product_id]}
+                      <p className='ml-1 mr-1 text-primary'>외 {orderHistory[orderId].length-1}개</p> */}
+                      <ChevronUpIcon className="h-6 w-6" stroke="black" />
+                    </div>
+                  ) : (
+                    <ChevronDownIcon className="h-6 w-6" stroke="black" />
+                  )}
+                </button>
+              )}
             </div>
-            {isExpanded &&
-              orderHistory[date].map((item) => (
+            
+            {/* 아래 화살표 누르기 전 첫 번째 항목만 표시 */}
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center">
+                <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+                <div className="p-2 pl-4">
+                  <div className='flex'>
+                    {orderHistory[orderId].length > 1 ? (
+                        <p className='mb-1'>{productMap[orderHistory[orderId][0].product_id]?.name}
+                        {!expandedCards[orderId] && (
+                          <span className='pl-1 text-primary'>외 {orderHistory[orderId].length-1}개</span>
+
+                        )}</p>
+                      ) : (
+                        <p className='mb-1'>{productMap[orderHistory[orderId][0].product_id]?.name}</p>
+                    )}
+                  </div>
+                  {(orderHistory[orderId].length == 1 || expandedCards[orderId] ) && (
+                    <p className='mb-1'>수량: {orderHistory[orderId][0].quantity}개</p>
+                  )}
+                  <div className="flex">
+                    <DogChew />
+                    <div className='flex items-center'>
+                      <p className="ml-2 mb-1 font-bold">{orderHistory[orderId][0].price}개</p>
+                      {(orderHistory[orderId].length == 1 || expandedCards[orderId] ) && (
+                        orderHistory[orderId][0].status === 'paid' ? (
+                          <p className='text-primary ml-2 mb-1 text-sm'> 결제완료</p>
+                        ) : (
+                          <p className='text-alert ml-2 mb-1 text-sm'> 환불완료</p>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {(orderHistory[orderId][0].status == 'paid' && expandedCards[orderId] )&& (
+                  <div>
+                    <button
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        setCancelPrice(item.price);
+                        setCancelId(item.id);
+                      }}
+                      className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
+                    >
+                      취소
+                    </button>
+
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* 아래 화살표 눌렀을 때 세부 내역 렌더링 */}
+            {expandedCards[orderId] &&
+              orderHistory[orderId].slice(1).map((item) => (
                 <div key={item.id} className="flex items-center justify-between mt-4">
                   <div className="flex items-center">
-                    <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg" alt="Product" />
-                    <div className="p-4">
-                      <p>{item.name}</p>
-                      <p>수량 : {item.quantity}개</p>
+                    <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+                    <div className="p-2 pl-4">
+                      <p className='mb-1'>{productMap[item.product_id]?.name}</p>
+                        <p className='mb-1'>수량: {item.quantity}개</p>
                       <div className="flex">
                         <DogChew />
-                        <p className="ml-2 font-bold">{item.price}개</p>
+                        <div className='flex items-center'>
+                          <p className="ml-2 mb-1 font-bold">{item.price}개</p>
+                          {item.status == 'paid' ? <p className='text-primary ml-2 mb-1 text-sm'> 결제완료</p> : <p className='text-alert ml-2 mb-1 text-sm'> 환불완료</p>}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      setCancelPrice(item.price);
-                    }}
-                    className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
-                  >
-                    취소
-                  </button>
+                  {item.status == 'paid' && (
+                    <div>
+                      <button
+                        onClick={() => {
+                          setIsModalOpen(true);
+                          setCancelPrice(item.price);
+                          setCancelId(item.id);
+                        }}
+                        className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
+                      >
+                        취소
+                      </button>
+
+                    </div>
+                  )}
                 </div>
               ))}
           </div>
