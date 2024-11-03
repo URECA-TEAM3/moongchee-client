@@ -1,7 +1,7 @@
 import React from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../api/axiosInstance';
+import axiosInstance from '../../api/axiosInstance';
 
 const GoogleLoginBtn = () => {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;

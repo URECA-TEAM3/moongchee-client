@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import KakaoLoginBtn from '../../components/KakaoLoginBtn';
-import GoogleLoginBtn from '../../components/GoogleLoginBtn';
+import KakaoLoginBtn from '../../components/login/KakaoLoginBtn';
+import GoogleLoginBtn from '../../components/login/GoogleLoginBtn';
 import axios from 'axios';
 
 const LoginPage = () => {
