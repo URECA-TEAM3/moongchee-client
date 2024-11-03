@@ -24,6 +24,7 @@ const ShopHistory = () => {
     const OrderHistory = async () => {
       try {
         const response = await API.get(`/cart/order/${id}`);
+        console.log(response.data.data);
 
         // Grouping data by date
         const groupedData = response.data.reduce((acc, order) => {
