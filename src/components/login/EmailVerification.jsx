@@ -8,6 +8,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErr
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [timer, setTimer] = useState(180);
   const [isResend, setIsResend] = useState(false);
+  const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
 
   useEffect(() => {
     let interval;
@@ -60,6 +61,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErr
   const handleVerifyEmailCode = () => {
     if (verificationCode === emailVerificationCode) {
       setIsEmailVerified(true);
+      setIsEmailFieldDisabled(true);
       toast.success('이메일 인증 성공!');
       setShowVerificationInput(false);
     } else {
@@ -79,12 +81,16 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErr
             setEmail(e.target.value);
             setErrors((prev) => ({ ...prev, email: '' }));
           }}
+          disabled={isEmailFieldDisabled}
           className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-divider'} rounded-lg`}
         />
         <button
           type="button"
           onClick={handleEmailVerification}
-          className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
+          disabled={isEmailFieldDisabled}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            isEmailFieldDisabled ? 'bg-gray-400 text-white cursor-not-allowed' : 'border border-primary text-primary hover:bg-primary hover:text-white'
+          }`}
         >
           {isResend ? '재발송' : '인증번호 발송'}
         </button>
