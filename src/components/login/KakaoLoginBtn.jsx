@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../api/axiosInstance';
-import { useUserStore } from '../store/user';
+import axiosInstance from '../../api/axiosInstance';
+import { useUserStore } from '../../store/user';
 
 const KakaoLoginBtn = () => {
   const navigate = useNavigate();
