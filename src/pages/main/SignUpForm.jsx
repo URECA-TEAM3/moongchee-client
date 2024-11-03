@@ -171,7 +171,7 @@ const SignUpForm = () => {
         phone,
         email,
         address: roadAddress,
-        detailAddress: detailedAddress,
+        detailaddress: detailedAddress,
         birthDate: formattedBirthDate,
         provider,
         token: userId,
@@ -191,9 +191,16 @@ const SignUpForm = () => {
           phone,
           email,
           address: roadAddress,
+<<<<<<< Updated upstream
           detailAddress: detailedAddress,
           birthDate: formattedBirthDate,
           provider,
+=======
+          detailaddress: detailedAddress, // 세션 데이터에 추가
+          birthDate: formattedBirthDate,
+          provider,
+          petsitter: 0,
+>>>>>>> Stashed changes
           userId,
           nickname,
           profile_image_url: downloadURL,
