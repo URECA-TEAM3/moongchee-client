@@ -171,7 +171,7 @@ const SignUpForm = () => {
         phone,
         email,
         address: roadAddress,
-        detailAddress: detailedAddress,
+        detailaddress: detailedAddress,
         birthDate: formattedBirthDate,
         provider,
         token: userId,
