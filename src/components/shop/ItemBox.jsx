@@ -6,12 +6,13 @@ import API from '../../api/axiosInstance';
 
 const ItemBox = ({ item }) => {
   const navigate = useNavigate();
+  const { id } = useUserStore((state) => state);
 
   const handleNavigate = async () => {
     try {
       await API.post('/cart', {
         product_id: item.id,
-        user_id: 1,
+        user_id: id,
         quantity: 1,
         checked: true,
       });
