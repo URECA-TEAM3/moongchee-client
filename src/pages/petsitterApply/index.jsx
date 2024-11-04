@@ -13,6 +13,7 @@ import usePetSitterStore from '../../store/petsitterStore';
 const index = () => {
   const { id } = useUserStore();
   const { type } = usePetSitterStore();
+  const { login } = useUserStore((state) => state);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
@@ -159,7 +160,14 @@ const index = () => {
 
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/apply', params);
-      console.log(res);
+
+      const newData = {
+        ...userData,
+        petsitter: 1,
+      };
+      console.log(newData);
+      sessionStorage.setItem('userData', newData);
+      login(newData);
       openModal();
     } catch (error) {
       console.log(error);
