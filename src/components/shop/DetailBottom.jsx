@@ -6,7 +6,8 @@ import { useUserStore } from '../../store/userStore';
 
 const DetailBottom = ({ product }) => {
   const navigate = useNavigate();
-  const { id, getPoint } = useUserStore((state) => state);
+  const { getPoint, id } = useUserStore((state) => state);
+  const [points, setPoints] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(false);
   const [productItem, setProductItem] = useState(product);
@@ -23,9 +24,27 @@ const DetailBottom = ({ product }) => {
     quantity: 1,
     checked: true,
   });
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      try {
+        const userPoints = await getPoint(id); // getPoint 함수 호출
+        setPoints(userPoints);
+      } catch (error) {
+        console.error('Error fetching points:', error); // 에러 처리
+      }
+    };
+
+    fetchPoints();
+  }, [id]); // 의존성 배열에 id 추가
+
   const toggleBottomSheet = () => {
     setIsVisible(!isVisible);
-    getPoint(id);
+    if (points - productItem.price * productItem.quantity < 0) {
+      setDisabledBtn(true);
+    } else {
+      setDisabledBtn(false);
+    }
   };
 
   const handleNavigate = async (quantity) => {
@@ -69,6 +88,7 @@ const DetailBottom = ({ product }) => {
       <div className="fixed bottom-0 flex items-center justify-between w-[600px] bg-white ">
         {isVisible && (
           <BottomSheet
+            points={points}
             setBuyNowData={setBuyNowData}
             price={price}
             setPrice={setPrice}
@@ -92,16 +112,16 @@ const DetailBottom = ({ product }) => {
 
         {isVisible ? (
           <>
-            {!disabledBtn ? (
+            {disabledBtn ? (
               <div className="flex grow">
-                <button className="grow" onClick={() => navigate('/payment', { state: { buyNowData } })}>
-                  <div className="bg-primary text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
+                <button className="grow" onClick={() => navigate('/ChargePage')}>
+                  <div className="bg-divider text-[gray] p-3 mx-2 rounded-xl text-center">포인트 충전하러 가기</div>
                 </button>
               </div>
             ) : (
               <div className="flex grow">
-                <button className="grow" onClick={() => navigate('/chargepage')}>
-                  <div className="bg-divider text-[gray] p-3 mx-2 rounded-xl text-center">포인트 충전하러 가기</div>
+                <button className="grow" onClick={() => navigate('/payment', { state: { buyNowData } })}>
+                  <div className="bg-primary text-white p-3 mx-2 rounded-xl text-center">결제하기</div>
                 </button>
               </div>
             )}

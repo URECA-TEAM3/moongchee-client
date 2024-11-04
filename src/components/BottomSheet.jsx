@@ -5,9 +5,7 @@ import { IoCloseOutline } from 'react-icons/io5';
 import DogChew from './DogChew';
 import { useUserStore } from '../store/userStore';
 
-const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
-  const { getPoint, id } = useUserStore((state) => state);
-  const [points, setPoints] = useState(0);
+const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const handleQuantityChange = (id, delta) => {
     setProductItem((prevItem) => {
@@ -40,7 +38,7 @@ const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBot
 
   useEffect(() => {
     setIsAnimating(true);
-    const ProductTotalPrice = productItem.price * productItem.quantity;
+    const ProductTotalPrice = productItem.price * 1;
     const UserTotalPrice = points - ProductTotalPrice;
 
     setPrice({
@@ -54,18 +52,6 @@ const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBot
     setTimeout(() => setIsVisible(false), 200);
   };
 
-  useEffect(() => {
-    const fetchPoints = async () => {
-      try {
-        const userPoints = await getPoint(id); // getPoint 함수 호출
-        setPoints(userPoints);
-      } catch (error) {
-        console.error('Error fetching points:', error); // 에러 처리
-      }
-    };
-
-    fetchPoints();
-  }, [id]); // 의존성 배열에 id 추가
   return (
     <>
       {/* 배경 블러 처리 */}
@@ -118,8 +104,10 @@ const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBot
               <DogChew />
             </div>
             <span className={`font-bold`}>
-              : {points} - {price.ProductTotal} ={' '}
-              <span className={`ml-1 ${points - price.ProductTotal > 0 ? 'text-primary' : 'text-red-500'}`}>{points - price.ProductTotal}개</span>
+              : {points} - {productItem.quantity * productItem.price} =
+              <span className={`ml-1 ${points - productItem.quantity * productItem.price > 0 ? 'text-primary' : 'text-red-500'}`}>
+                {points - productItem.quantity * productItem.price}개
+              </span>
             </span>
           </div>
         </div>

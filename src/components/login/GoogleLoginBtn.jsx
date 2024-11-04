@@ -1,11 +1,11 @@
 import React from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '../store/userStore';
-import axiosInstance from '../api/axiosInstance';
+import { useUserStore } from '../../store/userStore';
+import axiosInstance from '../../api/axiosInstance';
 
 const GoogleLoginBtn = () => {
-  const { login } = useUserStore.getState();
+  const { login } = useUserStore((state) => state);
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const navigate = useNavigate();
 
