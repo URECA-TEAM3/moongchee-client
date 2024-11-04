@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import successImage from '../../assets/images/white-curve.png';
 import axios from 'axios';
+import { useUserStore } from '../../store/userStore';
 
 export default function SuccessPage() {
+  const { getPoint } = useUserStore((state) => state);
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);

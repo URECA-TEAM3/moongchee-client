@@ -10,16 +10,18 @@ import API from '../../api/axiosInstance';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { IoMdClose } from 'react-icons/io';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
+import toast, { Toaster } from 'react-hot-toast';
 
 function ShoppingCart() {
   const navigate = useNavigate();
+  const { id, getPoint } = useUserStore((state) => state);
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
-  const [payment, setPayment] = useState(true); // 결제가능여부
+  const [payment, setPayment] = useState(true);
   const [cartItems, setCartItems] = useState([]);
   const [showItems, setShowItems] = useState(true);
-  const { id } = useUserStore((state) => state);
+  const [points, setPoints] = useState(0);
 
   const getCartItemsList = async () => {
     try {
@@ -47,8 +49,18 @@ function ShoppingCart() {
   };
 
   useEffect(() => {
-    getCartItemsList();
-  }, []);
+    const fetchPoints = async () => {
+      try {
+        const userPoints = await getPoint(id); // getPoint 함수 호출
+        setPoints(userPoints);
+      } catch (error) {
+        console.error('Error fetching points:', error); // 에러 처리
+      }
+    };
+
+    fetchPoints();
+    getCartItemsList(); // 장바구니 아이템 리스트 가져오기
+  }, [id]);
 
   // 최종 결제 금액 계산
   const calculateTotal = () => {
@@ -92,7 +104,14 @@ function ShoppingCart() {
   // 결제하기 btn
   const handleCheckout = async () => {
     await uploadLocalCart();
-    navigate('/payment', { state: { cartItems } });
+    console.log(cartItems);
+
+    const hasCheckedItems = cartItems.some((item) => item.checked);
+    if (!hasCheckedItems) {
+      toast.error('구매할 상품을 선택해주세요');
+    } else {
+      navigate('/payment', { state: { cartItems } });
+    }
   };
 
   // 장바구니 상품 삭제
@@ -112,9 +131,9 @@ function ShoppingCart() {
   useEffect(() => {
     const total = calculateTotal();
     setTotalPrice(total);
-    setAfterPayment(1000 - total);
+    setAfterPayment(points - total);
 
-    setPayment(1000 - total >= 0);
+    setPayment(points - total >= 0);
     setShowItems(cartItems.length > 0);
   }, [cartItems]);
 
@@ -144,6 +163,7 @@ function ShoppingCart() {
 
   return (
     <div className="bg-white flex flex-col min-h-full">
+      <Toaster />
       <div className="text-center px-10 py-6 font-bold">장바구니</div>
 
       {/* 장바구니 담긴 상품 조회 */}
@@ -191,7 +211,7 @@ function ShoppingCart() {
             </div>
             {payment ? (
               <div className="w-24 flex flex-col items-end gap-1">
-                <div>1000개</div>
+                <div>{points}개</div>
                 <div className="flex justify-between w-full pl-2">
                   <AiOutlineMinus />
                   <div>{totalPrice}개</div>
@@ -204,7 +224,7 @@ function ShoppingCart() {
                   잔액이 부족합니다.
                   <GoInfo className="ml-1" />
                 </div>
-                <div>{afterPayment}개</div>
+                <div>{points - totalPrice}개</div>
               </div>
             )}
           </div>
@@ -214,23 +234,23 @@ function ShoppingCart() {
               <div className="flex">
                 <span className="mr-2">결제 후 </span> <DogChew />
               </div>
-              <div>{afterPayment}개</div>
+              <div className="font-bold">{afterPayment}개</div>
             </div>
           )}
 
           {payment ? (
-            <div className="text-center m-10">
-              <button onClick={handleCheckout} className="w-full h-12 bg-primary text-white rounded-lg text-center">
+            <div className="text-center my-10">
+              <button onClick={handleCheckout} className="w-1/2 h-12 bg-primary text-white rounded-lg text-center">
                 결제하기
               </button>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center m-10">
-              <Link to="#" className="text-sm underline underline-offset-2">
+              <Link to="/chargepage" className="text-sm underline underline-offset-2">
                 지금 바로 충전하기
               </Link>
-              <Link to="#" className="grow w-full mt-2">
-                <div className=" mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-lg text-center">결제하기</div>
+              <Link to="#" className="grow w-1/2 mt-2">
+                <div className="mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-lg text-center">결제하기</div>
               </Link>
             </div>
           )}

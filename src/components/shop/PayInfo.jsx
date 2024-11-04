@@ -24,7 +24,7 @@ const PayInfo = ({ totalPrice }) => {
         <div className="flex">
           <span className="mr-2">최종 차감 될 </span> <DogChew />
         </div>
-        <div>{totalPrice}개</div>
+        <div className="font-bold">{totalPrice}개</div>
       </div>
     </>
   );
