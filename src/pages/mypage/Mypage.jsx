@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import petProfileImage from '/src/assets/images/defaultpet.png';
 import axios from 'axios';
+import { useUserStore } from '../../store/userStore';
 
 function Mypage(props) {
+  const { logout } = useUserStore((state) => state);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
@@ -54,6 +56,7 @@ function Mypage(props) {
     // 로그아웃 로직
     localStorage.clear();
     sessionStorage.clear();
+    logout();
     navigate('/');
 
     setIsModalOpen(false); // 모달 닫기
