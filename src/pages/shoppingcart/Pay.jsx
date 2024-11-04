@@ -136,7 +136,7 @@ const Pay = () => {
         <PayInfo totalPrice={orderData.total} />
 
         <div className="text-center px-10">
-          <button onClick={openModal} className="w-full h-12 bg-primary my-10 text-white p-3 rounded-xl text-center">
+          <button onClick={openModal} className="w-full h-12 bg-primary my-10 text-white p-3 rounded-lg text-center">
             결제하기
           </button>
         </div>
