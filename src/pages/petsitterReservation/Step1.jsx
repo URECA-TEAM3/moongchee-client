@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
+import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ko } from 'date-fns/locale';
 import axios from 'axios';
 import Dropdown from '../../components/DropDown';
 import DogChew from '../../components/DogChew';
@@ -101,6 +102,37 @@ const index = ({ handleNextStep }) => {
     return startIndex >= 0 ? dropDownTime.slice(startIndex + 1, endIndex + 1) : [];
   }, [formData.startTime, petsitter.startTime, petsitter.endTime]);
 
+  const validateFields = () => {
+    const newErrors = {};
+    Object.entries(formData).map((item) => {
+      if (item[0] === 'requestDate' && item[1] === '') {
+        newErrors.requestDate = '날짜를 입력해주세요.';
+      }
+      if (item[0] === 'pet' && item[1] === '선택') {
+        newErrors.pet = '반려동물을 선택해주세요.';
+      }
+      if (item[0] === 'dogSize' && item[1] === '') {
+        newErrors.dogSize = '반려견 사이즈 선택해주세요.';
+      }
+      if (item[0] === 'startTime' && item[1] === '선택') {
+        newErrors.startTime = '시작시간을 선택해주세요.';
+      }
+      if (item[0] === 'endTime' && item[1] === '선택') {
+        newErrors.endTime = '종료시간을 선택해주세요.';
+      }
+    });
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleReservationInfo = () => {
+    if (!validateFields()) {
+      toast.error('필수 항목을 모두 입력해주세요.');
+      return null;
+    }
+    setReservationData(formData);
+    handleNextStep();
+  };
+
   useEffect(() => {
     handleChange('price', handlePrice);
   }, [handlePrice]);
@@ -109,39 +141,13 @@ const index = ({ handleNextStep }) => {
     handleChange('workingTime', calculateTimeDifference);
   }, [calculateTimeDifference]);
 
-  const handleReservationInfo = () => {
-    let str = '';
-    Object.entries(formData).map((item) => {
-      if (item[0] === 'requestDate' && item[1] === '') {
-        str += '날짜, ';
-      }
-      if (item[0] === 'pet' && item[1] === '선택') {
-        str += '반려동물 선택란, ';
-      }
-      if (item[0] === 'dogSize' && item[1] === '') {
-        str += '반려동물 사이즈 선택란, ';
-      }
-      if (item[0] === 'startTime' && item[1] === '선택') {
-        str += '시작시간, ';
-      }
-      if (item[0] === 'endTime' && item[1] === '선택') {
-        str += '종료시간, ';
-      }
-    });
-    if (str.length > 0) {
-      alert(`${str}은 필수 입력 란입니다.`);
-      return null;
-    }
-    setReservationData(formData);
-    handleNextStep();
-  };
-
   useEffect(() => {
     handlePetList();
   }, []);
 
   return (
     <div className="p-5">
+      <Toaster position="top-center" reverseOrder={false} />
       <h1>펫시터</h1>
       <div className="profile flex items-center mt-3">
         <img src={petsitter.imageUrl} className="object-cover object-center w-24 h-24 rounded-full " />

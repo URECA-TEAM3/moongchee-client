@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PetSitterInfo from '../../components/PetSitterInfo';
@@ -62,6 +62,11 @@ const index = () => {
   const handleProfileClick = () => {
     navigate('/petsitter/profile');
   };
+
+  const availableEndTimes = useMemo(() => {
+    const startIndex = dropDownTime.indexOf(startTime);
+    return startIndex >= 0 ? dropDownTime.slice(startIndex + 1) : dropDownTime;
+  }, [startTime]);
 
   const handleDayClick = (dayName) => {
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
@@ -187,7 +192,7 @@ const index = () => {
               <Dropdown
                 width={'150'}
                 label={endTime}
-                options={dropDownTime}
+                options={availableEndTimes}
                 title={'End Time'}
                 onSelect={(option) => {
                   setEndTime(option);

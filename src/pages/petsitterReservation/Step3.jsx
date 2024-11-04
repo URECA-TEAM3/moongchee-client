@@ -8,22 +8,34 @@ import { useUserStore } from '../../store/user';
 const Step3 = () => {
   const { reservation } = useReservationStore();
   const navigate = useNavigate();
-  const { name, address, point } = useUserStore();
+  const { id, name, address, point } = useUserStore();
 
   const handleReservationClick = async () => {
     if (reservation.price > point) {
       alert('결제 실패');
       return;
-    } else {
-      try {
-        const res = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
-        if (res) {
-          navigate('/petsitter/reservation/list');
+    }
+
+    try {
+      const pointUpdateResponse = await axios.post('http://localhost:3000/api/members/update-points', {
+        userId: id,
+        amount: reservation.price,
+      });
+      if (pointUpdateResponse.status === 200) {
+        try {
+          const reservationResponse = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
+
+          if (reservationResponse.status === 200) {
+            navigate('/petsitter/reservation/list');
+          }
+        } catch (error) {
+          console.error('예약 생성 실패:', error);
+          alert('예약 생성에 실패했습니다.');
         }
-        console.log(res);
-      } catch (error) {
-        console.log(error);
       }
+    } catch (error) {
+      console.error('포인트 업데이트 실패:', error);
+      alert('포인트 업데이트에 실패했습니다.');
     }
   };
 

@@ -67,8 +67,7 @@ const ReservationCard = ({ info, openModal, userType }) => {
               </button>
             )
           ) : (
-            info.status ===
-            'reserved'(
+            info.status === 'reserved' && (
               <button
                 className="text-primary border border-primary px-4 py-2 rounded-lg w-full hover:bg-primary hover:text-white"
                 onClick={() => openModalAction('cancel')}

@@ -6,6 +6,7 @@ import { storage } from '../../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 import { useNavigate } from 'react-router-dom';
+import { toast, Toaster } from 'react-hot-toast';
 
 const index = () => {
   const navigate = useNavigate();
@@ -92,7 +93,34 @@ const index = () => {
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+    Object.entries(formData).map((item) => {
+      if (item[0] === 'description' && item[1] === '') {
+        newErrors.description = '자기소개를 입력해주세요.';
+      }
+      if (item[0] === 'experience' && item[1] === '선택') {
+        newErrors.experience = '경험을 선택해주세요.';
+      }
+      if (item[0] === 'region' && item[1] === '') {
+        newErrors.region = '지역을 선택해주세요.';
+      }
+      if (item[0] === 'startTime' && item[1] === '선택') {
+        newErrors.startTime = '시작시간을 선택해주세요.';
+      }
+      if (item[0] === 'endTime' && item[1] === '선택') {
+        newErrors.endTime = '종료시간을 선택해주세요.';
+      }
+    });
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleApplyAction = async () => {
+    if (!validateFields()) {
+      toast.error('필수 항목을 모두 입력해주세요.');
+      return null;
+    }
+
     const userData = JSON.parse(sessionStorage.getItem('userData'));
 
     let str = '';
@@ -127,6 +155,7 @@ const index = () => {
 
   return (
     <div className="p-5">
+      <Toaster position="top-center" reverseOrder={false} />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
