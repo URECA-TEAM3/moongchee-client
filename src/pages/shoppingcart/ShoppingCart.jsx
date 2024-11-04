@@ -252,8 +252,8 @@ function ShoppingCart() {
               )}
 
               {payment ? (
-                <div className="text-center my-10">
-                  <button onClick={handleCheckout} className="w-1/2 h-12 bg-primary text-white rounded-lg text-center">
+                <div className="text-center my-5 px-10">
+                  <button onClick={handleCheckout} className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
                     결제하기
                   </button>
                 </div>
@@ -269,13 +269,7 @@ function ShoppingCart() {
               )}
             </div>
           ) : (
-            <div className="mb-20 grow flex flex-col items-center justify-center text-xl font-bold">
-              <img className="w-1/2" src="/src/assets/images/black-curve.png" alt="" />
-              <div className="py-8">장바구니가 비었습니다.</div>
-              <button onClick={() => navigate('/shoppingmall')} className="w-6/12 mx-auto bg-primary text-white p-3 mx-2  rounded-lg text-center">
-                상품 구경하러가기
-              </button>
-            </div>
+            <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
           )}
         </div>
       )}
