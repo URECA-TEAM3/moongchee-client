@@ -12,6 +12,7 @@ import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {
   const { id } = useUserStore();
+  const [render, setRender] = useState(false);
   const { type } = usePetSitterStore();
   const { login } = useUserStore((state) => state);
   const navigate = useNavigate();
@@ -368,8 +369,37 @@ const index = () => {
   };
 
   const handleUpdateSitter = async () => {
+    if (!validateFields()) {
+      toast.error('필수 항목을 모두 입력해주세요.');
+      return null;
+    }
+
+    const userData = JSON.parse(sessionStorage.getItem('userData'));
+
+    let str = '';
+    for (let i = 0; i < dayList.length; i++) {
+      if (dayList[i].target === true) str += `${dayList[i].value},`;
+    }
+
+    const storageRef = ref(storage, `petsitter/${userData.id}`);
+    await uploadBytes(storageRef, selectedImageFile);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    const params = {
+      weekdays: str.slice(0, -1),
+      description: formData.description,
+      experience: formData.experience,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      region: `${formData.region1} ${formData.region2}`,
+      image: downloadURL,
+      status: 'confirmed',
+      name: userData.name,
+      userId: userData.id,
+    };
+
     try {
-      const response = await axios.put('http://localhost:3000/api/petsitter/sitter/update', formData);
+      const response = await axios.put('http://localhost:3000/api/petsitter/sitter/update', params);
       if (response.status === 200) {
         toast.success('시터 정보가 성공적으로 수정되었습니다.');
         fetchSitterDetail();
@@ -381,17 +411,20 @@ const index = () => {
   };
 
   const fetchSitterDetail = async () => {
+    setRender(true);
     if (type === 'update') {
       try {
         const res = await axios.get('http://localhost:3000/api/petsitter/sitter/detail', { params: { id } });
         const data = res.data.data;
+        const region = res.data.data.region.split(' ');
 
         setFormData({
           selectedImage: data.image,
           weekdays: data.weekdays,
           startTime: data.startTime,
           endTime: data.endTime,
-          region: data.region,
+          region1: region[0],
+          region2: region[1],
           description: data.description,
           experience: data.experience,
         });
@@ -416,7 +449,7 @@ const index = () => {
   }, []);
 
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, region2: '선택' }));
+    if (!render) setFormData((prev) => ({ ...prev, region2: '선택' }));
   }, [formData.region1]);
 
   return (
