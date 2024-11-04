@@ -6,7 +6,6 @@ import { useUserStore } from '../../store/userStore';
 import Modal from '../../components/Modal';
 
 const DetailBottom = ({ product }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { getPoint, id } = useUserStore((state) => state);
   const [points, setPoints] = useState(0);
@@ -18,6 +17,7 @@ const DetailBottom = ({ product }) => {
     UserTotal: 0,
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => {
     setIsModalOpen(true);
     handleNavigate(1);
