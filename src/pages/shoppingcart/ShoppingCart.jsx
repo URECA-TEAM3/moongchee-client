@@ -11,6 +11,7 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { IoMdClose } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
+import toast, { Toaster } from 'react-hot-toast';
 
 function ShoppingCart() {
   const navigate = useNavigate();
@@ -103,7 +104,14 @@ function ShoppingCart() {
   // 결제하기 btn
   const handleCheckout = async () => {
     await uploadLocalCart();
-    navigate('/payment', { state: { cartItems } });
+    console.log(cartItems);
+
+    const hasCheckedItems = cartItems.some((item) => item.checked);
+    if (!hasCheckedItems) {
+      toast.error('구매할 상품을 선택해주세요');
+    } else {
+      navigate('/payment', { state: { cartItems } });
+    }
   };
 
   // 장바구니 상품 삭제
@@ -155,6 +163,7 @@ function ShoppingCart() {
 
   return (
     <div className="bg-white flex flex-col min-h-full">
+      <Toaster />
       <div className="text-center px-10 py-6 font-bold">장바구니</div>
 
       {/* 장바구니 담긴 상품 조회 */}
@@ -230,8 +239,8 @@ function ShoppingCart() {
           )}
 
           {payment ? (
-            <div className="text-center m-10">
-              <button onClick={handleCheckout} className="w-full h-12 bg-primary text-white rounded-lg text-center">
+            <div className="text-center my-10">
+              <button onClick={handleCheckout} className="w-1/2 h-12 bg-primary text-white rounded-lg text-center">
                 결제하기
               </button>
             </div>
@@ -240,8 +249,8 @@ function ShoppingCart() {
               <Link to="#" className="text-sm underline underline-offset-2">
                 지금 바로 충전하기
               </Link>
-              <Link to="#" className="grow w-full mt-2">
-                <div className=" mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-lg text-center">결제하기</div>
+              <Link to="#" className="grow w-1/2 mt-2">
+                <div className="mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-lg text-center">결제하기</div>
               </Link>
             </div>
           )}

@@ -6,7 +6,6 @@ import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
 import { useUserStore } from '../../store/userStore';
-import toast, { Toaster } from 'react-hot-toast';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -138,7 +137,7 @@ const Pay = () => {
         <PayInfo totalPrice={orderData.total} />
 
         <div className="text-center">
-          <button onClick={openModal} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+          <button onClick={openModal} className="w-1/2 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
             결제하기
           </button>
         </div>
