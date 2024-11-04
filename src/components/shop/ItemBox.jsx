@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import DogChew from '../DogChew';
 import API from '../../api/axiosInstance';
+import { useUserStore } from '../../store/userStore';
 
 const ItemBox = ({ item }) => {
   const navigate = useNavigate();
   const { id } = useUserStore((state) => state);
 
   const handleNavigate = async () => {
+    console.log(id);
     try {
       await API.post('/cart', {
         product_id: item.id,
