@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import successImage from '../../assets/images/white-curve.png';
 import axios from 'axios';
+import { useUserStore } from '../../store/userStore';
 
 export default function SuccessPage() {
+  const { getPoint } = useUserStore((state) => state);
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
@@ -79,7 +81,7 @@ export default function SuccessPage() {
     <div className="flex flex-col justify-start items-center h-full bg-white pt-12">
       <img src={successImage} alt="회원가입 성공" className="w-[300px] h-[300px] mb-3" />
       <h2 className="text-lg font-bold text-gray-800">결제 완료</h2>
-      <button onClick={() => navigate(`/mypage`)} className="mt-6 py-2 px-4 bg-primary text-white rounded-lg hover:bg-blue-600 focus:outline-none">
+      <button onClick={() => navigate(`/mypage`)} className="mt-6 py-2 px-4 bg-primary text-white rounded-lg focus:outline-none">
         마이페이지로 돌아가기
       </button>
     </div>

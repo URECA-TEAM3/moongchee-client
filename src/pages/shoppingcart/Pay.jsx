@@ -5,11 +5,11 @@ import PayInfo from '../../components/shop/PayInfo';
 import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { id, name, phone, address } = useUserStore((state) => state);
+  const { id, name, phone, address, detailaddress } = useUserStore((state) => state);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -22,36 +22,52 @@ const Pay = () => {
   const [selectedItems, setSelectItems] = useState([]);
   const [orderData, setOrderData] = useState({
     userId: id,
-    status: 'paid',
     total: 0,
     productData: [],
+    status: 'paid',
   });
 
   const confirmOrder = async () => {
     try {
-      const response = await API.post('/api/cart/pay', orderData);
-      console.log(response);
-      navigate('/main');
+      console.log(orderData);
+      // 현재 날짜 orderData에 추가
+      const currentDate = new Date().toISOString().split('T')[0];
+      const updatedOrderData = {
+        ...orderData,
+        date: currentDate,
+      };
+
+      const response = await API.post('/cart/pay', updatedOrderData);
+      navigate(`/mypage/shophistory/${id}`, { state: { pay: 'done', payId: id } });
     } catch (error) {
       console.error();
     }
   };
 
   useEffect(() => {
-    const cartItems = location.state.cartItems || {};
-    console.log(cartItems);
-    const filteredItems = cartItems.filter((item) => item.checked);
-    setSelectItems(filteredItems);
+    const cartItems = location.state.cartItems || '';
+    const buyNowItems = location.state.buyNowData || '';
+
+    if (Boolean(cartItems)) {
+      const filteredItems = cartItems.filter((item) => item.checked);
+      setSelectItems(filteredItems);
+    } else if (Boolean(buyNowItems)) {
+      setSelectItems([buyNowItems]);
+    }
+  }, []);
+
+  useEffect(() => {
+    // selectedItems가 변경될 때마다 orderData 업데이트
     setOrderData((prev) => ({
       ...prev,
-      total: filteredItems.reduce((acc, item) => acc + item.quantity * item.price, 0),
-      productData: filteredItems.map((item) => ({
+      total: selectedItems.reduce((acc, item) => acc + item.quantity * item.price, 0),
+      productData: selectedItems.map((item) => ({
         product_id: item.product_id,
         quantity: item.quantity,
         price: item.price,
       })),
     }));
-  }, []);
+  }, [selectedItems]);
 
   return (
     <div className="bg-white flex flex-col min-h-full">
@@ -80,6 +96,7 @@ const Pay = () => {
             <div>
               <span className="text-[#9c9c9c]">주소 : </span>
               {address}
+              <span className="ml-2">{detailaddress}</span>
             </div>
           </div>
           <div>
@@ -94,7 +111,7 @@ const Pay = () => {
       <div className="mb-10">
         <ul>
           {selectedItems.map((item) => (
-            <li key={item.cart_id} className="cart-item text-lg">
+            <li key={item.cart_id || item.product_id} className="cart-item text-lg">
               <div className="flex items-start border-b-[1px] border-divider  w-full mx-auto py-5 px-10">
                 <div className="flex grow">
                   <img src={item.image} alt={item.name} className="mr-7 cart-item-image w-[150px]" />
@@ -120,7 +137,7 @@ const Pay = () => {
         <PayInfo totalPrice={orderData.total} />
 
         <div className="text-center">
-          <button onClick={openModal} className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
+          <button onClick={openModal} className="w-1/2 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">
             결제하기
           </button>
         </div>

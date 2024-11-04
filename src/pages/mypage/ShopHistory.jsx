@@ -1,39 +1,98 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
-import axios from 'axios';
+import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
+import EmptyPage from '../../components/EmptyPage';
 
 const ShopHistory = () => {
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedCards, setExpandedCards] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelPrice, setCancelPrice] = useState(0);
+  const [cancelId, setCancelId] = useState(0);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [productMap, setProductMap] = useState({});
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+  // Fetch order_item
+  useEffect(() => {
+    const OrderHistory = async () => {
+      try {
+        const response = await API.get(`/cart/order/${id}`);
+        const orderData = response.data.data;
+
+        // Grouping data by order_id
+        const groupedData = orderData.reduce((acc, order) => {
+          const orderId = order.order_id;
+          if (!acc[orderId]) {
+            acc[orderId] = [];
+          }
+          acc[orderId].push(order);
+          return acc;
+        }, {});
+        setOrderHistory(groupedData);
+
+        // 필요한 product_id만 추출
+        const productIds = [...new Set(orderData.map(order => order.product_id))];
+
+        // product_id 리스트를 서버에 전달하여 필요한 제품 정보만 가져오기
+        if (productIds && productIds.length > 0) {
+          
+          const productResponse = await API.post('/products/getByIds', {ids: productIds});
+          const products = productResponse.data.data;
+          
+          const productMap = products.reduce((map, product) => {
+            map[product.id] = { name: product.name, image: product.image };
+            return map;
+          }, {});
+  
+          
+          // 이미지 URL 생성
+          for (const product of products) {
+            const storageRef = ref(storage, product.image);
+            const imageUrl = await getDownloadURL(storageRef);
+            productMap[product.id] = { name: product.name, image: imageUrl };
+          }
+          
+          setProductMap(productMap)
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    if (id) {
+      OrderHistory();
+    }
+  }, [id]);
+  
+  const toggleExpand = (orderId) => {
+    setExpandedCards((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
   };
-
-  // 구매 내역 데이터 (예시)
-  const items = [
-    { id: 1, name: '순우리 국산 개껌 (4개입)', quantity: 1, price: 50 },
-    { id: 2, name: '슈퍼포우 오메가3 120ml', quantity: 1, price: 50 },
-    { id: 3, name: '순우리 국산 개껌 (4개입)', quantity: 1, price: 50 },
-  ];
 
   const refundPoint = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/members/update-points', {
+      const response = await API.post('members/update-points', {
         userId: id,
         amount: cancelPrice,
       });
 
+      const orderItemResponse = await API.put('/cart/refund-product', {
+        orderItemId: cancelId,
+        status: 'refund',
+      })
       console.log('Updated points successfully:', response);
       setIsModalOpen(false);
+      navigate(0);
     } catch (error) {
       if (error.response) {
         console.error('Error updating points:', error.response.data.message || error.message);
@@ -47,6 +106,23 @@ const ShopHistory = () => {
 
   const closeModal = () => setIsModalOpen(false);
 
+  // orderHistory 비어 있을 경우
+  if (Object.keys(orderHistory).length === 0) {
+    return (
+      <div className="bg-white flex flex-col min-h-full">
+        <div>
+          <div className="relative w-full flex items-center mb-4 mt-6">
+            <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+              <ChevronLeftIcon className="h-6 w-6 ml-5" />
+            </button>
+            <h1 className="mx-auto font-bold ">구매 / 취소 내역</h1>
+          </div>
+        </div>
+        <EmptyPage message="구매 내역이 없습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
+      </div>
+    )
+  }
+
   return (
     <div>
       <div>
@@ -54,77 +130,123 @@ const ShopHistory = () => {
           <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
             <ChevronLeftIcon className="h-6 w-6 ml-5" />
           </button>
-          <h1 className="mx-auto text-lg font-bold ">구매 / 취소 내역</h1>
+          <h1 className="mx-auto font-bold ">구매 / 취소 내역</h1>
         </div>
       </div>
 
       <div className="pt-3 pb-7 pl-10 pr-10">
-        <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
-          <div className="w-full flex flex-col justify-between">
-            <div className="flex w-full justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-lg font-bold mb-1">2024.09.18</span>
+        {Object.keys(orderHistory).map((orderId) => (
+          <div key={orderId} className="w-full bg-white rounded-lg p-5 shadow mb-5">
+            <div className="flex justify-between items-center">
+              <div className="text-lg font-bold">
+                {new Date(orderHistory[orderId][0].order_date).toLocaleDateString('ko-KR')}
               </div>
-              <div>
-                <button onClick={toggleExpand}>
-                  {isExpanded ? (
-                    <div className="flex">
-                      <span className="mr-1">순우리 국산 개껌 (4개입)</span>
-                      <span className="text-primary mr-1"> 외 2개</span>
+              {orderHistory[orderId].length > 1 && (
+                <button onClick={() => toggleExpand(orderId)}>
+                  {expandedCards[orderId] ? (
+                    <div className='flex text-sm items-center'>
+                      {/* {productMap[orderHistory[orderId][0].product_id]}
+                      <p className='ml-1 mr-1 text-primary'>외 {orderHistory[orderId].length-1}개</p> */}
                       <ChevronUpIcon className="h-6 w-6" stroke="black" />
                     </div>
                   ) : (
                     <ChevronDownIcon className="h-6 w-6" stroke="black" />
                   )}
                 </button>
-              </div>
+              )}
             </div>
-            {!isExpanded && (
-              <div className="flex mt-2">
-                <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg" />
-                <div className="p-4">
-                  <span>순우리 국산 개껌 (4개입)</span>
-                  <span className="text-primary"> 외 2개</span>
-                  <div className="p-1 flex">
+            
+            {/* 아래 화살표 누르기 전 첫 번째 항목만 표시 */}
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center">
+                {productMap[orderHistory[orderId][0].product_id] && (
+                  <img src={productMap[orderHistory[orderId][0].product_id].image} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+
+                )}
+                <div className="p-2 pl-4">
+                  <div className='flex'>
+                    {orderHistory[orderId].length > 1 ? (
+                        <p className='mb-1'>{productMap[orderHistory[orderId][0].product_id]?.name}
+                        {!expandedCards[orderId] && (
+                          <span className='pl-1 text-primary'>외 {orderHistory[orderId].length-1}개</span>
+
+                        )}</p>
+                      ) : (
+                        <p className='mb-1'>{productMap[orderHistory[orderId][0].product_id]?.name}</p>
+                    )}
+                  </div>
+                  {(orderHistory[orderId].length == 1 || expandedCards[orderId] ) && (
+                    <p className='mb-1'>수량: {orderHistory[orderId][0].quantity}개</p>
+                  )}
+                  <div className="flex">
                     <DogChew />
-                    <p className="ml-2 font-bold">150개</p>
+                    <div className='flex items-center'>
+                      <p className="ml-2 mb-1 font-bold">{orderHistory[orderId][0].price}개</p>
+                      {(orderHistory[orderId].length == 1 || expandedCards[orderId] ) && (
+                        orderHistory[orderId][0].status === 'paid' ? (
+                          <p className='text-primary ml-2 mb-1 text-sm'> 결제완료</p>
+                        ) : (
+                          <p className='text-alert ml-2 mb-1 text-sm'> 환불완료</p>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
-
-            {/* History detail */}
-            {isExpanded && (
-              <div>
-                {items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg" />
-                      <div className="p-4">
-                        <p>{item.name}</p>
-                        <p>수량 : {item.quantity}개</p>
-                        <div className="flex">
-                          <DogChew />
-                          <p className="ml-2 font-bold">{item.price}개</p>
-                        </div>
-                      </div>
-                    </div>
-
+                {(orderHistory[orderId][0].status == 'paid') && 
+                  ((expandedCards[orderId] ) || orderHistory[orderId].length == 1) && (
+                  <div>
                     <button
                       onClick={() => {
                         setIsModalOpen(true);
-                        setCancelPrice(item.price);
+                        setCancelPrice(orderHistory[orderId][0].price);
+                        setCancelId(orderHistory[orderId][0].id);
                       }}
                       className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
                     >
                       취소
                     </button>
                   </div>
-                ))}
-              </div>
-            )}
+                )}
+            </div>
+            
+            {/* 아래 화살표 눌렀을 때 세부 내역 렌더링 */}
+            {expandedCards[orderId] &&
+              orderHistory[orderId].slice(1).map((item) => (
+                <div key={item.id} className="flex items-center justify-between mt-4">
+                  <div className="flex items-center">
+                    <img src={productMap[item.product_id].image} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+                    <div className="p-2 pl-4">
+                      <p className='mb-1'>{productMap[item.product_id]?.name}</p>
+                        <p className='mb-1'>수량: {item.quantity}개</p>
+                      <div className="flex">
+                        <DogChew />
+                        <div className='flex items-center'>
+                          <p className="ml-2 mb-1 font-bold">{item.price}개</p>
+                          {item.status == 'paid' ? <p className='text-primary ml-2 mb-1 text-sm'> 결제완료</p> : <p className='text-alert ml-2 mb-1 text-sm'> 환불완료</p>}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {item.status == 'paid' && (
+                    <div>
+                      <button
+                        onClick={() => {
+                          setIsModalOpen(true);
+                          setCancelPrice(item.price);
+                          setCancelId(item.id);
+                        }}
+                        className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
+                      >
+                        취소
+                      </button>
+
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
-        </div>
+        ))}
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal} title={<div className="font-bold">주문을 취소하시겠습니까?</div>}>

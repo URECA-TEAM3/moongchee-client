@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {

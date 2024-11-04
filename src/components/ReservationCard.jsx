@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
-import { useUserStore } from '../store/user';
+import { useUserStore } from '../store/userStore';
 
 const ReservationCard = ({ info, openModal, userType }) => {
   const { petsitter } = useUserStore();

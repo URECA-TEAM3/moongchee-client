@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {

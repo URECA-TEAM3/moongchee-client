@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from '../../components/Modal';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 import { useLocation } from 'react-router-dom';
 
 const index = () => {

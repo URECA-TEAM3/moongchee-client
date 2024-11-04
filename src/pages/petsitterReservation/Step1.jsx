@@ -9,7 +9,7 @@ import DogChew from '../../components/DogChew';
 import ToolTip from '../../components/ToolTip';
 import useReservationStore from '../../store/reservationStore';
 import usePetSitterStore from '../../store/petsitterStore';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 const index = ({ handleNextStep }) => {
   const { id } = useUserStore();
@@ -222,7 +222,7 @@ const index = ({ handleNextStep }) => {
         />
       </div>
       <div className="flex justify-center mt-3">
-        <span className="text-slate-400 text-sm">예약이 완료된 후 펫시터와 채팅으로도 소통할 수 있습니다.</span>
+        {/* <span className="text-slate-400 text-sm">예약이 완료된 후 펫시터와 채팅으로도 소통할 수 있습니다.</span> */}
       </div>
       <div className="mt-5">
         <div className="flex items-center">

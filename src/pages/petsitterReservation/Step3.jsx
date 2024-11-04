@@ -4,7 +4,7 @@ import DogChew from '../../components/DogChew';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import useReservationStore from '../../store/reservationStore';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 const Step3 = () => {
   const { reservation } = useReservationStore();

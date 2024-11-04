@@ -1,19 +1,47 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
+import API from '../../api/axiosInstance';
+import toast, { Toaster } from 'react-hot-toast';
 
 const ChangeAddress = () => {
-  const { id, name, phone, address } = useUserStore((state) => state);
   const navigate = useNavigate();
+  const { id, name, phone, address, detailaddress, updateProfile } = useUserStore((state) => state);
+  const nameRef = useRef(null);
+  const phoneRef = useRef(null);
+  const addressRef = useRef(null);
   const [errors, setErrors] = useState({});
 
   const [changeInfo, setChangeInfo] = useState({
+    id: id,
     name: name,
     phone: phone,
-    roadAddress: address,
-    detailedAddress: '상세주소',
+    address: address,
+    detailaddress: detailaddress,
   });
+
+  const validateFields = (change) => {
+    let newErrors = {};
+
+    if (!changeInfo.name) {
+      newErrors.name = '이름을 입력해주세요.';
+      if (!change) toast.error('이름을 입력해주세요.');
+    }
+
+    if (!changeInfo.phone) {
+      newErrors.phone = '휴대폰 번호를 입력해주세요.';
+      if (!change) toast.error('휴대폰 번호를 입력해주세요.');
+    }
+
+    if (!changeInfo.detailaddress) {
+      newErrors.address = '주소를 입력해주세요.';
+      if (!change) toast.error('주소를 입력해주세요.');
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const openPostcodePopup = () => {
     const popupWidth = 500;
@@ -70,16 +98,41 @@ const ChangeAddress = () => {
 
     setChangeInfo((prev) => ({
       ...prev,
-      roadAddress: fullAddress,
+      address: fullAddress,
     }));
   };
 
-  const handleChangeInfo = () => {
-    console.log(changeInfo);
+  const handleChangeInfo = async (event) => {
+    validateFields();
+    event.preventDefault();
+
+    if (!nameRef.current.value) {
+      nameRef.current.focus();
+      return;
+    }
+
+    if (!phoneRef.current.value) {
+      phoneRef.current.focus();
+      return;
+    }
+
+    if (!addressRef.current.value) {
+      addressRef.current.focus();
+      return;
+    }
+
+    try {
+      const response = await API.put('/members/update-profile-in-cart', changeInfo);
+      updateProfile(response.data);
+      navigate(-1);
+    } catch (error) {
+      console.error();
+    }
   };
 
   return (
     <div className="bg-white flex flex-col h-full">
+      <Toaster />
       <div className="flex items-center justify-between p-5 border border-b-divider">
         <button onClick={() => navigate(-1)}>
           <IoIosArrowBack />
@@ -92,10 +145,12 @@ const ChangeAddress = () => {
         <div className="mb-5">
           <label className="block text-sm font-medium mb-1">이름*</label>
           <input
+            ref={nameRef}
             type="text"
             placeholder="이름"
             value={changeInfo.name}
             onChange={(e) => {
+              validateFields(true);
               setChangeInfo((prev) => ({
                 ...prev,
                 name: e.target.value,
@@ -103,16 +158,19 @@ const ChangeAddress = () => {
             }}
             className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
           />
+          {errors.name && <span className="text-red-500 text-xs mt-1 ml-1">{errors.name}</span>}
         </div>
 
         <div className="mb-5">
           <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
           <div className="flex space-x-2 mb-1">
             <input
+              ref={phoneRef}
               type="tel"
               placeholder="휴대폰번호"
               value={changeInfo.phone}
               onChange={(e) => {
+                validateFields(true);
                 setChangeInfo((prev) => ({
                   ...prev,
                   phone: e.target.value,
@@ -121,6 +179,7 @@ const ChangeAddress = () => {
               className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
             />
           </div>
+          {errors.phone && <span className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</span>}
         </div>
 
         <div className="mb-5">
@@ -129,23 +188,26 @@ const ChangeAddress = () => {
             type="text"
             placeholder="도로명 주소 (필수)"
             className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
-            value={changeInfo.roadAddress}
+            value={changeInfo.address}
             readOnly
             onClick={openPostcodePopup}
           />
 
           <input
+            ref={addressRef}
             type="text"
             placeholder="상세 주소 입력 (선택)"
-            value={changeInfo.detailedAddress}
+            value={changeInfo.detailaddress}
             onChange={(e) => {
+              validateFields(true);
               setChangeInfo((prev) => ({
                 ...prev,
-                detailedAddress: e.target.value,
+                detailaddress: e.target.value,
               }));
             }}
-            className="block w-full p-2 border border-gray-300 rounded mb-6"
+            className="block w-full p-2 border border-gray-300 rounded mb-1"
           />
+          {errors.address && <span className="text-red-500 text-xs mt-1 ml-1">{errors.address}</span>}
         </div>
       </form>
 

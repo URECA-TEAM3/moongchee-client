@@ -4,7 +4,7 @@ import Modal from '../../components/Modal';
 import axios from 'axios';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 const index = () => {
   const navigate = useNavigate();
@@ -101,7 +101,7 @@ const index = () => {
         <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
           <ChevronLeftIcon className="h-6 w-6 ml-5" />
         </button>
-        <h1 className="mx-auto">예약 / 취소 내역</h1>
+        <h1 className="mx-auto font-bold">예약 / 취소 내역</h1>
       </div>
       <div className="px-10 pt-5 flex flex-col gap-10 ">
         {reservationList.map((item, index) => (
