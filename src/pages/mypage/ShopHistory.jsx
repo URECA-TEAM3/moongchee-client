@@ -37,35 +37,39 @@ const ShopHistory = () => {
         }, {});
         setOrderHistory(groupedData);
 
-        // product 테이블에서 제품명(name)과 이미지 경로(image) 가져오기
-        const productResponse = await API.get('/products');
-        const products = productResponse.data.data;
+        // 필요한 product_id만 추출
+        const productIds = [...new Set(orderData.map(order => order.product_id))];
 
+        // product_id 리스트를 서버에 전달하여 필요한 제품 정보만 가져오기
+        const productResponse = await API.post('/products/getByIds', {ids: productIds});
+        const products = productResponse.data.data;
+        
         const productMap = products.reduce((map, product) => {
           map[product.id] = { name: product.name, image: product.image };
           return map;
         }, {});
 
+        
         // 이미지 URL 생성
-        // for (const product of products) {
-        //   const storageRef = ref(storage, product.image);
-        //   const imageUrl = await getDownloadURL(storageRef);
-        //   productMap[product.id] = { name: product.name, image: imageUrl };
-        // }
-        setProductMap(productMap);
-        // const storageRef = ref(storage, product.image);
-        // const imageUrl = await getDownloadURL(storageRef);
-
+        for (const product of products) {
+          const storageRef = ref(storage, product.image);
+          const imageUrl = await getDownloadURL(storageRef);
+          productMap[product.id] = { name: product.name, image: imageUrl };
+        }
+        
+        setProductMap(productMap)
       } catch (error) {
         console.error(error);
       }
     };
-
+    
     if (id) {
       OrderHistory();
     }
   }, [id]);
-
+  
+  console.log(productMap);
+  console.log(orderHistory)
   const toggleExpand = (orderId) => {
     setExpandedCards((prev) => ({
       ...prev,
@@ -136,7 +140,10 @@ const ShopHistory = () => {
             {/* 아래 화살표 누르기 전 첫 번째 항목만 표시 */}
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center">
-                <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+                {productMap[orderHistory[orderId][0].product_id] && (
+                  <img src={productMap[orderHistory[orderId][0].product_id].image} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+
+                )}
                 <div className="p-2 pl-4">
                   <div className='flex'>
                     {orderHistory[orderId].length > 1 ? (
@@ -189,7 +196,7 @@ const ShopHistory = () => {
               orderHistory[orderId].slice(1).map((item) => (
                 <div key={item.id} className="flex items-center justify-between mt-4">
                   <div className="flex items-center">
-                    <img src="/src/assets/images/dog.jpeg" className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
+                    <img src={productMap[item.product_id].image} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
                     <div className="p-2 pl-4">
                       <p className='mb-1'>{productMap[item.product_id]?.name}</p>
                         <p className='mb-1'>수량: {item.quantity}개</p>
