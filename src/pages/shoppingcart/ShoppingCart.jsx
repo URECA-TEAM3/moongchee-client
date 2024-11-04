@@ -246,7 +246,7 @@ function ShoppingCart() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center m-10">
-              <Link to="#" className="text-sm underline underline-offset-2">
+              <Link to="/chargepage" className="text-sm underline underline-offset-2">
                 지금 바로 충전하기
               </Link>
               <Link to="#" className="grow w-1/2 mt-2">
