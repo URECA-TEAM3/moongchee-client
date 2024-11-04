@@ -6,6 +6,7 @@ import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
+import EmptyPage from '../../components/EmptyPage';
 
 const ShopHistory = () => {
   const userData = sessionStorage.getItem('userData');
@@ -41,23 +42,26 @@ const ShopHistory = () => {
         const productIds = [...new Set(orderData.map(order => order.product_id))];
 
         // product_id 리스트를 서버에 전달하여 필요한 제품 정보만 가져오기
-        const productResponse = await API.post('/products/getByIds', {ids: productIds});
-        const products = productResponse.data.data;
-        
-        const productMap = products.reduce((map, product) => {
-          map[product.id] = { name: product.name, image: product.image };
-          return map;
-        }, {});
-
-        
-        // 이미지 URL 생성
-        for (const product of products) {
-          const storageRef = ref(storage, product.image);
-          const imageUrl = await getDownloadURL(storageRef);
-          productMap[product.id] = { name: product.name, image: imageUrl };
+        if (productIds && productIds.length > 0) {
+          
+          const productResponse = await API.post('/products/getByIds', {ids: productIds});
+          const products = productResponse.data.data;
+          
+          const productMap = products.reduce((map, product) => {
+            map[product.id] = { name: product.name, image: product.image };
+            return map;
+          }, {});
+  
+          
+          // 이미지 URL 생성
+          for (const product of products) {
+            const storageRef = ref(storage, product.image);
+            const imageUrl = await getDownloadURL(storageRef);
+            productMap[product.id] = { name: product.name, image: imageUrl };
+          }
+          
+          setProductMap(productMap)
         }
-        
-        setProductMap(productMap)
       } catch (error) {
         console.error(error);
       }
@@ -68,8 +72,6 @@ const ShopHistory = () => {
     }
   }, [id]);
   
-  console.log(productMap);
-  console.log(orderHistory)
   const toggleExpand = (orderId) => {
     setExpandedCards((prev) => ({
       ...prev,
@@ -103,6 +105,23 @@ const ShopHistory = () => {
   };
 
   const closeModal = () => setIsModalOpen(false);
+
+  // orderHistory 비어 있을 경우
+  if (Object.keys(orderHistory).length === 0) {
+    return (
+      <div className="bg-white flex flex-col min-h-full">
+        <div>
+          <div className="relative w-full flex items-center mb-4 mt-6">
+            <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+              <ChevronLeftIcon className="h-6 w-6 ml-5" />
+            </button>
+            <h1 className="mx-auto font-bold ">구매 / 취소 내역</h1>
+          </div>
+        </div>
+        <EmptyPage message="구매 내역이 없습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -173,13 +192,14 @@ const ShopHistory = () => {
                     </div>
                   </div>
                 </div>
-                {(orderHistory[orderId][0].status == 'paid' && expandedCards[orderId] )&& (
+                {(orderHistory[orderId][0].status == 'paid') && 
+                  ((expandedCards[orderId] ) || orderHistory[orderId].length == 1) && (
                   <div>
                     <button
                       onClick={() => {
                         setIsModalOpen(true);
-                        setCancelPrice(item.price);
-                        setCancelId(item.id);
+                        setCancelPrice(orderHistory[orderId][0].price);
+                        setCancelId(orderHistory[orderId][0].id);
                       }}
                       className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
                     >
