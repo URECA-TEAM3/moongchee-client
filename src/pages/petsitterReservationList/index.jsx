@@ -3,13 +3,12 @@ import ReservationCard from '../../components/ReservationCard';
 import Modal from '../../components/Modal';
 import axios from 'axios';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../store/userStore';
 
 const index = () => {
   const navigate = useNavigate();
-  const userData = sessionStorage.getItem('userData');
-  const parsedData = userData ? JSON.parse(userData) : null;
-  const [id, setId] = useState(parsedData.id);
+  const location = useLocation();
   const [reservationList, setReservationList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
@@ -18,12 +17,13 @@ const index = () => {
     reservationId: '',
     price: '',
   });
+  const { id } = useUserStore();
 
   const handleReservationList = async () => {
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
         user_id: id,
-        user_type: 'user', // 마찬가지
+        user_type: location.state.type,
       });
 
       const reservationList = res.data.data.map((item) => {
@@ -34,6 +34,7 @@ const index = () => {
           endTime: item.endTime,
           status: item.status,
           price: item.price,
+          profile_image: item.profile_image,
           reservationId: item.reservation_id,
         };
       });
@@ -42,12 +43,16 @@ const index = () => {
     } catch (error) {}
   };
 
-  const handleReservationCancel = async () => {
+  const handleReservationUpdate = async (type) => {
     try {
-      const res = await axios.post('http://localhost:3000/api/petsitter/reservation/cancel', { reservation_id: selectedReservation.reservationId });
-      console.log('Cancellation response:', res.data);
+      const res = await axios.post(`http://localhost:3000/api/petsitter/reservation/${type === 'confirm' ? 'confirm' : 'cancel'}`, {
+        reservation_id: selectedReservation.reservationId,
+      });
+      console.log('response:', res.data);
       closeModal();
-      refundPoint();
+      if (!type === 'confirm') {
+        refundPoint();
+      }
       handleReservationList();
     } catch (error) {
       console.error('Error cancelling reservation:', error);
@@ -100,7 +105,7 @@ const index = () => {
       </div>
       <div className="px-10 pt-5 flex flex-col gap-10 ">
         {reservationList.map((item, index) => (
-          <ReservationCard key={item.name + index} info={item} openModal={openModal} />
+          <ReservationCard key={item.name + index} info={item} openModal={openModal} userType={location.state.type} />
         ))}
         <Modal
           isOpen={isModalOpen}
@@ -128,7 +133,10 @@ const index = () => {
             <button onClick={closeModal} className="px-10 py-2 w-full bg-divider text-gray-500 rounded-lg">
               취소
             </button>
-            <button onClick={handleReservationCancel} className="px-8 py-2 w-full bg-delete text-white rounded-lg">
+            <button
+              onClick={() => handleReservationUpdate(status === 'confirm' ? 'confirm' : 'cancel')}
+              className="px-8 py-2 w-full bg-delete text-white rounded-lg"
+            >
               확인
             </button>
           </div>

@@ -124,6 +124,14 @@ const PetSitterScreens = {
       </PrivateRoute>
     ),
   },
+  PetSitterUpdate: {
+    path: '/petsitter/profile',
+    element: (
+      <PrivateRoute>
+        <PetSitterApply />
+      </PrivateRoute>
+    ),
+  },
   PetSitterDetail: {
     path: '/petsitter/detail/:name',
     element: (
