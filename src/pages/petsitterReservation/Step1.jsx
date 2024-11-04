@@ -1,24 +1,27 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
+import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ko } from 'date-fns/locale';
+import axios from 'axios';
 import Dropdown from '../../components/DropDown';
 import DogChew from '../../components/DogChew';
 import ToolTip from '../../components/ToolTip';
 import useReservationStore from '../../store/reservationStore';
 import usePetSitterStore from '../../store/petsitterStore';
+import { useUserStore } from '../../store/userStore';
 
 const index = ({ handleNextStep }) => {
-  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const { id } = useUserStore();
   const { setReservationData } = useReservationStore();
   const { petsitter } = usePetSitterStore();
   const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const [formData, setFormData] = useState({
-    user_id: userData.id,
+    user_id: id,
     sitter_id: petsitter.id,
     requestDate: '',
-    startTime: '선택',
-    endTime: '선택',
+    startTime: petsitter.startTime,
+    endTime: petsitter.endTime,
     status: 'reserved',
     request: '',
     pet: '선택',
@@ -26,7 +29,7 @@ const index = ({ handleNextStep }) => {
     workingTime: '',
     price: 0,
   });
-  const petList = ['말티즈', '시츄', '리트리버', '푸들'];
+  const [petList, setPetList] = useState([]);
 
   const getTime = (time) => {
     if (time === '선택') {
@@ -44,11 +47,36 @@ const index = ({ handleNextStep }) => {
   };
 
   const handleChange = (name, value) => {
-    console.log(value);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handlePetList = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/pets/${id}`);
+      const petList = res.data.map((pet) => pet.name);
+      setPetList(petList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const isWeekday = (date) => {
+    const dayMapping = {
+      SUN: 0,
+      MON: 1,
+      TUE: 2,
+      WED: 3,
+      THU: 4,
+      FRI: 5,
+      SAT: 6,
+    };
+
+    const allowedDays = petsitter.weekdays.split(',');
+    const day = date.getDay();
+    return allowedDays.map((day) => dayMapping[day]).includes(day);
   };
 
   const calculateTimeDifference = useMemo(() => {
@@ -62,6 +90,49 @@ const index = ({ handleNextStep }) => {
     return handleSizeCost() * timeDifference + 150 * timeDifference;
   }, [formData.startTime, formData.endTime, formData.dogSize]);
 
+  const availableStartTimes = useMemo(() => {
+    const startIndex = dropDownTime.indexOf(petsitter.startTime);
+    const endIndex = dropDownTime.indexOf(petsitter.endTime);
+    return dropDownTime.slice(startIndex, endIndex + 1);
+  }, [petsitter.startTime, petsitter.endTime]);
+
+  const availableEndTimes = useMemo(() => {
+    const startIndex = Math.max(dropDownTime.indexOf(formData.startTime), dropDownTime.indexOf(petsitter.startTime));
+    const endIndex = dropDownTime.indexOf(petsitter.endTime);
+    return startIndex >= 0 ? dropDownTime.slice(startIndex + 1, endIndex + 1) : [];
+  }, [formData.startTime, petsitter.startTime, petsitter.endTime]);
+
+  const validateFields = () => {
+    const newErrors = {};
+    Object.entries(formData).map((item) => {
+      if (item[0] === 'requestDate' && item[1] === '') {
+        newErrors.requestDate = '날짜를 입력해주세요.';
+      }
+      if (item[0] === 'pet' && item[1] === '선택') {
+        newErrors.pet = '반려동물을 선택해주세요.';
+      }
+      if (item[0] === 'dogSize' && item[1] === '') {
+        newErrors.dogSize = '반려견 사이즈 선택해주세요.';
+      }
+      if (item[0] === 'startTime' && item[1] === '선택') {
+        newErrors.startTime = '시작시간을 선택해주세요.';
+      }
+      if (item[0] === 'endTime' && item[1] === '선택') {
+        newErrors.endTime = '종료시간을 선택해주세요.';
+      }
+    });
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleReservationInfo = () => {
+    if (!validateFields()) {
+      toast.error('필수 항목을 모두 입력해주세요.');
+      return null;
+    }
+    setReservationData(formData);
+    handleNextStep();
+  };
+
   useEffect(() => {
     handleChange('price', handlePrice);
   }, [handlePrice]);
@@ -70,35 +141,13 @@ const index = ({ handleNextStep }) => {
     handleChange('workingTime', calculateTimeDifference);
   }, [calculateTimeDifference]);
 
-  const handleReservationInfo = () => {
-    let str = '';
-    Object.entries(formData).map((item) => {
-      if (item[0] === 'requestDate' && item[1] === '') {
-        str += '날짜, ';
-      }
-      if (item[0] === 'pet' && item[1] === '선택') {
-        str += '반려동물 선택란, ';
-      }
-      if (item[0] === 'dogSize' && item[1] === '') {
-        str += '반려동물 사이즈 선택란, ';
-      }
-      if (item[0] === 'startTime' && item[1] === '선택') {
-        str += '시작시간, ';
-      }
-      if (item[0] === 'endTime' && item[1] === '선택') {
-        str += '종료시간, ';
-      }
-    });
-    if (str.length > 0) {
-      alert(`${str}은 필수 입력 란입니다.`);
-      return null;
-    }
-    setReservationData(formData);
-    handleNextStep();
-  };
+  useEffect(() => {
+    handlePetList();
+  }, []);
 
   return (
     <div className="p-5">
+      <Toaster position="top-center" reverseOrder={false} />
       <h1>펫시터</h1>
       <div className="profile flex items-center mt-3">
         <img src={petsitter.imageUrl} className="object-cover object-center w-24 h-24 rounded-full " />
@@ -123,6 +172,7 @@ const index = ({ handleNextStep }) => {
             showYearDropdown
             showMonthDropdown
             dropdownMode="select"
+            filterDate={isWeekday}
             maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
             yearDropdownItemNumber={100}
             locale={ko}
@@ -134,7 +184,7 @@ const index = ({ handleNextStep }) => {
         <div className="flex justify-center items-center gap-5 mt-3">
           <Dropdown
             label={formData.startTime}
-            options={dropDownTime}
+            options={availableStartTimes}
             title={'Start Time'}
             onSelect={(option) => {
               handleChange('startTime', option);
@@ -143,7 +193,7 @@ const index = ({ handleNextStep }) => {
           ~
           <Dropdown
             label={formData.endTime}
-            options={dropDownTime}
+            options={availableEndTimes}
             title={'Start Time'}
             onSelect={(option) => {
               handleChange('endTime', option);
@@ -172,11 +222,11 @@ const index = ({ handleNextStep }) => {
         />
       </div>
       <div className="flex justify-center mt-3">
-        <span className="text-slate-400 text-sm">예약이 완료된 후 펫시터와 채팅으로도 소통할 수 있습니다.</span>
+        {/* <span className="text-slate-400 text-sm">예약이 완료된 후 펫시터와 채팅으로도 소통할 수 있습니다.</span> */}
       </div>
       <div className="mt-5">
         <div className="flex items-center">
-          <span>반려견 사이즈</span>
+          <span>반려견 사이즈 *</span>
           <ToolTip
             text={[
               '반려견 크기 안내',

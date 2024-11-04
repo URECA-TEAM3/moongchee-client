@@ -12,7 +12,6 @@ export const useUserStore = create(
         set(userData);
       },
       logout: () => {
-        // sessionStorage.removeItem('userData');
         set({ ...initialUserState });
       },
       // 포인트 얻어오는 함수

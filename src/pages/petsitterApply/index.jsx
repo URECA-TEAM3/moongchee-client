@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Dropdown from '../../components/DropDown';
 import axios from 'axios';
 import Modal from '../../components/Modal';
 import { storage } from '../../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import { useNavigate } from 'react-router-dom';
+import { toast, Toaster } from 'react-hot-toast';
+import { useUserStore } from '../../store/userStore';
+import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {
+  const { id } = useUserStore();
+  const { type } = usePetSitterStore();
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [formData, setFormData] = useState({
@@ -62,7 +69,15 @@ const index = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    navigate('/petsitter');
+  };
+
+  const availableEndTimes = useMemo(() => {
+    const startIndex = dropDownTime.indexOf(formData.startTime);
+    return startIndex >= 0 ? dropDownTime.slice(startIndex + 1) : dropDownTime;
+  }, [formData.startTime]);
 
   const handleChange = (name, value) => {
     setFormData((prevData) => ({
@@ -84,11 +99,41 @@ const index = () => {
   };
 
   const handleDayClick = (dayName) => {
-    openModal();
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
+  const handleDecodeDayList = (dayName) => {
+    setDayList((prevDayList) => prevDayList.map((day) => (day.value === dayName ? { ...day, target: !day.target } : day)));
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+    Object.entries(formData).map((item) => {
+      if (item[0] === 'description' && item[1] === '') {
+        newErrors.description = '자기소개를 입력해주세요.';
+      }
+      if (item[0] === 'experience' && item[1] === '') {
+        newErrors.experience = '경험을 선택해주세요.';
+      }
+      if (item[0] === 'region' && item[1] === '') {
+        newErrors.region = '지역을 선택해주세요.';
+      }
+      if (item[0] === 'startTime' && item[1] === '선택') {
+        newErrors.startTime = '시작시간을 선택해주세요.';
+      }
+      if (item[0] === 'endTime' && item[1] === '선택') {
+        newErrors.endTime = '종료시간을 선택해주세요.';
+      }
+    });
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleApplyAction = async () => {
+    if (!validateFields()) {
+      toast.error('필수 항목을 모두 입력해주세요.');
+      return null;
+    }
+
     const userData = JSON.parse(sessionStorage.getItem('userData'));
 
     let str = '';
@@ -109,6 +154,7 @@ const index = () => {
       region: formData.region,
       image: downloadURL,
       name: userData.name,
+      userId: userData.id,
     };
 
     try {
@@ -120,8 +166,53 @@ const index = () => {
     }
   };
 
+  const handleUpdateSitter = async () => {
+    try {
+      const response = await axios.put('http://localhost:3000/api/sitter/update', formData);
+      if (response.status === 200) {
+        toast.success('시터 정보가 성공적으로 수정되었습니다.');
+        fetchSitterDetail();
+      }
+    } catch (error) {
+      console.error('시터 정보 수정 실패:', error);
+      toast.error('수정에 실패했습니다.');
+    }
+  };
+
+  const fetchSitterDetail = async () => {
+    if (type === 'update') {
+      try {
+        const res = await axios.get('http://localhost:3000/api/petsitter/sitter/detail', { params: { id } });
+        const data = res.data.data;
+
+        setFormData({
+          selectedImage: data.image,
+          weekdays: data.weekdays,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          region: data.region,
+          description: data.description,
+          experience: data.experience,
+        });
+        const days = data.weekdays.split(',');
+        for (let i = 0; i < days.length; i++) {
+          handleDecodeDayList(days[i]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchSitterDetail();
+  }, []);
+
   return (
     <div className="p-5">
+      <Toaster position="top-center" reverseOrder={false} />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -145,9 +236,9 @@ const index = () => {
       <div className="mt-3 flex justify-center items-center flex-col">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
           {formData.selectedImage !== defaultProfileImage ? (
-            <img src={formData.selectedImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
+            <img src={formData.selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
           ) : (
-            <img src={defaultProfileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+            <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
           )}
         </div>
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
@@ -186,7 +277,7 @@ const index = () => {
             <Dropdown
               width={'150'}
               label={formData.endTime}
-              options={dropDownTime}
+              options={availableEndTimes}
               title={'End Time'}
               onSelect={(option) => {
                 handleChange('endTime', option);
@@ -212,6 +303,7 @@ const index = () => {
           type="text"
           className="block w-full p-2.5 h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
           required
+          value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
         />
       </div>
@@ -221,14 +313,23 @@ const index = () => {
           type="text"
           className="block w-full p-2.5 h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
           required
+          value={formData.experience}
           onChange={(e) => handleChange('experience', e.target.value)}
         />
       </div>
-      <div className="flex justify-center mt-10">
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleApplyAction}>
-          완료하기
-        </button>
-      </div>
+      {type === 'apply' ? (
+        <div className="flex justify-center mt-10">
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleApplyAction}>
+            완료하기
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-center mt-10">
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleUpdateSitter}>
+            수정하기
+          </button>
+        </div>
+      )}
     </div>
   );
 };

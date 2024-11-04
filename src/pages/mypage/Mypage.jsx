@@ -4,9 +4,11 @@ import DogChew from '../../components/DogChew';
 import petProfileImage from '/src/assets/images/defaultpet.png';
 import axios from 'axios';
 import { useUserStore } from '../../store/userStore';
+import { useProductStore } from '../../store/productsStore';
 
 function Mypage(props) {
   const { logout } = useUserStore((state) => state);
+  const { resetProduct } = useProductStore((state) => state);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
@@ -57,6 +59,8 @@ function Mypage(props) {
     localStorage.clear();
     sessionStorage.clear();
     logout();
+    resetProduct();
+
     navigate('/');
 
     setIsModalOpen(false); // 모달 닫기
@@ -171,7 +175,7 @@ function Mypage(props) {
         <div className="w-full bg-white rounded-lg p-5 rounded-lg shadow mb-8 flex justify-between items-center">
           <p className="">펫시터 예약 / 취소 내역</p>
           <button
-            onClick={() => navigate('/petsitter/reservation/list')}
+            onClick={() => navigate('/petsitter/reservation/list', { state: { type: 'user' } })}
             className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7"
           >
             더보기

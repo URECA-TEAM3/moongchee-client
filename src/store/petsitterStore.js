@@ -11,12 +11,16 @@ const usePetSitterStore = create((set) => ({
     description: '',
     experience: '',
   },
+  type: '',
 
   setPetsitterData: (data) =>
     set({
       petsitter: { ...data },
     }),
-
+  setType: (data) =>
+    set({
+      type: data,
+    }),
   resetPetsitter: () =>
     set({
       petsitter: {
