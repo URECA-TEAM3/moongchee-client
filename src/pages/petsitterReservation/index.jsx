@@ -11,7 +11,7 @@ const index = () => {
   };
 
   return (
-    <div>
+    <div className="bg-white h-full overflow-y-auto">
       {step === 1 && <Step1 handleNextStep={handleNextStep}></Step1>}
       {step === 2 && <Step2 handleNextStep={handleNextStep}></Step2>}
       {step === 3 && <Step3 handleNextStep={handleNextStep}></Step3>}

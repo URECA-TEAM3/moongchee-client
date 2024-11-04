@@ -148,12 +148,12 @@ const DetailBottom = ({ product }) => {
         )}
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={'장바구니'}>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="my-10 flex justify-center">
           <span className="font-bold text-lg">상품이 장바구니에 담겼습니다.</span>
         </div>
         <div className="flex gap-4 mt-3">
-          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={() => closeModal()}>
+          <button className="text-gray-500 bg-gray-300 px-4 py-2 rounded-lg font-normal w-full" onClick={() => closeModal()}>
             계속 쇼핑하기
           </button>
           <button onClick={() => navigate('/shoppingcart')} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">

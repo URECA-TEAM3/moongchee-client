@@ -135,8 +135,7 @@ const index = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-y-5 px-5 py-4 justify-center w-full">
-      <h1 className="text-2xl subpixel-antialiased w-full">펫시터</h1>
+    <div className="flex flex-col gap-y-5 p-10 justify-center w-full">
       {isPetSitter ? (
         <div className="flex items-center container gap-5 w-full">
           <button
@@ -195,7 +194,7 @@ const index = () => {
           </div>
           <div className="flex justify-center items-center gap-5 mt-5">
             <div className="flex items-center flex-col w-[150px]">
-              <span>근무 시작 시간</span>
+              <span className="text-sm">근무 시작 시간</span>
               <Dropdown
                 width={'150'}
                 label={startTime}
@@ -208,7 +207,7 @@ const index = () => {
             </div>
             ~
             <div className="flex items-center flex-col w-[150px]">
-              <span>근무 종료 시간</span>
+              <span className="text-sm">근무 종료 시간</span>
               <Dropdown
                 width={'150'}
                 label={endTime}

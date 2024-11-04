@@ -11,6 +11,7 @@ import { storage } from '../../../firebase';
 import { IoMdClose } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
 import toast, { Toaster } from 'react-hot-toast';
+import EmptyPage from '../../components/EmptyPage';
 
 function ShoppingCart() {
   const navigate = useNavigate();

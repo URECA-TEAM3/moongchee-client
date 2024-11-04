@@ -114,15 +114,15 @@ const ShopHistory = () => {
   if (Object.keys(orderHistory).length === 0) {
     return (
       <div className="bg-white flex flex-col min-h-full">
-        <div>
-          <div className="relative w-full flex items-center mb-4 mt-6">
-            <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
-              <ChevronLeftIcon className="h-6 w-6 ml-5" />
-            </button>
-            <h1 className="mx-auto font-bold ">구매 / 취소 내역</h1>
-          </div>
+        <div className="relative w-full flex items-center mb-4 mt-6">
+          <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
+            <ChevronLeftIcon className="h-6 w-6 ml-5" />
+          </button>
+          <h1 className="mx-auto font-bold ">구매 / 취소 내역</h1>
         </div>
-        <EmptyPage message="구매 내역이 없습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
+        <div className="my-auto">
+          <EmptyPage message="구매 내역이 없습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
+        </div>
       </div>
     );
   }

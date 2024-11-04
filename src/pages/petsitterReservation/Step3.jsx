@@ -40,7 +40,7 @@ const Step3 = () => {
   };
 
   return (
-    <div className="mt-5">
+    <div className="">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col">
         <p className="px-5 mt-5 font-bold text-black">주소</p>
@@ -55,7 +55,7 @@ const Step3 = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <div className="flex w-full justify-between mt-5 bg-lightblue h-[50px] items-center">
+          <div className="flex w-full justify-between mt-5 bg-paleblue h-[50px] items-center">
             <div className="flex px-5 font-bold text-black">
               <p className="mr-2">차감될</p>
               <DogChew />
