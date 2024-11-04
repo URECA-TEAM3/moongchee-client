@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { convertWeekDay } from '../utils/petSitterHelper';
 import usePetSitterStore from '../store/petsitterStore';
 
-const PetSitterInfo = ({ info }) => {
+const PetSitterInfo = ({ info, isDisabled }) => {
   const navigate = useNavigate();
   const { setPetsitterData } = usePetSitterStore();
 
   const handleInfoClick = () => {
-    console.log(info);
-    setPetsitterData(info);
-    navigate(`/petsitter/detail/${info.name}`);
+    if (!isDisabled) {
+      setPetsitterData(info);
+      navigate(`/petsitter/detail/${info.name}`);
+    } else {
+      return null;
+    }
   };
 
   return (

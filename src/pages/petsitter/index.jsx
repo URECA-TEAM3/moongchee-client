@@ -10,6 +10,7 @@ const index = () => {
   const { setType } = usePetSitterStore();
   const [sitterList, setSitterList] = useState([]);
   const [isPetSitter, setIsPetSitter] = useState(false);
+  const [isDisabled, setIsDisbaled] = useState(false);
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('18:00');
   const [dayList, setDayList] = useState([
@@ -76,6 +77,17 @@ const index = () => {
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
+  const handlePetList = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/pets/${id}`);
+      if (res.data.length === 0) {
+        setIsDisbaled(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSearchClick = async () => {
     let str = '';
     for (let i = 0; i < dayList.length; i++) {
@@ -119,6 +131,7 @@ const index = () => {
     } else {
       setIsPetSitter(false);
     }
+    handlePetList();
   }, []);
 
   return (
@@ -211,7 +224,7 @@ const index = () => {
       </div>
       <div className="search"></div>
       {sitterList.map((item, index) => (
-        <PetSitterInfo key={'item' + index} info={item} />
+        <PetSitterInfo key={'item' + index} info={item} isDisabled={isDisabled} />
       ))}
     </div>
   );
