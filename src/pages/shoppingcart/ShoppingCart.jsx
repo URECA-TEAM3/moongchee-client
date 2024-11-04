@@ -12,6 +12,7 @@ import { storage } from '../../../firebase';
 import { IoMdClose } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
 import toast, { Toaster } from 'react-hot-toast';
+import EmptyPage from '../../components/EmptyPage';
 
 function ShoppingCart() {
   const navigate = useNavigate();
@@ -256,13 +257,7 @@ function ShoppingCart() {
           )}
         </div>
       ) : (
-        <div className="mb-20 grow flex flex-col items-center justify-center text-xl font-bold">
-          <img className="w-1/2 " src="/src/assets/images/black-curve.png" alt="" />
-          <div className="py-8">장바구니가 비었습니다.</div>
-          <button onClick={() => navigate('/shoppingmall')} className="w-6/12 mx-auto bg-primary text-white p-3 mx-2  rounded-lg text-center">
-            상품 구경하러가기
-          </button>
-        </div>
+        <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
       )}
     </div>
   );
