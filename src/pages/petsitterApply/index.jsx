@@ -112,7 +112,7 @@ const index = () => {
       if (item[0] === 'description' && item[1] === '') {
         newErrors.description = '자기소개를 입력해주세요.';
       }
-      if (item[0] === 'experience' && item[1] === '선택') {
+      if (item[0] === 'experience' && item[1] === '') {
         newErrors.experience = '경험을 선택해주세요.';
       }
       if (item[0] === 'region' && item[1] === '') {
