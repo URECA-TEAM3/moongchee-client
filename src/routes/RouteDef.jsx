@@ -4,6 +4,7 @@ import PrivateRoute from './PrivateRoute';
 import LoginPage from '../pages/main/LoginPage';
 import LoginSuccessPage from '../pages/main/LoginSuccessPage';
 import SignUpForm from '../pages/main/SignUpForm';
+import ErrorPage from '../pages/main/ErrorPage';
 
 import Main from '../pages/main';
 import AnimalInfo from '../pages/main/AnimalInfo';
@@ -240,6 +241,11 @@ const MypageScreens = {
         <ShopHistory />
       </PrivateRoute>
     ),
+  },
+
+  NotFound: {
+    path: '*',
+    element: <ErrorPage />,
   },
 };
 

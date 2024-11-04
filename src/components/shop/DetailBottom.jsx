@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import BottomSheet from '../BottomSheet';
 import API from '../../api/axiosInstance';
 import { useUserStore } from '../../store/userStore';
+import Modal from '../../components/Modal';
 
 const DetailBottom = ({ product }) => {
   const navigate = useNavigate();
@@ -15,6 +16,16 @@ const DetailBottom = ({ product }) => {
     ProductTotal: 0,
     UserTotal: 0,
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+    handleNavigate(1);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const [buyNowData, setBuyNowData] = useState({
     product_id: '',
@@ -55,8 +66,6 @@ const DetailBottom = ({ product }) => {
         quantity: quantity,
         checked: true,
       });
-
-      navigate('/shoppingcart');
     } catch (error) {
       console.error('Error adding product to cart:', error);
       alert('There was an error adding the product to the cart.');
@@ -129,7 +138,7 @@ const DetailBottom = ({ product }) => {
         ) : (
           // 기본 바텀바
           <div className="flex grow">
-            <button className="grow" onClick={() => handleNavigate(1)}>
+            <button className="grow" onClick={openModal}>
               <div className={`p-3 mx-2 text-primary rounded-2xl text-center border border-primary`}>장바구니에 담기</div>
             </button>
             <button onClick={toggleBottomSheet} className="grow">
@@ -138,6 +147,20 @@ const DetailBottom = ({ product }) => {
           </div>
         )}
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={'장바구니'}>
+        <div className="my-10 flex justify-center">
+          <span className="font-bold text-lg">상품이 장바구니에 담겼습니다.</span>
+        </div>
+        <div className="flex gap-4 mt-3">
+          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={() => closeModal()}>
+            계속 쇼핑하기
+          </button>
+          <button onClick={() => navigate('/shoppingcart')} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+            장바구니 이동
+          </button>
+        </div>
+      </Modal>
     </>
   );
 };
