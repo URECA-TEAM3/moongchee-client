@@ -51,16 +51,16 @@ const index = () => {
   const { id, petsitter } = useUserStore();
   const navigate = useNavigate();
 
-  const handleApplyClick = () => {
-    navigate('/petsitter/apply');
+  const handleApplyClick = (type) => {
+    navigate('/petsitter/apply', { state: { type: type } });
   };
 
   const handleReservationClick = (type) => {
     navigate('/petsitter/reservation/list', { state: { type: type } });
   };
 
-  const handleProfileClick = () => {
-    navigate('/petsitter/profile');
+  const handleProfileClick = (type) => {
+    navigate('/petsitter/profile', { state: { type: type } });
   };
 
   const availableEndTimes = useMemo(() => {
@@ -139,7 +139,7 @@ const index = () => {
           {isPetSitter && (
             <button
               className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={handleProfileClick}
+              onClick={() => handleProfileClick('update')}
             >
               나의 펫시터 프로필
             </button>
@@ -147,7 +147,7 @@ const index = () => {
         </div>
       ) : (
         <div className="flex items-center container gap-5 w-full">
-          <button className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white" onClick={handleApplyClick}>
+          <button className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white" onClick={() => handleApplyClick('apply')}>
             펫시터 지원하기
           </button>
           <button

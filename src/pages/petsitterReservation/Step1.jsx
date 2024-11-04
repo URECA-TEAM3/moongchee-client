@@ -226,7 +226,7 @@ const index = ({ handleNextStep }) => {
       </div>
       <div className="mt-5">
         <div className="flex items-center">
-          <span>반려견 사이즈</span>
+          <span>반려견 사이즈 *</span>
           <ToolTip
             text={[
               '반려견 크기 안내',

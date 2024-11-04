@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Dropdown from '../../components/DropDown';
 import axios from 'axios';
 import Modal from '../../components/Modal';
@@ -69,6 +69,11 @@ const index = () => {
     setIsModalOpen(false);
     navigate('/petsitter');
   };
+
+  const availableEndTimes = useMemo(() => {
+    const startIndex = dropDownTime.indexOf(formData.startTime);
+    return startIndex >= 0 ? dropDownTime.slice(startIndex + 1) : dropDownTime;
+  }, [formData.startTime]);
 
   const handleChange = (name, value) => {
     setFormData((prevData) => ({
@@ -220,7 +225,7 @@ const index = () => {
             <Dropdown
               width={'150'}
               label={formData.endTime}
-              options={dropDownTime}
+              options={availableEndTimes}
               title={'End Time'}
               onSelect={(option) => {
                 handleChange('endTime', option);
