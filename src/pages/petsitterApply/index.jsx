@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Dropdown from '../../components/DropDown';
 import axios from 'axios';
 import Modal from '../../components/Modal';
@@ -7,8 +7,12 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import defaultProfileImage from '/src/assets/images/registerprofile.svg';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
+import { useUserStore } from '../../store/user';
+import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {
+  const { id } = useUserStore();
+  const { type } = usePetSitterStore();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
@@ -98,6 +102,10 @@ const index = () => {
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
+  const handleDecodeDayList = (dayName) => {
+    setDayList((prevDayList) => prevDayList.map((day) => (day.value === dayName ? { ...day, target: !day.target } : day)));
+  };
+
   const validateFields = () => {
     const newErrors = {};
     Object.entries(formData).map((item) => {
@@ -157,6 +165,50 @@ const index = () => {
       console.log(error);
     }
   };
+
+  const handleUpdateSitter = async () => {
+    try {
+      const response = await axios.put('http://localhost:3000/api/sitter/update', formData);
+      if (response.status === 200) {
+        toast.success('시터 정보가 성공적으로 수정되었습니다.');
+        fetchSitterDetail();
+      }
+    } catch (error) {
+      console.error('시터 정보 수정 실패:', error);
+      toast.error('수정에 실패했습니다.');
+    }
+  };
+
+  const fetchSitterDetail = async () => {
+    if (type === 'update') {
+      try {
+        const res = await axios.get('http://localhost:3000/api/petsitter/sitter/detail', { params: { id } });
+        const data = res.data.data;
+
+        setFormData({
+          selectedImage: data.image,
+          weekdays: data.weekdays,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          region: data.region,
+          description: data.description,
+          experience: data.experience,
+        });
+        const days = data.weekdays.split(',');
+        for (let i = 0; i < days.length; i++) {
+          handleDecodeDayList(days[i]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchSitterDetail();
+  }, []);
 
   return (
     <div className="p-5">
@@ -251,6 +303,7 @@ const index = () => {
           type="text"
           className="block w-full p-2.5 h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
           required
+          value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
         />
       </div>
@@ -260,14 +313,23 @@ const index = () => {
           type="text"
           className="block w-full p-2.5 h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
           required
+          value={formData.experience}
           onChange={(e) => handleChange('experience', e.target.value)}
         />
       </div>
-      <div className="flex justify-center mt-10">
-        <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleApplyAction}>
-          완료하기
-        </button>
-      </div>
+      {type === 'apply' ? (
+        <div className="flex justify-center mt-10">
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleApplyAction}>
+            완료하기
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-center mt-10">
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleUpdateSitter}>
+            수정하기
+          </button>
+        </div>
+      )}
     </div>
   );
 };

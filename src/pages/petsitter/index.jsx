@@ -4,8 +4,10 @@ import axios from 'axios';
 import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
 import { useUserStore } from '../../store/user';
+import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {
+  const { setType } = usePetSitterStore();
   const [sitterList, setSitterList] = useState([]);
   const [isPetSitter, setIsPetSitter] = useState(false);
   const [startTime, setStartTime] = useState('10:00');
@@ -51,16 +53,18 @@ const index = () => {
   const { id, petsitter } = useUserStore();
   const navigate = useNavigate();
 
-  const handleApplyClick = (type) => {
-    navigate('/petsitter/apply', { state: { type: type } });
+  const handleApplyClick = () => {
+    setType('user');
+    navigate('/petsitter/apply');
   };
 
   const handleReservationClick = (type) => {
     navigate('/petsitter/reservation/list', { state: { type: type } });
   };
 
-  const handleProfileClick = (type) => {
-    navigate('/petsitter/profile', { state: { type: type } });
+  const handleProfileClick = () => {
+    setType('update');
+    navigate('/petsitter/profile');
   };
 
   const availableEndTimes = useMemo(() => {
@@ -124,7 +128,7 @@ const index = () => {
         <div className="flex items-center container gap-5 w-full">
           <button
             className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleReservationClick('user')}
+            onClick={() => handleReservationClick()}
           >
             예약 / 취소 내역
           </button>
@@ -139,7 +143,7 @@ const index = () => {
           {isPetSitter && (
             <button
               className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={() => handleProfileClick('update')}
+              onClick={() => handleProfileClick()}
             >
               나의 펫시터 프로필
             </button>
@@ -147,7 +151,10 @@ const index = () => {
         </div>
       ) : (
         <div className="flex items-center container gap-5 w-full">
-          <button className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white" onClick={() => handleApplyClick('apply')}>
+          <button
+            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
+            onClick={() => handleApplyClick('apply')}
+          >
             펫시터 지원하기
           </button>
           <button

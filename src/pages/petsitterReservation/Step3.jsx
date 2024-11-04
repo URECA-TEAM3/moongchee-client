@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import DogChew from '../../components/DogChew';
+import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import useReservationStore from '../../store/reservationStore';
 import { useUserStore } from '../../store/user';
@@ -12,7 +13,7 @@ const Step3 = () => {
 
   const handleReservationClick = async () => {
     if (reservation.price > point) {
-      alert('결제 실패');
+      toast.error('잔액이 부족하여 결제에 실패했습니다.');
       return;
     }
 
@@ -30,17 +31,17 @@ const Step3 = () => {
           }
         } catch (error) {
           console.error('예약 생성 실패:', error);
-          alert('예약 생성에 실패했습니다.');
+          toast.error('예약 생성에 실패했습니다.');
         }
       }
     } catch (error) {
       console.error('포인트 업데이트 실패:', error);
-      alert('포인트 업데이트에 실패했습니다.');
     }
   };
 
   return (
     <div className="mt-5">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col">
         <p className="px-5 mt-5 font-bold text-black">주소</p>
         <div className="px-5">
