@@ -20,14 +20,14 @@ const Step3 = () => {
     try {
       const pointUpdateResponse = await axios.post('http://localhost:3000/api/members/update-points', {
         userId: id,
-        amount: reservation.price,
+        amount: -reservation.price,
       });
       if (pointUpdateResponse.status === 200) {
         try {
           const reservationResponse = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
 
           if (reservationResponse.status === 200) {
-            navigate('/petsitter/reservation/list');
+            navigate('/petsitter/reservation/list', { state: { type: 'user' } });
           }
         } catch (error) {
           console.error('예약 생성 실패:', error);
