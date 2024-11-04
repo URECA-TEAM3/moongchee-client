@@ -1,10 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
-import { useUserStore } from '../store/userStore';
 
 const ReservationCard = ({ info, openModal, userType }) => {
-  const { petsitter } = useUserStore();
   const navigate = useNavigate();
 
   const openModalAction = (value) => {
@@ -48,7 +46,7 @@ const ReservationCard = ({ info, openModal, userType }) => {
       </div>
       {info.status !== 'cancelled' && (
         <div className="flex gap-5 mt-3">
-          {petsitter ? (
+          {userType === 'petsitter' ? (
             info.status === 'reserved' ? (
               <div className="flex gap-5 mt-3 w-full">
                 <button className="text-white bg-delete px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModalAction('reject')}>

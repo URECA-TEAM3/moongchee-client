@@ -10,7 +10,7 @@ import { AiOutlineMinus } from 'react-icons/ai';
 import { GoInfo } from 'react-icons/go';
 
 const Step3 = () => {
-  const [points, setPoints] = useState();
+  const [points, setPoints] = useState(0);
   const [payment, setPayment] = useState(true);
   const { reservation } = useReservationStore();
   const navigate = useNavigate();
@@ -54,6 +54,10 @@ const Step3 = () => {
     setPayment(points - reservation.price >= 0);
   }, []);
 
+  useEffect(() => {
+    setPayment(points - reservation.price >= 0);
+  },[points])
+
   return (
     <div className="">
       <Toaster position="top-center" reverseOrder={false} />
@@ -70,7 +74,7 @@ const Step3 = () => {
           </div>
         </div>
         <div className="grow flex flex-col justify-end mt-5">
-          <PayInfo totalPrice={reservation.price} disabled={true}/>
+          <PayInfo totalPrice={reservation.price} disabled={true} />
 
           <div className="flex justify-between items-start pt-3 px-10">
             <div className="flex">
