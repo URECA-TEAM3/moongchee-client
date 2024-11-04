@@ -240,8 +240,8 @@ function ShoppingCart() {
           )}
 
           {payment ? (
-            <div className="text-center my-10">
-              <button onClick={handleCheckout} className="w-1/2 h-12 bg-primary text-white rounded-lg text-center">
+            <div className="text-center my-5 px-10">
+              <button onClick={handleCheckout} className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
                 결제하기
               </button>
             </div>
@@ -250,9 +250,7 @@ function ShoppingCart() {
               <Link to="/chargepage" className="text-sm underline underline-offset-2">
                 지금 바로 충전하기
               </Link>
-              <Link to="#" className="grow w-1/2 mt-2">
-                <div className="mx-auto bg-[#acacac] text-white p-3 mx-2 rounded-lg text-center">결제하기</div>
-              </Link>
+              <button className="w-full h-12 py-2 bg-gray-300 text-white rounded-lg mt-2">결제하기</button>
             </div>
           )}
         </div>
