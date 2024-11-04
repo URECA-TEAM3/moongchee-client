@@ -54,7 +54,7 @@ const index = () => {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
-    setType('user');
+    setType('apply');
     navigate('/petsitter/apply');
   };
 
