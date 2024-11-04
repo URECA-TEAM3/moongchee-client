@@ -21,6 +21,7 @@ const ItemBox = ({ item }) => {
   };
 
   const handleNavigate = async () => {
+    console.log(id);
     try {
       await API.post('/cart', {
         product_id: item.id,
