@@ -29,8 +29,6 @@ const Pay = () => {
 
   const confirmOrder = async () => {
     try {
-      console.log(orderData);
-      // 현재 날짜 orderData에 추가
       const currentDate = new Date().toISOString().split('T')[0];
       const updatedOrderData = {
         ...orderData,

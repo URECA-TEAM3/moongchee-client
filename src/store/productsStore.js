@@ -82,7 +82,7 @@ export const useProductStore = create(
         });
       },
 
-      logout: () => {
+      resetProduct: () => {
         set({
           products: [],
           sortOption: 'latest',

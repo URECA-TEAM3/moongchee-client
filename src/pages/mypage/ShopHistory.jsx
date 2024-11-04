@@ -39,45 +39,49 @@ const ShopHistory = () => {
         setOrderHistory(groupedData);
 
         // 필요한 product_id만 추출
-        const productIds = [...new Set(orderData.map(order => order.product_id))];
+        const productIds = [...new Set(orderData.map((order) => order.product_id))];
 
         // product_id 리스트를 서버에 전달하여 필요한 제품 정보만 가져오기
         if (productIds && productIds.length > 0) {
-          
-          const productResponse = await API.post('/products/getByIds', {ids: productIds});
+          const productResponse = await API.post('/products/getByIds', { ids: productIds });
           const products = productResponse.data.data;
-          
+
           const productMap = products.reduce((map, product) => {
             map[product.id] = { name: product.name, image: product.image };
             return map;
           }, {});
-  
-          
+
           // 이미지 URL 생성
           for (const product of products) {
             const storageRef = ref(storage, product.image);
             const imageUrl = await getDownloadURL(storageRef);
             productMap[product.id] = { name: product.name, image: imageUrl };
           }
-          
-          setProductMap(productMap)
+
+          setProductMap(productMap);
         }
       } catch (error) {
         console.error(error);
       }
     };
-    
+
     if (id) {
       OrderHistory();
     }
   }, [id]);
-  
+
   const toggleExpand = (orderId) => {
     setExpandedCards((prev) => ({
       ...prev,
       [orderId]: !prev[orderId],
     }));
   };
+
+  useEffect(() => {
+    if (pay === 'done') {
+      toast.success('결제 완료');
+    }
+  }, []);
 
   const refundPoint = async () => {
     try {
@@ -89,7 +93,7 @@ const ShopHistory = () => {
       const orderItemResponse = await API.put('/cart/refund-product', {
         orderItemId: cancelId,
         status: 'refund',
-      })
+      });
       console.log('Updated points successfully:', response);
       setIsModalOpen(false);
       navigate(0);
@@ -120,11 +124,12 @@ const ShopHistory = () => {
         </div>
         <EmptyPage message="구매 내역이 없습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
       </div>
-    )
+    );
   }
 
   return (
     <div>
+      <Toaster />
       <div>
         <div className="relative w-full flex items-center mb-4 mt-6">
           <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
@@ -138,13 +143,11 @@ const ShopHistory = () => {
         {Object.keys(orderHistory).map((orderId) => (
           <div key={orderId} className="w-full bg-white rounded-lg p-5 shadow mb-5">
             <div className="flex justify-between items-center">
-              <div className="text-lg font-bold">
-                {new Date(orderHistory[orderId][0].order_date).toLocaleDateString('ko-KR')}
-              </div>
+              <div className="text-lg font-bold">{new Date(orderHistory[orderId][0].order_date).toLocaleDateString('ko-KR')}</div>
               {orderHistory[orderId].length > 1 && (
                 <button onClick={() => toggleExpand(orderId)}>
                   {expandedCards[orderId] ? (
-                    <div className='flex text-sm items-center'>
+                    <div className="flex text-sm items-center">
                       {/* {productMap[orderHistory[orderId][0].product_id]}
                       <p className='ml-1 mr-1 text-primary'>외 {orderHistory[orderId].length-1}개</p> */}
                       <ChevronUpIcon className="h-6 w-6" stroke="black" />
@@ -155,61 +158,55 @@ const ShopHistory = () => {
                 </button>
               )}
             </div>
-            
+
             {/* 아래 화살표 누르기 전 첫 번째 항목만 표시 */}
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center">
                 {productMap[orderHistory[orderId][0].product_id] && (
                   <img src={productMap[orderHistory[orderId][0].product_id].image} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
-
                 )}
                 <div className="p-2 pl-4">
-                  <div className='flex'>
+                  <div className="flex">
                     {orderHistory[orderId].length > 1 ? (
-                        <p className='mb-1'>{productMap[orderHistory[orderId][0].product_id]?.name}
-                        {!expandedCards[orderId] && (
-                          <span className='pl-1 text-primary'>외 {orderHistory[orderId].length-1}개</span>
-
-                        )}</p>
-                      ) : (
-                        <p className='mb-1'>{productMap[orderHistory[orderId][0].product_id]?.name}</p>
+                      <p className="mb-1">
+                        {productMap[orderHistory[orderId][0].product_id]?.name}
+                        {!expandedCards[orderId] && <span className="pl-1 text-primary">외 {orderHistory[orderId].length - 1}개</span>}
+                      </p>
+                    ) : (
+                      <p className="mb-1">{productMap[orderHistory[orderId][0].product_id]?.name}</p>
                     )}
                   </div>
-                  {(orderHistory[orderId].length == 1 || expandedCards[orderId] ) && (
-                    <p className='mb-1'>수량: {orderHistory[orderId][0].quantity}개</p>
-                  )}
+                  {(orderHistory[orderId].length == 1 || expandedCards[orderId]) && <p className="mb-1">수량: {orderHistory[orderId][0].quantity}개</p>}
                   <div className="flex">
                     <DogChew />
-                    <div className='flex items-center'>
+                    <div className="flex items-center">
                       <p className="ml-2 mb-1 font-bold">{orderHistory[orderId][0].price}개</p>
-                      {(orderHistory[orderId].length == 1 || expandedCards[orderId] ) && (
-                        orderHistory[orderId][0].status === 'paid' ? (
-                          <p className='text-primary ml-2 mb-1 text-sm'> 결제완료</p>
+                      {(orderHistory[orderId].length == 1 || expandedCards[orderId]) &&
+                        (orderHistory[orderId][0].status === 'paid' ? (
+                          <p className="text-primary ml-2 mb-1 text-sm"> 결제완료</p>
                         ) : (
-                          <p className='text-alert ml-2 mb-1 text-sm'> 환불완료</p>
-                        )
-                      )}
+                          <p className="text-alert ml-2 mb-1 text-sm"> 환불완료</p>
+                        ))}
                     </div>
                   </div>
                 </div>
               </div>
-                {(orderHistory[orderId][0].status == 'paid') && 
-                  ((expandedCards[orderId] ) || orderHistory[orderId].length == 1) && (
-                  <div>
-                    <button
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setCancelPrice(orderHistory[orderId][0].price);
-                        setCancelId(orderHistory[orderId][0].id);
-                      }}
-                      className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
-                    >
-                      취소
-                    </button>
-                  </div>
-                )}
+              {orderHistory[orderId][0].status == 'paid' && (expandedCards[orderId] || orderHistory[orderId].length == 1) && (
+                <div>
+                  <button
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setCancelPrice(orderHistory[orderId][0].price);
+                      setCancelId(orderHistory[orderId][0].id);
+                    }}
+                    className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
+                  >
+                    취소
+                  </button>
+                </div>
+              )}
             </div>
-            
+
             {/* 아래 화살표 눌렀을 때 세부 내역 렌더링 */}
             {expandedCards[orderId] &&
               orderHistory[orderId].slice(1).map((item) => (
@@ -217,13 +214,17 @@ const ShopHistory = () => {
                   <div className="flex items-center">
                     <img src={productMap[item.product_id].image} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" alt="Product" />
                     <div className="p-2 pl-4">
-                      <p className='mb-1'>{productMap[item.product_id]?.name}</p>
-                        <p className='mb-1'>수량: {item.quantity}개</p>
+                      <p className="mb-1">{productMap[item.product_id]?.name}</p>
+                      <p className="mb-1">수량: {item.quantity}개</p>
                       <div className="flex">
                         <DogChew />
-                        <div className='flex items-center'>
+                        <div className="flex items-center">
                           <p className="ml-2 mb-1 font-bold">{item.price}개</p>
-                          {item.status == 'paid' ? <p className='text-primary ml-2 mb-1 text-sm'> 결제완료</p> : <p className='text-alert ml-2 mb-1 text-sm'> 환불완료</p>}
+                          {item.status == 'paid' ? (
+                            <p className="text-primary ml-2 mb-1 text-sm"> 결제완료</p>
+                          ) : (
+                            <p className="text-alert ml-2 mb-1 text-sm"> 환불완료</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -240,7 +241,6 @@ const ShopHistory = () => {
                       >
                         취소
                       </button>
-
                     </div>
                   )}
                 </div>

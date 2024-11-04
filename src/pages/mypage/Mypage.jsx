@@ -4,9 +4,11 @@ import DogChew from '../../components/DogChew';
 import petProfileImage from '/src/assets/images/defaultpet.png';
 import axios from 'axios';
 import { useUserStore } from '../../store/userStore';
+import { useProductStore } from '../../store/productsStore';
 
 function Mypage(props) {
   const { logout } = useUserStore((state) => state);
+  const { resetProduct } = useProductStore((state) => state);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
@@ -57,6 +59,8 @@ function Mypage(props) {
     localStorage.clear();
     sessionStorage.clear();
     logout();
+    resetProduct();
+
     navigate('/');
 
     setIsModalOpen(false); // 모달 닫기

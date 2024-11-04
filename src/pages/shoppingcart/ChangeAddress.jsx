@@ -4,6 +4,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
 import API from '../../api/axiosInstance';
 import toast, { Toaster } from 'react-hot-toast';
+import Modal from '../../components/Modal';
 
 const ChangeAddress = () => {
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ const ChangeAddress = () => {
     address: address,
     detailaddress: detailaddress,
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const validateFields = (change) => {
     let newErrors = {};
@@ -104,7 +111,6 @@ const ChangeAddress = () => {
 
   const handleChangeInfo = async (event) => {
     validateFields();
-    event.preventDefault();
 
     if (!nameRef.current.value) {
       nameRef.current.focus();
@@ -124,97 +130,117 @@ const ChangeAddress = () => {
     try {
       const response = await API.put('/members/update-profile-in-cart', changeInfo);
       updateProfile(response.data);
-      navigate(-1);
+      setIsModalOpen(true);
     } catch (error) {
       console.error();
     }
   };
 
   return (
-    <div className="bg-white flex flex-col h-full">
-      <Toaster />
-      <div className="flex items-center justify-between p-5 border border-b-divider">
-        <button onClick={() => navigate(-1)}>
-          <IoIosArrowBack />
-        </button>
-        <div>배송지 변경</div>
-        <div></div>
-      </div>
-
-      <form className="p-10 grow">
-        <div className="mb-5">
-          <label className="block text-sm font-medium mb-1">이름*</label>
-          <input
-            ref={nameRef}
-            type="text"
-            placeholder="이름"
-            value={changeInfo.name}
-            onChange={(e) => {
-              validateFields(true);
-              setChangeInfo((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }));
-            }}
-            className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
-          />
-          {errors.name && <span className="text-red-500 text-xs mt-1 ml-1">{errors.name}</span>}
+    <>
+      <div className="bg-white flex flex-col h-full">
+        <Toaster />
+        <div className="flex items-center justify-between p-5 border border-b-divider">
+          <button onClick={() => navigate(-1)}>
+            <IoIosArrowBack />
+          </button>
+          <div>배송지 변경</div>
+          <div></div>
         </div>
 
-        <div className="mb-5">
-          <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
-          <div className="flex space-x-2 mb-1">
+        <form className="p-10 grow">
+          <div className="mb-5">
+            <label className="block text-sm font-medium mb-1">이름*</label>
             <input
-              ref={phoneRef}
-              type="tel"
-              placeholder="휴대폰번호"
-              value={changeInfo.phone}
+              ref={nameRef}
+              type="text"
+              placeholder="이름"
+              value={changeInfo.name}
               onChange={(e) => {
                 validateFields(true);
                 setChangeInfo((prev) => ({
                   ...prev,
-                  phone: e.target.value,
+                  name: e.target.value,
                 }));
               }}
-              className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+              className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
             />
+            {errors.name && <span className="text-red-500 text-xs mt-1 ml-1">{errors.name}</span>}
           </div>
-          {errors.phone && <span className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</span>}
+
+          <div className="mb-5">
+            <label className="block text-sm font-medium mb-1">휴대폰 번호*</label>
+            <div className="flex space-x-2 mb-1">
+              <input
+                ref={phoneRef}
+                type="tel"
+                placeholder="휴대폰번호"
+                value={changeInfo.phone}
+                onChange={(e) => {
+                  validateFields(true);
+                  setChangeInfo((prev) => ({
+                    ...prev,
+                    phone: e.target.value,
+                  }));
+                }}
+                className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+              />
+            </div>
+            {errors.phone && <span className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</span>}
+          </div>
+
+          <div className="mb-5">
+            <label className="block text-sm font-medium mb-1">주소*</label>
+            <input
+              type="text"
+              placeholder="도로명 주소 (필수)"
+              className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+              value={changeInfo.address}
+              readOnly
+              onClick={openPostcodePopup}
+            />
+
+            <input
+              ref={addressRef}
+              type="text"
+              placeholder="상세 주소 입력 (선택)"
+              value={changeInfo.detailaddress}
+              onChange={(e) => {
+                validateFields(true);
+                setChangeInfo((prev) => ({
+                  ...prev,
+                  detailaddress: e.target.value,
+                }));
+              }}
+              className="block w-full p-2 border border-gray-300 rounded mb-1"
+            />
+            {errors.address && <span className="text-red-500 text-xs mt-1 ml-1">{errors.address}</span>}
+          </div>
+        </form>
+
+        <button
+          onClick={() => {
+            handleChangeInfo();
+          }}
+        >
+          <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">저장</div>
+        </button>
+      </div>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={'배송지 변경'}>
+        <div className="my-10 flex justify-center">
+          <span className="font-bold text-lg">개인정보가 수정되었습니다.</span>
         </div>
-
-        <div className="mb-5">
-          <label className="block text-sm font-medium mb-1">주소*</label>
-          <input
-            type="text"
-            placeholder="도로명 주소 (필수)"
-            className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
-            value={changeInfo.address}
-            readOnly
-            onClick={openPostcodePopup}
-          />
-
-          <input
-            ref={addressRef}
-            type="text"
-            placeholder="상세 주소 입력 (선택)"
-            value={changeInfo.detailaddress}
-            onChange={(e) => {
-              validateFields(true);
-              setChangeInfo((prev) => ({
-                ...prev,
-                detailaddress: e.target.value,
-              }));
-            }}
-            className="block w-full p-2 border border-gray-300 rounded mb-1"
-          />
-          {errors.address && <span className="text-red-500 text-xs mt-1 ml-1">{errors.address}</span>}
+        <div className="flex gap-4 mt-3">
+          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={() => navigate('/mypage/edituser')}>
+            내 정보 보기
+          </button>
+          <button onClick={() => navigate(-1)} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+            확인
+          </button>
         </div>
-      </form>
-
-      <button onClick={handleChangeInfo}>
-        <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">저장</div>
-      </button>
-    </div>
+      </Modal>
+    </>
   );
 };
 
