@@ -211,7 +211,7 @@ const index = () => {
   }, []);
 
   return (
-    <div className="p-5">
+    <div className="p-10 bg-white h-full overflow-y-auto">
       <Toaster position="top-center" reverseOrder={false} />
       <Modal
         isOpen={isModalOpen}
@@ -242,7 +242,7 @@ const index = () => {
           )}
         </div>
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
-        <span className="mt-5 text-alert font-normal text-base">펫시터는 실명으로 활동하게 됩니다.</span>
+        <span className="mt-5 text-alert text-sm text-base">펫시터는 실명으로 활동하게 됩니다.</span>
       </div>
       <div className="mt-5">
         <span className="text-text text-sm">근무 요일 *</span>
@@ -260,7 +260,7 @@ const index = () => {
         </div>
         <div className="flex justify-center items-center gap-5 mt-5">
           <div className="flex items-center flex-col w-[150px]">
-            <span>근무 시작 시간</span>
+            <span className="text-sm">근무 시작 시간</span>
             <Dropdown
               width={'150'}
               label={formData.startTime}
@@ -273,7 +273,7 @@ const index = () => {
           </div>
           ~
           <div className="flex items-center flex-col w-[150px]">
-            <span>근무 종료 시간</span>
+            <span className="text-sm">근무 종료 시간</span>
             <Dropdown
               width={'150'}
               label={formData.endTime}
@@ -287,7 +287,7 @@ const index = () => {
         </div>
       </div>
       <div className="mt-3">
-        <label className="block mb-2 text-sm font-medium text-gray-900">지역 *</label>
+        <label className="block mb-2 text-sm font-medium">지역 *</label>
         <Dropdown
           label={formData.region}
           options={regionList}
@@ -298,20 +298,20 @@ const index = () => {
         />
       </div>
       <div className="mt-3">
-        <label className="block mb-2 text-sm font-medium text-gray-900">자기소개 *</label>
+        <label className="block mb-2 text-sm font-medium ">자기소개 *</label>
         <textarea
           type="text"
-          className="block w-full p-2.5 h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
+          className="block w-full p-2.5 h-40 border border-divider text-sm rounded-lg mt-3"
           required
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
         />
       </div>
       <div className="mt-3">
-        <label className="block mb-2 text-sm font-medium text-gray-900">경험 *</label>
+        <label className="block mb-2 text-sm font-medium ">경험 *</label>
         <textarea
           type="text"
-          className="block w-full p-2.5 h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-3"
+          className="block w-full p-2.5 h-40 border border-divider text-sm rounded-lg mt-3"
           required
           value={formData.experience}
           onChange={(e) => handleChange('experience', e.target.value)}
@@ -319,13 +319,13 @@ const index = () => {
       </div>
       {type === 'apply' ? (
         <div className="flex justify-center mt-10">
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleApplyAction}>
+          <button className="text-white bg-primary px-4 py-2 rounded-lg w-full h-12" onClick={handleApplyAction}>
             완료하기
           </button>
         </div>
       ) : (
         <div className="flex justify-center mt-10">
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleUpdateSitter}>
+          <button className="text-white bg-primary px-4 py-2 rounded-lg w-full h-12" onClick={handleUpdateSitter}>
             수정하기
           </button>
         </div>

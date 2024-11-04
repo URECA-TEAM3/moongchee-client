@@ -89,7 +89,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErr
           onClick={handleEmailVerification}
           disabled={isEmailFieldDisabled}
           className={`px-4 py-2 rounded-lg transition-colors ${
-            isEmailFieldDisabled ? 'bg-gray-400 text-white cursor-not-allowed' : 'border border-primary text-primary hover:bg-primary hover:text-white'
+            isEmailFieldDisabled ? 'bg-gray-300 text-white cursor-not-allowed' : 'border border-primary text-primary hover:bg-primary hover:text-white'
           }`}
         >
           {isResend ? '재발송' : '인증번호 발송'}

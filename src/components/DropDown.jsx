@@ -33,14 +33,14 @@ const Dropdown = ({ label, options, onSelect }) => {
           <button
             onClick={toggleDropdown}
             type="button"
-            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+            className="inline-flex justify-center w-full rounded-lg border border-divider shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
           >
             {label}
           </button>
         </div>
 
         {isOpen && (
-          <div className="origin-top-right absolute right-0 mt-2 w-full z-10 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+          <div className="origin-top-right absolute right-0 mt-2 w-full z-10 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <div className="py-1">
               {options.map((option, index) => (
                 <a
