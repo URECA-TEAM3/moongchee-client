@@ -192,6 +192,7 @@ const ShopHistory = () => {
                     </div>
                   </div>
                 </div>
+              </div>
                 {(orderHistory[orderId][0].status == 'paid') && 
                   ((expandedCards[orderId] ) || orderHistory[orderId].length == 1) && (
                   <div>
@@ -205,10 +206,8 @@ const ShopHistory = () => {
                     >
                       취소
                     </button>
-
                   </div>
                 )}
-              </div>
             </div>
             
             {/* 아래 화살표 눌렀을 때 세부 내역 렌더링 */}
