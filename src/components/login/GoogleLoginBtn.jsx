@@ -5,6 +5,7 @@ import { useUserStore } from '../store/userStore';
 import axiosInstance from '../api/axiosInstance';
 
 const GoogleLoginBtn = () => {
+  const { login } = useUserStore.getState();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const navigate = useNavigate();
 

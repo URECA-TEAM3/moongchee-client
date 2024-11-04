@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import DaumPostcode from 'react-daum-postcode';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,17 +8,18 @@ import defaultProfileImage from '/src/assets/images/user.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import toast, { Toaster } from 'react-hot-toast';
 import { storage } from '../../../firebase';
+import AddressSearch from '../../components/login/AddressSearch';
+import EmailVerification from '../../components/login/EmailVerification';
+import NicknameInput from '../../components/login/NicknameInput';
+import ProfileImageUpload from '../../components/login/ProfileImageUpload';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
-  const [emailVerificationCode, setEmailVerificationCode] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [birthDate, setBirthDate] = useState(null);
@@ -28,9 +28,7 @@ const SignUpForm = () => {
   const [nickname, setNickname] = useState('');
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-
   const [timer, setTimer] = useState(180);
-  const [isResend, setIsResend] = useState(false);
 
   const location = useLocation();
   const provider = location.state?.provider || 'Unknown';
@@ -65,21 +63,6 @@ const SignUpForm = () => {
     return () => clearInterval(interval);
   }, [showVerificationInput, timer]);
 
-  const formatTime = (seconds) => {
-    const min = String(Math.floor(seconds / 60)).padStart(2, '0');
-    const sec = String(seconds % 60).padStart(2, '0');
-    return `${min}:${sec}`;
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
-      setSelectedImageFile(file);
-    }
-  };
-
   const handlePhoneChange = (e) => {
     const value = e.target.value;
     if (/^[0-9\b]+$/.test(value) || value === '') {
@@ -90,98 +73,8 @@ const SignUpForm = () => {
     }
   };
 
-  const handleProfileClick = () => {
-    document.getElementById('profileImageUpload').click();
-  };
-
-  const validateNickname = (nickname) => {
-    const validPattern = /^[가-힣a-zA-Z0-9._]+$/;
-    return validPattern.test(nickname);
-  };
-
-  const handleNicknameCheck = async () => {
-    if (!nickname) {
-      toast.error('닉네임을 입력해주세요.');
-      return;
-    }
-
-    if (!validateNickname(nickname)) {
-      toast.error('닉네임에 자음이나 모음만 사용할 수 없습니다.');
-      return;
-    }
-
-    if (nickname.length > 15) {
-      toast.error('닉네임은 15자 이하여야 합니다.');
-      return;
-    }
-
-    try {
-      const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
-      if (response.data.available) {
-        toast.success('사용 가능한 닉네임입니다.');
-        setIsNicknameChecked(true);
-      } else {
-        toast.error('이미 사용 중인 닉네임입니다.');
-      }
-    } catch (error) {
-      toast.error('닉네임 중복 확인 중 오류가 발생했습니다.');
-      console.error('닉네임 중복 확인 오류:', error);
-    }
-  };
-
-  const handleEmailVerification = async () => {
-    if (!email) {
-      toast.error('이메일을 입력해주세요.');
-      return;
-    }
-
-    const toastId = toast.loading('인증 번호 보내는 중...');
-
-    try {
-      const response = await axios.post('http://localhost:3000/api/members/send-email-verification', { email });
-      setEmailVerificationCode(response.data.code);
-      setShowVerificationInput(true);
-      setTimer(180);
-      setIsResend(true);
-
-      toast.dismiss(toastId);
-      toast.success('인증 코드가 발송되었습니다.');
-    } catch (error) {
-      toast.dismiss(toastId);
-      if (error.response && error.response.status === 409) {
-        toast.error('이미 등록된 이메일 주소입니다.');
-      } else {
-        toast.error('이메일 인증 중 오류가 발생했습니다.');
-      }
-      console.error('이메일 인증 오류:', error);
-    }
-  };
-
-  const handleVerifyEmailCode = () => {
-    if (verificationCode === emailVerificationCode) {
-      setIsEmailVerified(true);
-      toast.success('이메일 인증 성공!');
-      setShowVerificationInput(false);
-    } else {
-      toast.error('인증 코드가 올바르지 않습니다.');
-    }
-  };
-
-  const handleComplete = (data) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${extraAddress}` : data.buildingName;
-      }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-    }
-
-    setRoadAddress(fullAddress);
+  const handleCompleteAddress = (address) => {
+    setRoadAddress(address);
     setErrors((prevErrors) => ({ ...prevErrors, address: '' }));
   };
 
@@ -189,51 +82,9 @@ const SignUpForm = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
     if (field === 'name') setName(value);
     if (field === 'phone') setPhone(value);
-    if (field === 'email') setEmail(value);
-    if (field === 'nickname') setNickname(value);
-    if (field === 'verificationCode') setVerificationCode(value);
     if (field === 'detailedAddress') setDetailedAddress(value);
     if (field === 'birthDate') setBirthDate(value);
   };
-
-  const openPostcodePopup = () => {
-    const popupWidth = 500;
-    const popupHeight = 600;
-    const popupX = window.screen.width / 2 - popupWidth / 2;
-    const popupY = window.screen.height / 2 - popupHeight / 2;
-
-    const popup = window.open('', '우편번호검색', `width=${popupWidth},height=${popupHeight},left=${popupX},top=${popupY}`);
-
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>주소 검색</title>
-        <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-      </head>
-      <body>
-        <div id="postcode-container"></div>
-        <script>
-          new daum.Postcode({
-            oncomplete: function(data) {
-              window.opener.postMessage(data, '*');
-              window.close();
-            }
-          }).embed(document.getElementById('postcode-container'));
-        </script>
-      </body>
-      </html>
-    `;
-
-    popup.document.write(htmlContent);
-  };
-
-  window.addEventListener('message', (event) => {
-    if (event.data && event.data.address) {
-      handleComplete(event.data);
-    }
-  });
 
   const handleDateChange = (date) => {
     setBirthDate(date);
@@ -242,13 +93,41 @@ const SignUpForm = () => {
 
   const validateFields = () => {
     let newErrors = {};
-    if (!name) newErrors.name = '이름을 입력해주세요.';
-    if (!phone) newErrors.phone = '휴대폰 번호를 입력해주세요.';
-    if (!email) newErrors.email = '이메일을 입력해주세요.';
-    if (!isEmailVerified) newErrors.emailVerified = '이메일 인증을 완료해주세요.';
-    if (!roadAddress) newErrors.address = '주소를 입력해주세요.';
-    if (!birthDate) newErrors.birthDate = '생년월일을 선택해주세요.';
-    if (!nickname) newErrors.nickname = '닉네임을 입력해주세요.';
+
+    if (!name) {
+      newErrors.name = '이름을 입력해주세요.';
+      toast.error('이름을 입력해주세요.');
+    }
+
+    if (!phone) {
+      newErrors.phone = '휴대폰 번호를 입력해주세요.';
+      toast.error('휴대폰 번호를 입력해주세요.');
+    }
+
+    if (!email) {
+      newErrors.email = '이메일을 입력해주세요.';
+      toast.error('이메일을 입력해주세요.');
+    }
+
+    if (!isEmailVerified) {
+      newErrors.emailVerified = '이메일 인증을 완료해주세요.';
+      toast.error('이메일 인증을 완료해주세요.');
+    }
+
+    if (!roadAddress) {
+      newErrors.address = '주소를 입력해주세요.';
+      toast.error('주소를 입력해주세요.');
+    }
+
+    if (!birthDate) {
+      newErrors.birthDate = '생년월일을 선택해주세요.';
+      toast.error('생년월일을 선택해주세요.');
+    }
+
+    if (!nickname) {
+      newErrors.nickname = '닉네임을 입력해주세요.';
+      toast.error('닉네임을 입력해주세요.');
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -257,11 +136,7 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 유효성 검사
     if (!validateFields()) {
-      if (!isEmailVerified) {
-        toast.error('이메일 인증을 완료해주세요.');
-      }
       return;
     }
 
@@ -296,14 +171,13 @@ const SignUpForm = () => {
         phone,
         email,
         address: roadAddress,
-        detailAddress: detailedAddress,
+        detailaddress: detailedAddress,
         birthDate: formattedBirthDate,
         provider,
         token: userId,
         nickname,
         profileImageUrl: downloadURL,
       });
-      console.log('디테일 주소', detailedAddress);
 
       const { userId: responseUserId, refreshToken } = response.data;
 
@@ -317,9 +191,10 @@ const SignUpForm = () => {
           phone,
           email,
           address: roadAddress,
-          detailAddress: detailedAddress, // 세션 데이터에 추가
+          detailaddress: detailedAddress, // 세션 데이터에 추가
           birthDate: formattedBirthDate,
           provider,
+          petsitter: 0,
           userId,
           nickname,
           profile_image_url: downloadURL,
@@ -347,35 +222,9 @@ const SignUpForm = () => {
       <div className="w-full px-10">
         <label className="text-sm font-medium mb-1">프로필 등록(선택)</label>
         <div className="flex items-center space-x-4 mb-4">
-          <div className="relative w-20 h-20 ml-2 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
-            {selectedImage ? (
-              <img src={selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
-            ) : (
-              <img src={defaultProfileImage} alt="기본 프로필 이미지" className="w-full h-full object-contain" />
-            )}
-          </div>
-          <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
+          <ProfileImageUpload selectedImage={selectedImage} setSelectedImage={setSelectedImage} setSelectedImageFile={setSelectedImageFile} />
 
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1 ml-2">닉네임*</label>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="닉네임 입력"
-                value={nickname}
-                onChange={(e) => handleInputChange('nickname', e.target.value)}
-                className={`flex-1 p-2 ml-2 border ${errors.nickname ? 'border-red-500' : 'border-primary'} rounded-lg`}
-              />
-              <button
-                type="button"
-                onClick={handleNicknameCheck}
-                className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
-              >
-                중복확인
-              </button>
-            </div>
-            {errors.nickname && <span className="text-red-500 text-xs mt-1">{errors.nickname}</span>}
-          </div>
+          <NicknameInput nickname={nickname} setNickname={setNickname} setIsNicknameChecked={setIsNicknameChecked} errors={errors} setErrors={setErrors} />
         </div>
       </div>
 
@@ -390,46 +239,7 @@ const SignUpForm = () => {
         />
         {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
 
-        <label className="block text-sm font-medium my-1 mt-4">이메일 주소*</label>
-        <div className="flex space-x-2 mb-1">
-          <input
-            type="email"
-            placeholder="이메일 주소"
-            value={email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            className={`flex-1 p-2 border ${errors.email ? 'border-red-500' : 'border-divider'} rounded-lg`}
-          />
-          <button
-            type="button"
-            onClick={handleEmailVerification}
-            className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
-          >
-            {isResend ? '재발송' : '인증번호 발송'}
-          </button>
-        </div>
-        {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email}</span>}
-
-        {showVerificationInput && timer > 0 && (
-          <div className="flex space-x-2 mb-1 items-center">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="인증번호 입력"
-                value={verificationCode}
-                onChange={(e) => handleInputChange('verificationCode', e.target.value)}
-                className="w-full p-2 pr-12 border border-divider rounded-lg"
-              />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">{formatTime(timer)}</span>
-            </div>
-            <button
-              type="button"
-              onClick={handleVerifyEmailCode}
-              className="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
-            >
-              인증
-            </button>
-          </div>
-        )}
+        <EmailVerification email={email} setEmail={setEmail} setIsEmailVerified={setIsEmailVerified} errors={errors} setErrors={setErrors} />
 
         <label className="block text-sm font-medium my-1 mt-4">휴대폰 번호*</label>
         <input
@@ -459,15 +269,8 @@ const SignUpForm = () => {
         </div>
         {errors.birthDate && <span className="text-red-500 text-xs mt-1">{errors.birthDate}</span>}
 
-        <label className="block text-sm font-medium my-1 mt-4">주소*</label>
-        <input
-          type="text"
-          placeholder="도로명 주소 (필수)"
-          className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
-          value={roadAddress}
-          readOnly
-          onClick={() => openPostcodePopup()}
-        />
+        {/* <label className="block text-sm font-medium mb-1">주소*</label> */}
+        <AddressSearch errors={errors} onComplete={handleCompleteAddress} />
         {errors.address && <span className="text-red-500 text-xs mt-1">{errors.address}</span>}
 
         <input
