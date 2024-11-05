@@ -185,7 +185,7 @@ const index = () => {
               <div className="flex-1 flex items-center justify-center" key={day.name + index}>
                 <div
                   onClick={() => handleDayClick(day.name)}
-                  className={`day rounded-full w-10 h-10 text-center leading-10 text-slate-400 cursor-pointer ${!day.target ? 'bg-divider' : 'bg-primary text-white'}`}
+                  className={`day rounded-full w-10 h-10 text-center leading-10 cursor-pointer ${!day.target ? 'bg-divider' : 'bg-primary text-white'}`}
                 >
                   {day.name}
                 </div>
