@@ -94,7 +94,6 @@ const ShopHistory = () => {
         orderItemId: cancelId,
         status: 'refund',
       });
-      console.log('Updated points successfully:', response);
       setIsModalOpen(false);
       navigate(0);
     } catch (error) {
