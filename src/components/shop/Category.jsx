@@ -18,7 +18,7 @@ const Category = ({ selectedCategory, setSelectedCategory }) => {
 
   useEffect(() => {
     if (showCategory) setSelectedCategory(1);
-  }, [showCategory, setSelectedCategory]);
+  }, []);
 
   const handleClick = (id) => {
     setSelectedCategory(id);
