@@ -17,6 +17,9 @@ function Mypage(props) {
   const [isPetsitter, setIsPetsitter] = useState(true);
   const [point, setPoint] = useState(0);
   const [logoutModal, setLogoutModal] = useState(false);
+  const [nickname, setNickname] = useState('');
+  const [userId, setUserId] = useState(0);
+  const [petsitter, setPetsitter] = useState({});
 
   useEffect(() => {
     const userData = sessionStorage.getItem('userData');
@@ -24,10 +27,14 @@ function Mypage(props) {
       const parsedData = JSON.parse(userData); // JSON 파싱
       setUserName(parsedData.name);
       setProfileImageUrl(parsedData.profile_image_url);
+      setNickname(parsedData.nickname);
+      setUserId(parsedData.id);
       // setIsPetsitter(parsedData.petsitter); -> 펫시터 등록 기능 구현되면 주석 해제
       // 반려동물 리스트 출력 함수 호출
       fetchPets(parsedData.id);
       fetchPoints(parsedData.id);
+      setIsPetsitter(parsedData.petsitter == 1 ? true : false);
+      fetchPetsitter(parsedData.id);
     }
   }, []);
 
@@ -50,6 +57,17 @@ function Mypage(props) {
       console.error(error);
     }
   };
+
+  const fetchPetsitter = async (userId) => {
+
+    try {
+      const response = await axios.get(`http://localhost:3000/api/petsitter/detail/${userId}`);
+      setPetsitter(response.data.data[0]);
+      // setPetsitter(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
@@ -92,7 +110,7 @@ function Mypage(props) {
         <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <img src={profileImageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
-            <p className="text-lg">{userName}</p>
+            <p className="text-lg">{nickname}</p>
           </div>
           <button
             onClick={handleEditUserInfoClick}
@@ -108,8 +126,8 @@ function Mypage(props) {
             <p className="mb-2 ">펫시터 프로필</p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <img src="/src/assets/images/dog.jpeg" alt="Profile" className="w-12 h-12 rounded-full" />
-                <p className="text-lg">{userName}</p>
+                <img src={petsitter.image} alt="Profile" className="w-12 h-12 rounded-full" />
+                <p className="text-lg">{petsitter.name}</p>
               </div>
               <button className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7">편집</button>
             </div>
