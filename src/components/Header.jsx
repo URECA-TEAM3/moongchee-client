@@ -8,7 +8,7 @@ function Header(props) {
         <img src="src/assets/images/black-horizontal.png" alt="logo" className="h-16 p-2" />
       </a>
 
-      <Notification />
+      {/* <Notification /> */}
     </div>
   );
 }
