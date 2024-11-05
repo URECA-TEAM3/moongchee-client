@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+// Category.js
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const Category = ({ selectedCategory, setSelectedCategory }) => {
   const location = useLocation();
-  let showCategory = location.pathname.includes('/category');
+  const showCategory = location.pathname.includes('/category');
 
   const categories = [
     { id: 0, name: '전체' },
@@ -17,8 +18,7 @@ const Category = ({ selectedCategory, setSelectedCategory }) => {
 
   useEffect(() => {
     if (showCategory) setSelectedCategory(1);
-    showCategory = false;
-  }, []);
+  }, [showCategory, setSelectedCategory]);
 
   const handleClick = (id) => {
     setSelectedCategory(id);
