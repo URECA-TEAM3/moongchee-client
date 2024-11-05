@@ -172,6 +172,7 @@ const index = ({ handleNextStep }) => {
               className={`block w-full p-2 border rounded-lg`}
               showYearDropdown
               showMonthDropdown
+              minDate={new Date()}
               dropdownMode="select"
               filterDate={isWeekday}
               maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
