@@ -140,7 +140,7 @@ const index = () => {
         <div className="flex items-center container gap-5 w-full">
           <button
             className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleReservationClick()}
+            onClick={() => handleReservationClick('user')}
           >
             예약 / 취소 내역
           </button>
