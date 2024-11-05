@@ -13,6 +13,7 @@ export const useUserStore = create(
       },
       logout: () => {
         set({ ...initialUserState });
+        localStorage.removeItem('user-storage');
       },
       // 포인트 얻어오는 함수
       getPoint: async (id) => {
