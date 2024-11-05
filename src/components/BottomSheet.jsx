@@ -3,7 +3,6 @@ import { CiCircleMinus } from 'react-icons/ci';
 import { CiCirclePlus } from 'react-icons/ci';
 import { IoCloseOutline } from 'react-icons/io5';
 import DogChew from './DogChew';
-import { useUserStore } from '../store/userStore';
 
 const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
   const [isAnimating, setIsAnimating] = useState(false);
