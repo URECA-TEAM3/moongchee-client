@@ -14,7 +14,7 @@ function Mypage(props) {
   const [userName, setUserName] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState('');
   const [pets, setPets] = useState([]);
-  const [isPetsitter, setIsPetsitter] = useState(true);
+  const [isPetsitter, setIsPetsitter] = useState(false);
   const [point, setPoint] = useState(0);
   const [logoutModal, setLogoutModal] = useState(false);
   const [nickname, setNickname] = useState('');

@@ -218,7 +218,6 @@ const ChangeAddress = () => {
         </form>
 
         <div className="w-full px-10 pb-10">
-          {' '}
           <button onClick={() => handleChangeInfo()} className="w-full h-12 bg-primary text-white rounded-lg text-center">
             저장
           </button>
