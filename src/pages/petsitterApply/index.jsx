@@ -116,7 +116,7 @@ const index = () => {
     대전광역시: ['동구', '중구', '서구', '유성구', '대덕구'],
     울산광역시: ['중구', '남구', '동구', '북구', '울주군'],
     세종특별자치시: ['세종시'],
-    경기도: [
+    경기: [
       '수원시',
       '성남시',
       '의정부시',
@@ -147,7 +147,7 @@ const index = () => {
       '포천시',
       '여주시',
     ],
-    강원도: [
+    강원특별자치도: [
       '춘천시',
       '원주시',
       '강릉시',
@@ -167,8 +167,8 @@ const index = () => {
       '고성군',
       '양양군',
     ],
-    충청북도: ['청주시', '충주시', '제천시', '보은군', '옥천군', '영동군', '진천군', '괴산군', '음성군', '단양군'],
-    충청남도: [
+    충북: ['청주시', '충주시', '제천시', '보은군', '옥천군', '영동군', '진천군', '괴산군', '음성군', '단양군'],
+    충남: [
       '천안시',
       '공주시',
       '보령시',
@@ -185,8 +185,23 @@ const index = () => {
       '예산군',
       '태안군',
     ],
-    전라북도: ['전주시', '군산시', '익산시', '정읍시', '남원시', '김제시', '완주군', '진안군', '무주군', '장수군', '임실군', '순창군', '고창군', '부안군'],
-    전라남도: [
+    전북특별자치도: [
+      '전주시',
+      '군산시',
+      '익산시',
+      '정읍시',
+      '남원시',
+      '김제시',
+      '완주군',
+      '진안군',
+      '무주군',
+      '장수군',
+      '임실군',
+      '순창군',
+      '고창군',
+      '부안군',
+    ],
+    전남: [
       '목포시',
       '여수시',
       '순천시',
@@ -210,7 +225,7 @@ const index = () => {
       '진도군',
       '신안군',
     ],
-    경상북도: [
+    경북: [
       '포항시',
       '경주시',
       '김천시',
@@ -235,7 +250,7 @@ const index = () => {
       '울진군',
       '울릉군',
     ],
-    경상남도: [
+    경남: [
       '창원시',
       '진주시',
       '통영시',
@@ -340,9 +355,14 @@ const index = () => {
       if (dayList[i].target === true) str += `${dayList[i].value},`;
     }
 
-    const storageRef = ref(storage, `petsitter/${userData.id}`);
-    await uploadBytes(storageRef, selectedImageFile);
-    const downloadURL = await getDownloadURL(storageRef);
+    let downloadURL;
+    if (selectedImageFile) {
+      const storageRef = ref(storage, `petsitter/${userData.id}`);
+      await uploadBytes(storageRef, selectedImageFile);
+      downloadURL = await getDownloadURL(storageRef);
+    } else {
+      downloadURL = defaultProfileImage;
+    }
 
     const params = {
       weekdays: str.slice(0, -1),
