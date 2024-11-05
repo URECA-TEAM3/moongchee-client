@@ -20,7 +20,7 @@ const PayInfo = ({ totalPrice }) => {
         <div>무료</div>
       </div>
 
-      <div className="flex justify-between items-center py-4 bg-[#F5FAFF] px-10">
+      <div className="flex justify-between items-center py-4 bg-paleblue px-10">
         <div className="flex">
           <span className="mr-2">최종 차감 될 </span> <DogChew />
         </div>
