@@ -12,7 +12,6 @@ import usePetSitterStore from '../../store/petsitterStore';
 
 const index = () => {
   const { id } = useUserStore();
-  const [render, setRender] = useState(false);
   const { type } = usePetSitterStore();
   const { login } = useUserStore((state) => state);
   const navigate = useNavigate();
@@ -280,6 +279,7 @@ const index = () => {
       ...prevData,
       [name]: value,
     }));
+    if (name === 'region1') setFormData((prev) => ({ ...prev, region2: '선택' }));
   };
 
   const handleImageChange = (e) => {
@@ -411,7 +411,6 @@ const index = () => {
   };
 
   const fetchSitterDetail = async () => {
-    setRender(true);
     if (type === 'update') {
       try {
         const res = await axios.get('http://localhost:3000/api/petsitter/sitter/detail', { params: { id } });
@@ -432,6 +431,7 @@ const index = () => {
         for (let i = 0; i < days.length; i++) {
           handleDecodeDayList(days[i]);
         }
+        console.log('fetch');
       } catch (error) {
         console.log(error);
       }
@@ -447,10 +447,6 @@ const index = () => {
   useEffect(() => {
     fetchSitterDetail();
   }, []);
-
-  useEffect(() => {
-    if (!render) setFormData((prev) => ({ ...prev, region2: '선택' }));
-  }, [formData.region1]);
 
   return (
     <div className="p-10 bg-white h-full overflow-y-auto">
