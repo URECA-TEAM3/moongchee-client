@@ -87,7 +87,7 @@ const Step3 = () => {
               <DogChew />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <span className="">{`${point}개`}</span>
+              <span className="">{`${points}개`}</span>
             </div>
           </div>
           <div className="flex w-full justify-between mt-5 px-10 items-center">
@@ -102,8 +102,7 @@ const Step3 = () => {
           <button className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg" onClick={handleReservationClick}>
             결제하기
           </button>
-        </div>{' '}
-        */}
+        </div>
       </div>
     </div>
   );

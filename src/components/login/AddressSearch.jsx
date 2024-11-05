@@ -18,8 +18,6 @@ const AddressSearch = ({ onComplete, errors }) => {
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
 
-    console.log('우편번호 완');
-
     setRoadAddress(fullAddress);
     onComplete(fullAddress);
   };
