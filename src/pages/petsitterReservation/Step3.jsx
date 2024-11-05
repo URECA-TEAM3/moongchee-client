@@ -124,35 +124,8 @@ const Step3 = () => {
             </div>
           )}
         </div>
-        {/* <div>
-          <div>
-            <p className="mr-2">차감될</p>
-            <DogChew />
-          </div>
-          <span className="px-10 font-bold">{`${reservation.price}개`}</span>
-        </div>
-        <div className="flex w-full justify-between mt-5 px-10 items-center">
-          <div className="flex">
-            <p className="mr-2">나의 현재</p>
-            <DogChew />
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <span className="">{`${points}개`}</span>
-          </div>
-        </div>
-        <div className="flex w-full justify-between mt-5 px-10 items-center">
-          <div className="flex">
-            <p className="mr-2">결제 후</p>
-            <DogChew />
-          </div>
-          <span>{`${points - reservation.price}개`}</span>
-        </div> */}
+        
       </div>
-      {/* <div className="flex justify-center p-10">
-        <button className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg" onClick={handleReservationClick}>
-          결제하기
-        </button>
-      </div> */}
     </div>
   );
 };

@@ -5,8 +5,10 @@ import petProfileImage from '/src/assets/images/defaultpet.png';
 import axios from 'axios';
 import { useUserStore } from '../../store/userStore';
 import { useProductStore } from '../../store/productsStore';
+import usePetSitterStore from '../../store/petsitterStore';
 
 function Mypage(props) {
+  const { setType } = usePetSitterStore();
   const { logout } = useUserStore((state) => state);
   const { resetProduct } = useProductStore((state) => state);
   const navigate = useNavigate();
@@ -14,8 +16,12 @@ function Mypage(props) {
   const [userName, setUserName] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState('');
   const [pets, setPets] = useState([]);
-  const [isPetsitter, setIsPetsitter] = useState(true);
+  const [isPetsitter, setIsPetsitter] = useState(false);
   const [point, setPoint] = useState(0);
+  const [logoutModal, setLogoutModal] = useState(false);
+  const [nickname, setNickname] = useState('');
+  const [userId, setUserId] = useState(0);
+  const [petsitter, setPetsitter] = useState({});
 
   useEffect(() => {
     const userData = sessionStorage.getItem('userData');
@@ -23,10 +29,14 @@ function Mypage(props) {
       const parsedData = JSON.parse(userData); // JSON 파싱
       setUserName(parsedData.name);
       setProfileImageUrl(parsedData.profile_image_url);
+      setNickname(parsedData.nickname);
+      setUserId(parsedData.id);
       // setIsPetsitter(parsedData.petsitter); -> 펫시터 등록 기능 구현되면 주석 해제
       // 반려동물 리스트 출력 함수 호출
       fetchPets(parsedData.id);
       fetchPoints(parsedData.id);
+      setIsPetsitter(parsedData.petsitter == 1 ? true : false);
+      fetchPetsitter(parsedData.id);
     }
   }, []);
 
@@ -50,11 +60,22 @@ function Mypage(props) {
     }
   };
 
+  const fetchPetsitter = async (userId) => {
+
+    try {
+      const response = await axios.get(`http://localhost:3000/api/petsitter/detail/${userId}`);
+      setPetsitter(response.data.data[0]);
+      // setPetsitter(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
   };
 
-  const confirmLogout = () => {
+  const logoutSuccess = () => {
     // 로그아웃 로직
     localStorage.clear();
     sessionStorage.clear();
@@ -63,8 +84,13 @@ function Mypage(props) {
 
     navigate('/');
 
+    setLogoutModal(false);
+  }
+
+  const confirmLogout = () => {
+
     setIsModalOpen(false); // 모달 닫기
-    alert('로그아웃되었습니다.');
+    setLogoutModal(true);
   };
 
   const closeModal = () => {
@@ -86,7 +112,7 @@ function Mypage(props) {
         <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <img src={profileImageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
-            <p className="text-lg">{userName}</p>
+            <p className="text-lg">{nickname}</p>
           </div>
           <button
             onClick={handleEditUserInfoClick}
@@ -102,10 +128,12 @@ function Mypage(props) {
             <p className="mb-2 ">펫시터 프로필</p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <img src="/src/assets/images/dog.jpeg" alt="Profile" className="w-12 h-12 rounded-full" />
-                <p className="text-lg">{userName}</p>
+                <img src={petsitter.image} alt="Profile" className="w-12 h-12 rounded-full" />
+                <p className="text-lg">{petsitter.name}</p>
               </div>
-              <button className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7">편집</button>
+              <button onClick={() => {
+                setType('update');
+                navigate('/petsitter/profile')}} className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7">편집</button>
             </div>
           </div>
         )}
@@ -204,6 +232,18 @@ function Mypage(props) {
             </div>
           </div>
         )}
+
+        {logoutModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
+              <h2 className="text-base font-bold mb-6">로그아웃 되었습니다.</h2>
+              <button onClick={logoutSuccess} className="px-12 py-2 bg-primary text-white rounded-lg">
+                확인
+              </button>
+            </div>
+        </div>
+        )}
+
       </div>
     </div>
   );

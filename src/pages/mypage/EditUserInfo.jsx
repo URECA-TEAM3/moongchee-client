@@ -181,6 +181,23 @@ const EditUserInfo = () => {
     setBirthDate(date);
   };
 
+  useEffect(() => {
+    // 주소 변경 이벤트 리스너 등록
+    const handlePostMessage = (event) => {
+      if (event.data && event.data.roadAddress) {
+        setRoadAddress(event.data.roadAddress);
+      }
+    };
+  
+    window.addEventListener('message', handlePostMessage);
+  
+    return () => {
+      // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+      window.removeEventListener('message', handlePostMessage);
+    };
+  }, []);
+  
+
   const openPostcodePopup = () => {
     const popupWidth = 500;
     const popupHeight = 600;
@@ -313,7 +330,7 @@ const EditUserInfo = () => {
           placeholder="도로명 주소 (필수)"
           className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-divider'} rounded-lg mb-1`}
           value={roadAddress}
-          readOnly
+          onChange={(e) => setRoadAddress(e.target.value)}
           onClick={openPostcodePopup}
         />
 
