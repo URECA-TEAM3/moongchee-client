@@ -11,7 +11,7 @@ const index = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [reservationList, setReservationList] = useState([]);
-  const [showItems, setShowItems] = useState(true);
+  const [showItems, setShowItems] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [selectedReservation, setSelectedReservation] = useState({
@@ -41,7 +41,9 @@ const index = () => {
           reservationId: item.reservation_id,
         };
       });
+
       if (reservationList.length > 0) {
+        console.log(reservationList.length > 0);
         setShowItems(true);
       }
       setReservationList(reservationList);
@@ -151,7 +153,9 @@ const index = () => {
           </div>
         </div>
       ) : (
-        <EmptyPage message="예약내역이 없습니다." buttonText="뒤로가기" onButtonClick={() => navigate(-1)} />
+        <>
+          <EmptyPage message="예약내역이 없습니다." buttonText="뒤로가기" onButtonClick={() => navigate(-1)} />
+        </>
       )}
     </div>
   );

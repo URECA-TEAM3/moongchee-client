@@ -51,7 +51,7 @@ const index = () => {
     },
   ]);
   const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
-  const { id, petsitter } = useUserStore();
+  const { id, petsitter, address } = useUserStore();
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
@@ -93,12 +93,14 @@ const index = () => {
     for (let i = 0; i < dayList.length; i++) {
       if (dayList[i].target === true) str += `${dayList[i].value},`;
     }
-
+    const addr = address.split(' ');
+    console.log(`${addr[0]} ${addr[1]}`);
     const params = {
       userId: id,
       weekdays: str.slice(0, -1),
       startTime: startTime,
       endTime: endTime,
+      region: `${addr[0]} ${addr[1]}`,
     };
 
     try {
