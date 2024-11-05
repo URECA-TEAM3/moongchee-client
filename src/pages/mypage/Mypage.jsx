@@ -71,8 +71,6 @@ function Mypage(props) {
     }
   }
 
-  console.log(petsitter);
-
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
   };
@@ -113,6 +111,7 @@ function Mypage(props) {
         {/* User Profile */}
         <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className="flex items-center space-x-4">
+
             <img src={profileImageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
             <p className="text-lg">{nickname}</p>
           </div>
@@ -130,7 +129,7 @@ function Mypage(props) {
             <p className="mb-2 ">펫시터 프로필</p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <img src={'/src/assets/images/defaultpet.png'} alt="Profile" className="w-12 h-12 rounded-full" />
+                <img src={petsitter.image} alt="Profile" className="w-12 h-12 rounded-full" />
                 <p className="text-lg">{petsitter.name}</p>
               </div>
               <button onClick={() => {

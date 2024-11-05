@@ -6,6 +6,7 @@ import { storage } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import defaultPetImage from '/src/assets/images/defaultpet.png';
 import Modal from '../../components/Modal';
 
 const AnimalInfo = () => {
@@ -209,10 +210,10 @@ const AnimalInfo = () => {
 
       <div className="mb-2">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
-          {profileImage !== registerPetProfileImage ? (
+          {profileImage ? (
             <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
           ) : (
-            <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+            <img src={defaultPetImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
           )}
         </div>
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
@@ -273,7 +274,7 @@ const AnimalInfo = () => {
       </div>
       {errors.neutered && <span className="text-red-500 text-xs w-full px-10 text-left">{errors.neutered}</span>}
 
-      <label className="block text-sm font-medium mb-2 mt-4 text-left w-full px-10">몸무게*</label>
+      <label className="block text-sm font-medium mb-2 mt-4 text-left w-full px-10">몸무게(kg)*</label>
       <div className="relative w-full px-10">
         <input
           type="text"
@@ -285,7 +286,7 @@ const AnimalInfo = () => {
             validateSingleField('weight', e.target.value);
           }}
         />
-        <span className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${weight ? 'text-black' : 'text-divider'}`}>kg</span>
+        <span className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${weight ? 'text-black' : 'text-divider'}`}></span>
       </div>
       {errors.weight && <span className="text-red-500 text-xs w-full px-10 text-left">{errors.weight}</span>}
 

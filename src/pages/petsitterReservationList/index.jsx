@@ -61,7 +61,7 @@ const index = () => {
       setReservationList(reservationList);
     } catch (error) {}
   };
-
+  
   const handleReservationUpdate = async (type) => {
     try {
       const res = await axios.post(`http://localhost:3000/api/petsitter/reservation/${type === 'confirm' ? 'confirm' : 'cancel'}`, {
@@ -73,9 +73,9 @@ const index = () => {
         refundPoint();
       }
       handleReservationList();
-
+      
+      console.log(sitterInfo);
       try {
-
         let notiType;
         if (type == 'cancel') {
           if (isPetsitter != 'user') notiType = 'denied'
