@@ -1,5 +1,5 @@
 import React from 'react';
-import Notification from './notifications/notification';
+import Notification from './notifications/Notification';
 
 
 
