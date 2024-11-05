@@ -14,6 +14,7 @@ function Mypage(props) {
   const [pets, setPets] = useState([]);
   const [isPetsitter, setIsPetsitter] = useState(true);
   const [point, setPoint] = useState(0);
+  const [logoutModal, setLogoutModal] = useState(false);
 
   useEffect(() => {
     const userData = sessionStorage.getItem('userData');
@@ -52,15 +53,20 @@ function Mypage(props) {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
   };
 
-  const confirmLogout = () => {
+  const logoutSuccess = () => {
     // 로그아웃 로직
     localStorage.clear();
     sessionStorage.clear();
     logout();
     navigate('/');
 
+    setLogoutModal(false);
+  }
+
+  const confirmLogout = () => {
+
     setIsModalOpen(false); // 모달 닫기
-    alert('로그아웃되었습니다.');
+    setLogoutModal(true);
   };
 
   const closeModal = () => {
@@ -200,6 +206,18 @@ function Mypage(props) {
             </div>
           </div>
         )}
+
+        {logoutModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
+              <h2 className="text-base font-bold mb-6">로그아웃 되었습니다.</h2>
+              <button onClick={logoutSuccess} className="px-12 py-2 bg-primary text-white rounded-lg">
+                확인
+              </button>
+            </div>
+        </div>
+        )}
+
       </div>
     </div>
   );

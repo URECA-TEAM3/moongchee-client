@@ -7,7 +7,6 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = sessionStorage.getItem('accessToken');
   if (accessToken) {
-    console.log('여기들어오냐');
     config.headers['Authorization'] = `Bearer ${accessToken}`;
   }
   return config;
@@ -24,7 +23,6 @@ axiosInstance.interceptors.response.use(
 
       if (newAccessToken) {
         sessionStorage.setItem('accessToken', newAccessToken);
-        console.log('여기들어오냐123');
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       }
@@ -46,7 +44,6 @@ const refreshAccessToken = async () => {
 
     const newAccessToken = response.data.accessToken;
     if (newAccessToken) {
-      console.log('여기들어오냐123');
       return newAccessToken;
     } else {
       console.error('서버로부터 유효한 액세스 토큰을 받지 못했습니다.');
