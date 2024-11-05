@@ -1,5 +1,5 @@
 import React from 'react';
-import Notification from './notifications/notification';
+import { BellIcon } from '@heroicons/react/24/outline';
 
 function Header(props) {
   return (
@@ -8,7 +8,9 @@ function Header(props) {
         <img src="src/assets/images/black-horizontal.png" alt="logo" className="h-16 p-2" />
       </a>
 
-      {/* <Notification /> */}
+      <button>
+        <BellIcon className="size-7" />
+      </button>
     </div>
   );
 }
