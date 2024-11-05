@@ -1,22 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DogChew from '../../components/DogChew';
 import { toast, Toaster } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useReservationStore from '../../store/reservationStore';
 import { useUserStore } from '../../store/userStore';
+import PayInfo from '../../components/shop/PayInfo';
+import { AiOutlineMinus } from 'react-icons/ai';
+import { GoInfo } from 'react-icons/go';
 
 const Step3 = () => {
+  const [points, setPoints] = useState(0);
+  const [payment, setPayment] = useState(true);
   const { reservation } = useReservationStore();
   const navigate = useNavigate();
-  const { id, name, address, point } = useUserStore();
+  const { id, name, address, getPoint } = useUserStore();
 
   const handleReservationClick = async () => {
-    if (reservation.price > point) {
-      toast.error('잔액이 부족하여 결제에 실패했습니다.');
-      return;
-    }
-
     try {
       const pointUpdateResponse = await axios.post('http://localhost:3000/api/members/update-points', {
         userId: id,
@@ -35,9 +35,28 @@ const Step3 = () => {
         }
       }
     } catch (error) {
+      toast.error('잔액이 부족하여 결제에 실패했습니다.');
       console.error('포인트 업데이트 실패:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      try {
+        const userPoints = await getPoint(id);
+        setPoints(userPoints);
+      } catch (error) {
+        console.error('Error fetching points:', error);
+      }
+    };
+
+    fetchPoints();
+    setPayment(points - reservation.price >= 0);
+  }, []);
+
+  useEffect(() => {
+    setPayment(points - reservation.price >= 0);
+  }, [points]);
 
   return (
     <div className="pt-10">
@@ -46,11 +65,11 @@ const Step3 = () => {
         <p className="px-10 font-bold text-black">주소</p>
         <div className="px-10">
           <div className="flex mt-3">
-            <p className="font-semibold text-gray-600">이름:</p>
+            <p className="font-semibold text-gray-600 mr-3">이름:</p>
             <span>{name}</span>
           </div>
           <div className="flex mt-3">
-            <p className="font-semibold text-gray-600">주소:</p>
+            <p className="font-semibold text-gray-600 mr-3">주소:</p>
             <span>{address}</span>
           </div>
         </div>
@@ -68,7 +87,7 @@ const Step3 = () => {
               <DogChew />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <span className="">{`${point}개`}</span>
+              <span className="">{`${points}개`}</span>
             </div>
           </div>
           <div className="flex w-full justify-between mt-5 px-10 items-center">
@@ -76,7 +95,7 @@ const Step3 = () => {
               <p className="mr-2">결제 후</p>
               <DogChew />
             </div>
-            <span>{`${point - reservation.price}개`}</span>
+            <span>{`${points - reservation.price}개`}</span>
           </div>
         </div>
         <div className="flex justify-center p-10">
