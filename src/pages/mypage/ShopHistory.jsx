@@ -77,12 +77,6 @@ const ShopHistory = () => {
     }));
   };
 
-  useEffect(() => {
-    if (pay === 'done') {
-      toast.success('결제 완료');
-    }
-  }, []);
-
   const refundPoint = async () => {
     try {
       const response = await API.post('members/update-points', {
@@ -129,7 +123,6 @@ const ShopHistory = () => {
 
   return (
     <div>
-      <Toaster />
       <div>
         <div className="relative w-full flex items-center mb-4 mt-6">
           <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
