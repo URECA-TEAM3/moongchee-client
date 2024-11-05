@@ -6,6 +6,7 @@ import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import EmptyPage from '../../components/EmptyPage';
+import API from '../../api/axiosInstance';
 
 const index = () => {
   const navigate = useNavigate();
@@ -19,8 +20,18 @@ const index = () => {
     reservationId: '',
     price: '',
   });
-  const { id } = useUserStore();
+  const { id, name } = useUserStore();
   const isPetsitter = location.state.type;
+  const [sitterInfo, setSitterInfo] = useState({});
+
+  const fetchSitterInfo = async (sitterId) => {
+      try {
+        const response = await API.get(`/petsitter/detail/${sitterId}`);
+        setSitterInfo(response.data.data[0]);
+      } catch (error) {
+        console.error(error);
+      }
+  }
 
   const handleReservationList = async () => {
     try {
@@ -32,6 +43,7 @@ const index = () => {
       const reservationList = res.data.data.map((item) => {
         return {
           name: item.name,
+          sitterId : item.sitter_id,
           requestDate: item.requestDate,
           startTime: item.startTime,
           endTime: item.endTime,
@@ -61,19 +73,48 @@ const index = () => {
         refundPoint();
       }
       handleReservationList();
+
+      try {
+
+        let notiType;
+        if (type == 'cancel') {
+          if (isPetsitter != 'user') notiType = 'denied'
+          else notiType = 'canceled'
+        } else {
+          notiType = 'confirmed'
+        };
+
+        const notiData = {
+          sending_name: name,
+          receive_id: sitterInfo.userId,
+          receive_name: selectedReservation.name,
+          type: notiType,
+          status: 'unread',
+        };
+
+        try {
+          const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
+        } catch (error) {
+          console.error('Notification 정보 저장 실패')
+        }
+
+      } catch (error) {
+        console.error('Notification 정보 저장 실패 : ', error);
+      }
+      
     } catch (error) {
       console.error('Error cancelling reservation:', error);
       closeModal();
     }
   };
-
+  
   const refundPoint = async () => {
     try {
       const response = await axios.post('http://localhost:3000/api/members/update-points', {
         userId: id,
         amount: selectedReservation.price,
       });
-
+      
       console.log('Updated points successfully:', response);
     } catch (error) {
       if (error.response) {
@@ -85,14 +126,18 @@ const index = () => {
       }
     }
   };
-
+  
   const openModal = (value, info) => {
+    console.log(info);
     setIsModalOpen(true);
     setSelectedReservation({
       name: info.name,
       reservationId: info.reservationId,
       price: info.price,
+      sitterId: info.sitterId,
+      
     });
+    fetchSitterInfo(info.sitterId);
     setStatus(value);
   };
 
