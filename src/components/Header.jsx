@@ -2,6 +2,7 @@ import React from 'react';
 import Notification from './notifications/notification';
 
 
+
 function Header(props) {
   return (
     <div className="flex justify-between bg-white h-16 p-3 items-center border-b border-divider">
