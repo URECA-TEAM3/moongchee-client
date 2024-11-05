@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import DogChew from '../DogChew';
 import API from '../../api/axiosInstance';
 import { useUserStore } from '../../store/userStore';
 import Modal from '../Modal';
+import { useIsImgLoaded } from '../../hooks/useIsImgLoaded';
 
 const ItemBox = ({ item }) => {
+  const { elementRef, isLoaded } = useIsImgLoaded(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { id } = useUserStore((state) => state);
@@ -37,10 +39,10 @@ const ItemBox = ({ item }) => {
 
   return (
     <>
-      <div key={item.id}>
+      <div ref={elementRef} key={item.id}>
         <button onClick={() => navigate(`/shoppingmall/${item.id}`)} className="flex flex-col">
           <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg">
-            <img src={item.image} className="h-full w-full object-cover object-center hover:opacity-75" />
+            {isLoaded ? <img src={item.image} className="h-full w-full object-cover object-center hover:opacity-75" /> : <div> 로딩중</div>}
           </div>
         </button>
 
