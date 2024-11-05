@@ -22,14 +22,14 @@ const ReservationCard = ({ info, openModal, userType }) => {
   const handleDetailClick = () => navigate('/petsitter/reservation/detail', { state: { info: info, userType: userType } });
 
   return (
-    <div className={`rounded-lg shadow-sm p-5 h-[220px] ${info.status === 'reserved' ? 'bg-paleblue' : 'bg-gray-100'}`}>
+    <div className={`rounded-lg shadow-sm p-5 ${info.status === 'reserved' ? 'bg-paleblue' : 'bg-gray-100'}`}>
       <div className="profile flex items-center">
         <img
           src={info.profile_image}
           className={`object-cover object-center w-16 h-16 rounded-full ${info.status === 'reserved' ? 'grayscale-0' : 'grayscale'}`}
         />
         <div className="personal ml-5">
-          <span className="text text-slate-900 font-bold">{info.name}</span>
+          <span className="font-bold">{info.name}</span>
         </div>
         <span className={`${info.status === 'cancelled' ? 'text-alert' : 'text-primary'} -mt-10 mr-2 text-sm ml-auto`}>{handleStatusCode()}</span>
       </div>
@@ -51,10 +51,10 @@ const ReservationCard = ({ info, openModal, userType }) => {
           {petsitter ? (
             info.status === 'reserved' ? (
               <div className="flex gap-5 mt-3 w-full">
-                <button className="text-white bg-delete px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModalAction('reject')}>
+                <button className="text-white bg-delete px-4 py-2 rounded-lg w-full" onClick={() => openModalAction('reject')}>
                   거절
                 </button>
-                <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModalAction('confirm')}>
+                <button className="text-white bg-primary px-4 py-2 rounded-lg w-full" onClick={() => openModalAction('confirm')}>
                   수락
                 </button>
               </div>

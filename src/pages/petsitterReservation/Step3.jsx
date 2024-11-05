@@ -40,11 +40,11 @@ const Step3 = () => {
   };
 
   return (
-    <div className="">
+    <div className="pt-10">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col">
-        <p className="px-5 mt-5 font-bold text-black">주소</p>
-        <div className="px-5">
+        <p className="px-10 font-bold text-black">주소</p>
+        <div className="px-10">
           <div className="flex mt-3">
             <p className="font-semibold text-gray-600">이름:</p>
             <span>{name}</span>
@@ -55,24 +55,23 @@ const Step3 = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <div className="flex w-full justify-between mt-5 bg-paleblue h-[50px] items-center">
-            <div className="flex px-5 font-bold text-black">
+          <div className="flex w-full justify-between mt-5 bg-paleblue py-4 items-center">
+            <div className="flex px-10">
               <p className="mr-2">차감될</p>
               <DogChew />
             </div>
-            <span className="px-5">{`${reservation.price}개`}</span>
+            <span className="px-10 font-bold">{`${reservation.price}개`}</span>
           </div>
-          <div className="flex w-full justify-between mt-5 px-5 h-[50px] items-center">
+          <div className="flex w-full justify-between mt-5 px-10 items-center">
             <div className="flex">
               <p className="mr-2">나의 현재</p>
               <DogChew />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <span className="text-gray-500">{`${point}개`}</span>
-              <span className="text-gray-500">{`- ${reservation.price}개`}</span>
+              <span className="">{`${point}개`}</span>
             </div>
           </div>
-          <div className="flex w-full justify-between mt-5 px-5 h-[50px] items-center">
+          <div className="flex w-full justify-between mt-5 px-10 items-center">
             <div className="flex">
               <p className="mr-2">결제 후</p>
               <DogChew />
@@ -80,8 +79,8 @@ const Step3 = () => {
             <span>{`${point - reservation.price}개`}</span>
           </div>
         </div>
-        <div className="flex justify-center mt-10">
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[150px]" onClick={handleReservationClick}>
+        <div className="flex justify-center p-10">
+          <button className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg" onClick={handleReservationClick}>
             결제하기
           </button>
         </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from '../../components/Modal';
 import { useUserStore } from '../../store/userStore';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const index = () => {
   const { id } = useUserStore();
@@ -18,6 +18,7 @@ const index = () => {
     pet: {},
   });
   const location = useLocation();
+  const navigate = useNavigate();
   const userInfo = location.state.info;
   const userType = location.state.userType;
 
@@ -85,7 +86,7 @@ const index = () => {
   }, []);
 
   return (
-    <div className="p-5 h-full bg-white">
+    <div className="p-10 h-full bg-white overflow-y-auto">
       <div className="profile flex items-center mt-3">
         <img src={detailData.profile} className="object-cover object-center w-24 h-24 rounded-full " />
         <div className="personal ml-5">
@@ -94,43 +95,43 @@ const index = () => {
       </div>
       <div className="flex flex-col">
         <div className="flex flex-col mt-5">
-          <span className="text-black text-base font-semibold">요청한 날짜</span>
-          <span className="text-gray-700 text-base font-medium">{detailData.requestDate}</span>
+          <span className="text-sm font-bold">요청한 날짜</span>
+          <span className="text-lg">{detailData.requestDate}</span>
         </div>
         <div className="flex flex-col mt-5">
-          <span className="text-black text-base font-semibold">요청한 시간</span>
-          <span className="text-gray-700 text-base font-medium">{`${detailData.startTime} ~ ${detailData.endTime}`}</span>
+          <span className="text-sm font-bold">요청한 시간</span>
+          <span className="text-lg">{`${detailData.startTime} ~ ${detailData.endTime}`}</span>
         </div>
         <div className="mt-5">
-          <span className="text-black text-base font-semibold">반려동물 정보</span>
-          <div className="flex flex-col bg-paleblue px-5 py-3 rounded-lg shadow-sm mt-3">
+          <span className="text-sm font-bold">반려동물 정보</span>
+          <div className="flex flex-col bg-paleblue px-5 py-3 rounded-lg mt-1">
             <span className="font-bold">{detailData.pet.name}</span>
             <span>{`${detailData.pet.species} | ${detailData.pet.age}살 | ${handleGenderCode(detailData.pet.gender)} | ${detailData.pet.weight}`}</span>
             <span>{handleNeutuerStatusCode(detailData.pet.surgery)}</span>
           </div>
         </div>
         <div className="mt-5">
-          <span className="text-black text-base font-semibold">요청 사항</span>
-          <div className="whitespace-pre-line mt-3 leading-9">{detailData.request}</div>
+          <span className="text-sm font-bold">요청 사항</span>
+          <div className="whitespace-pre-line leading-7">{detailData.request}</div>
         </div>
         <div className="mt-10">
           {userType ? (
             detailData.status === 'confirmed' ? (
-              <div className="flex gap-5 mt-3 w-full">
-                <button className="text-white bg-delete px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('reject')}>
+              <div className="flex gap-5 w-full">
+                <button className="text-white bg-delete px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('reject')}>
                   거절
                 </button>
-                <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('confirm')}>
+                <button className="text-white bg-primary px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('confirm')}>
                   수락
                 </button>
               </div>
             ) : (
-              <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('cancel')}>
+              <button className="text-white bg-primary px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('cancel')}>
                 예약 취소하기
               </button>
             )
           ) : (
-            <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full" onClick={() => openModal('cancel')}>
+            <button className="text-white bg-primary px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('cancel')}>
               예약 취소하기
             </button>
           )}
@@ -162,7 +163,10 @@ const index = () => {
               취소
             </button>
             <button
-              onClick={() => handleReservationUpdate(status === 'confirm' ? 'confirm' : 'cancel')}
+              onClick={() => {
+                handleReservationUpdate(status === 'confirm' ? 'confirm' : 'cancel');
+                navigate(-1);
+              }}
               className="px-8 py-2 w-full bg-delete text-white rounded-lg"
             >
               확인

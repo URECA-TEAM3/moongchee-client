@@ -96,7 +96,7 @@ const index = () => {
   }, []);
 
   return (
-    <div className="bg-white pb-10">
+    <div className="bg-white pb-10 h-full overflow-y-auto">
       <div className="relative w-full flex items-center pb-4 pt-6">
         <button onClick={() => navigate('/mypage')} className="absolute left-0 ml-1">
           <ChevronLeftIcon className="h-6 w-6 ml-5" />
