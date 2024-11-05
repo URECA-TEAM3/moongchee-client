@@ -3,7 +3,7 @@ import { FaArrowAltCircleUp } from 'react-icons/fa';
 
 const ScrollToTop = ({ scrollContainerRef }) => {
   return (
-    <div className="absolute bottom-5 right-5 z-20 flex flex-col justify-center items-center">
+    <div className="absolute bottom-5 right-12 z-20 flex flex-col justify-center items-center">
       <button
         onClick={() => {
           if (scrollContainerRef.current) {

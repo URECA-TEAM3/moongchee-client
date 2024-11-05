@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Step2 = ({ handleNextStep }) => {
   const [isChecked, setIsChecked] = useState(false);
@@ -6,8 +6,16 @@ const Step2 = ({ handleNextStep }) => {
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   };
+
+  useEffect(() => {
+    const element = document.getElementById('step2-top');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col p-5">
+    <div id="step2-top" className="flex flex-col p-10">
       <div className="required">
         <span className="font-bold">필수 용품 준비</span>
         <ul className="list-disc px-5 mt-2 text-gray-400">
@@ -60,7 +68,7 @@ const Step2 = ({ handleNextStep }) => {
           <span className="ml-4">모두 확인, 동의하였습니다.</span>
         </label>
         <button
-          className={`text-white bg-primary px-4 py-2 rounded-lg font-normal w-[200px] mt-5 ${!isChecked ? 'grayscale' : ''}`}
+          className={`text-white w-full h-12 px-4 py-2 rounded-lg mt-5 ${!isChecked ? 'bg-gray-300' : 'bg-primary'}`}
           onClick={isChecked ? handleNextStep : null}
         >
           다음

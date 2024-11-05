@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoIosArrowBack } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
 import API from '../../api/axiosInstance';
 import toast, { Toaster } from 'react-hot-toast';
 import Modal from '../../components/Modal';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 const ChangeAddress = () => {
   const navigate = useNavigate();
@@ -140,12 +140,11 @@ const ChangeAddress = () => {
     <>
       <div className="bg-white flex flex-col h-full">
         <Toaster />
-        <div className="flex items-center justify-between p-5 border border-b-divider">
-          <button onClick={() => navigate(-1)}>
-            <IoIosArrowBack />
+        <div className="relative w-full flex items-center mb-4 mt-6">
+          <button onClick={() => navigate(-1)} className="absolute left-0 ml-1">
+            <ChevronLeftIcon className="h-6 w-6 ml-5" stroke="black" />
           </button>
-          <div>배송지 변경</div>
-          <div></div>
+          <h1 className="mx-auto font-bold">배송지 변경</h1>
         </div>
 
         <form className="p-10 grow">
@@ -163,7 +162,7 @@ const ChangeAddress = () => {
                   name: e.target.value,
                 }));
               }}
-              className={`block w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+              className={`block w-full p-2 border ${errors.name ? 'border-red-500' : ' border-divider'} rounded-lg mb-1`}
             />
             {errors.name && <span className="text-red-500 text-xs mt-1 ml-1">{errors.name}</span>}
           </div>
@@ -183,7 +182,7 @@ const ChangeAddress = () => {
                     phone: e.target.value,
                   }));
                 }}
-                className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded`}
+                className={`w-full p-2 border ${errors.phone ? 'border-red-500' : ' border-divider'} rounded-lg`}
               />
             </div>
             {errors.phone && <span className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</span>}
@@ -194,7 +193,7 @@ const ChangeAddress = () => {
             <input
               type="text"
               placeholder="도로명 주소 (필수)"
-              className={`block w-full p-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded mb-1`}
+              className={`block w-full p-2 border ${errors.address ? 'border-red-500' : ' border-divider'} rounded-lg mb-1`}
               value={changeInfo.address}
               readOnly
               onClick={openPostcodePopup}
@@ -212,30 +211,25 @@ const ChangeAddress = () => {
                   detailaddress: e.target.value,
                 }));
               }}
-              className="block w-full p-2 border border-gray-300 rounded mb-1"
+              className="block w-full p-2 border  border-divider rounded-lg mb-1"
             />
             {errors.address && <span className="text-red-500 text-xs mt-1 ml-1">{errors.address}</span>}
           </div>
         </form>
 
-        <button
-          onClick={() => {
-            handleChangeInfo();
-          }}
-        >
-          <div className="w-6/12 mx-auto bg-primary my-10 text-white p-3 mx-2 rounded-xl text-center">저장</div>
-        </button>
+        <div className="w-full px-10 pb-10">
+          <button onClick={() => handleChangeInfo()} className="w-full h-12 bg-primary text-white rounded-lg text-center">
+            저장
+          </button>
+        </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={'배송지 변경'}>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="my-10 flex justify-center">
-          <span className="font-bold text-lg">개인정보가 수정되었습니다.</span>
+          <span className="font-bold text-lg">배송지가 수정되었습니다.</span>
         </div>
         <div className="flex gap-4 mt-3">
-          <button className="text-white bg-divider px-4 py-2 rounded-lg font-normal w-full" onClick={() => navigate('/mypage/edituser')}>
-            내 정보 보기
-          </button>
-          <button onClick={() => navigate(-1)} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+          <button onClick={() => navigate(-1)} className="text-white bg-primary px-4 py-2 rounded-lg w-full">
             확인
           </button>
         </div>
