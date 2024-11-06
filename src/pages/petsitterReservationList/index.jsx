@@ -129,7 +129,6 @@ const index = () => {
   };
 
   const openModal = (value, info) => {
-    console.log(info);
     setIsModalOpen(true);
     setSelectedReservation({
       name: info.name,
