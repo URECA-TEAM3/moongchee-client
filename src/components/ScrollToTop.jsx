@@ -3,7 +3,7 @@ import { FaArrowAltCircleUp } from 'react-icons/fa';
 
 const ScrollToTop = ({ scrollContainerRef }) => {
   return (
-    <div className="absolute bottom-5 right-12 z-20 flex flex-col justify-center items-center">
+    <div className="bg-white rounded-2xl absolute bottom-5 right-12 z-20 flex flex-col justify-center items-center">
       <button
         onClick={() => {
           if (scrollContainerRef.current) {
@@ -12,7 +12,7 @@ const ScrollToTop = ({ scrollContainerRef }) => {
         }}
       >
         <FaArrowAltCircleUp size={40} />
-        <span className="text-xs mt-1">맨 위로</span>
+        <span className="text-xs">TOP</span>
       </button>
     </div>
   );

@@ -16,8 +16,10 @@ const ShopMain = () => {
 
     if (location.pathname === '/shoppingmall/category') {
       setSelectedCategory(1);
+      setSortOption('popular');
     } else {
       setSelectedCategory(0);
+      setSortOption('popular');
     }
 
     const scrollPosition = sessionStorage.getItem('scrollPosition');
