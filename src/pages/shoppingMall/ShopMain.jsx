@@ -16,8 +16,10 @@ const ShopMain = () => {
 
     if (location.pathname === '/shoppingmall/category') {
       setSelectedCategory(1);
+      setSortOption('latest');
     } else {
       setSelectedCategory(0);
+      setSortOption('latest');
     }
 
     const scrollPosition = sessionStorage.getItem('scrollPosition');
