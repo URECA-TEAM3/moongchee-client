@@ -15,7 +15,7 @@ import EmptyPage from '../../components/EmptyPage';
 
 function ShoppingCart() {
   const navigate = useNavigate();
-  const { id, getPoint } = useUserStore((state) => state);
+  const { id } = useUserStore((state) => state);
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
   const [payment, setPayment] = useState(true);
@@ -53,18 +53,18 @@ function ShoppingCart() {
   };
 
   useEffect(() => {
-    const fetchPoints = async () => {
-      try {
-        const userPoints = await getPoint(id);
-        setPoints(userPoints);
-      } catch (error) {
-        console.error('Error fetching points:', error);
-      }
-    };
-
-    fetchPoints();
+    getPoint();
     getCartItemsList();
-  }, [id]);
+  }, []);
+
+  const getPoint = async () => {
+    try {
+      const response = await API.get(`/members/point/${id}`);
+      setPoints(response.data.data.point);
+    } catch (error) {
+      console.error('포인트 요청 실패:', error);
+    }
+  };
 
   // 최종 결제 금액 계산
   const calculateTotal = () => {
