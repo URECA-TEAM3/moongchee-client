@@ -33,7 +33,7 @@ const Dropdown = ({ label, options, onSelect }) => {
           <button
             onClick={toggleDropdown}
             type="button"
-            className="inline-flex justify-center w-full rounded-lg border border-divider shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+            className="inline-flex justify-center w-full rounded-lg border border-divider px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:border-gray-300 focus:outline-none"
           >
             {label}
           </button>

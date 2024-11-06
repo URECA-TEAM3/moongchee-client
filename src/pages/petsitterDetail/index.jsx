@@ -15,19 +15,23 @@ const index = () => {
     <div className="flex flex-col justify-between items-center px-10 h-full">
       <div className="card bg-white rounded-2xl px-6 py-6 hover:shadow-lg shadow-black-500/50 ease-in duration-200 mt-10 w-full">
         <div className="profile flex items-center justify-between">
-          <div className="flex items-center">
-            <img src={petsitter.imageUrl} className="object-cover object-center w-24 h-24 rounded-full " />
+          <div className="flex items-center w-full">
+            <img src={petsitter.imageUrl} className="object-cover object-center w-24 h-24 rounded-full" />
             <div className="personal ml-5">
-              <span className="text-lg font-bold">{petsitter.name}</span>
+              <span className="text-lg font-bold mr-3">{petsitter.name}</span>
+              <button
+                className="border border-primary text-primary text-sm rounded-lg w-16 h-7 relative left-56 hover:bg-primary hover:text-white"
+                onClick={handleReservationClick}
+              >
+                예약
+              </button>
+
               <div className="weekday">
-                <div className="holiday">{convertWeekDay(petsitter.weekdays)} 근무</div>
-                <span className="workTime">{`${petsitter.startTime} ~ ${petsitter.endTime}`}</span>
+                <div className="holiday">근무일: {convertWeekDay(petsitter.weekdays)}</div>
+                <span className="workTime">근무시간: {`${petsitter.startTime} ~ ${petsitter.endTime}`}</span>
               </div>
             </div>
           </div>
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal cursor-pointer w-[80px]" onClick={handleReservationClick}>
-            예약
-          </button>
         </div>
         <div className="personal-history mt-5 flex flex-col gap-3">
           <div>

@@ -242,7 +242,7 @@ const index = ({ handleNextStep }) => {
                 width: '450px',
               }}
             >
-              <button className="w-6 h-6 bg-divider rounded-full ml-5">?</button>
+              <button className="w-5 h-5 text-sm border border-primary text-primary rounded-full ml-5">i</button>
             </ToolTip>
           </div>
           <div className="flex justify-center gap-20 mt-5">

@@ -113,10 +113,10 @@ const Pay = () => {
             <li key={item.cart_id || item.product_id} className="cart-item text-lg">
               <div className="flex items-start w-full mx-auto py-5 px-10">
                 <div className="flex grow">
-                  <img src={item.image} alt={item.name} className="mr-7 cart-item-image w-[150px]" />
+                  <img src={item.image} alt={item.name} className="mr-7 cart-item-image w-[150px] rounded-lg" />
                   <div className="flex flex-col">
                     <span className="my-1">{item.name}</span>
-                    <span className="flex items-center mb-1">
+                    <span className="flex items-center my-1">
                       <DogChew />
                       <div className="ml-2 font-bold">{item.price.toLocaleString()}개</div>
                     </span>

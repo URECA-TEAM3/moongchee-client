@@ -61,7 +61,6 @@ function Mypage(props) {
   };
 
   const fetchPetsitter = async (userId) => {
-
     try {
       const response = await axios.get(`http://localhost:3000/api/petsitter/detail/${userId}`);
       setPetsitter(response.data.data[0]);
@@ -69,7 +68,7 @@ function Mypage(props) {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleLogout = () => {
     setIsModalOpen(true); // 로그아웃 버튼 클릭 시 모달 open
@@ -85,10 +84,9 @@ function Mypage(props) {
     navigate('/');
 
     setLogoutModal(false);
-  }
+  };
 
   const confirmLogout = () => {
-
     setIsModalOpen(false); // 모달 닫기
     setLogoutModal(true);
   };
@@ -111,7 +109,6 @@ function Mypage(props) {
         {/* User Profile */}
         <div className="w-full bg-white rounded-lg p-5 shadow mb-5 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-
             <img src={profileImageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
             <p className="text-lg">{nickname}</p>
           </div>
@@ -132,9 +129,15 @@ function Mypage(props) {
                 <img src={petsitter.image} alt="Profile" className="w-12 h-12 rounded-full" />
                 <p className="text-lg">{petsitter.name}</p>
               </div>
-              <button onClick={() => {
-                setType('update');
-                navigate('/petsitter/profile')}} className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7">편집</button>
+              <button
+                onClick={() => {
+                  setType('update');
+                  navigate('/petsitter/profile');
+                }}
+                className="border border-primary mb-6 hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7"
+              >
+                편집
+              </button>
             </div>
           </div>
         )}
@@ -144,7 +147,7 @@ function Mypage(props) {
           <div className="flex items-center justify-between">
             <p className="">내 반려동물 ({pets.length})</p>
             <button onClick={() => navigate('/mypage/petregister')}>
-              <p className="text-primary">⊕ 추가</p>
+              <p className="text-lightblue hover:text-primary">⊕ 추가</p>
             </button>
           </div>
 
@@ -162,7 +165,7 @@ function Mypage(props) {
               </div>
               <button
                 onClick={() => navigate(`/mypage/editpet/${pet.id}`, { state: { petId: pet.id } })}
-                className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7"
+                className="border border-primary text-primary text-sm rounded-lg w-16 h-7 hover:bg-primary hover:text-white"
               >
                 편집
               </button>
@@ -182,7 +185,7 @@ function Mypage(props) {
             </div>
             <button
               onClick={() => navigate(`/chargepage`)}
-              className="border border-primary hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7"
+              className="border border-primary -mt-8 hover:bg-primary hover:text-white text-primary text-sm rounded-lg w-16 h-7"
             >
               충전
             </button>
@@ -213,7 +216,7 @@ function Mypage(props) {
 
         {/* Logout */}
         <div className="w-full text-center">
-          <button onClick={handleLogout} className="text-base text-gray-600 underline">
+          <button onClick={handleLogout} className="underline hover:text-text">
             로그아웃
           </button>
         </div>
@@ -242,9 +245,8 @@ function Mypage(props) {
                 확인
               </button>
             </div>
-        </div>
+          </div>
         )}
-
       </div>
     </div>
   );
