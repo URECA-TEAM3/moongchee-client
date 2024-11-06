@@ -199,6 +199,14 @@ const ShoppingMallScreens = {
       </PrivateRoute>
     ),
   },
+  ShopBest: {
+    path: '/shoppingmall/best',
+    element: (
+      <PrivateRoute>
+        <ShopMain />
+      </PrivateRoute>
+    ),
+  },
 };
 
 const MypageScreens = {

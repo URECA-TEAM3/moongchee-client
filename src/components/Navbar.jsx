@@ -16,7 +16,7 @@ function Navbar(props) {
           </button>
         </a>
 
-        <a href="/shoppingmall">
+        <a href="/shoppingmall/best">
           <button type="button" className="inline-flex flex-col items-center justify-center px-5 group">
             <BuildingStorefrontIcon className="size-6" color={curr == '/shoppingmall' ? '#404040' : '#D9D9D9'} />
             <span>쇼핑몰</span>
