@@ -19,19 +19,18 @@ const Step3 = () => {
   const [sitterInfo, setSitterInfo] = useState({});
 
   useEffect(() => {
-
     const sitterId = reservation.sitter_id;
     fetchSitterInfo(sitterId);
   }, []);
 
   const fetchSitterInfo = async (sitterId) => {
-      try {
-        const response = await API.get(`/petsitter/detail/${reservation.sitter_id}`);
-        setSitterInfo(response.data.data[0]);
-      } catch (error) {
-        console.error(error);
-      }
-  }
+    try {
+      const response = await API.get(`/petsitter/detail/${reservation.sitter_id}`);
+      setSitterInfo(response.data.data[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleReservationClick = async () => {
     try {
@@ -44,7 +43,6 @@ const Step3 = () => {
           const reservationResponse = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
 
           if (reservationResponse.status === 200) {
-
             const notiData = {
               sending_name: name,
               receive_id: sitterInfo.userId,
@@ -52,12 +50,12 @@ const Step3 = () => {
               type: 'request',
               status: 'unread',
             };
-            
+
             try {
               const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
               navigate('/petsitter/reservation/list', { state: { type: 'user' } });
             } catch (error) {
-              console.error('Notification 정보 저장 실패')
+              console.error('Notification 정보 저장 실패');
             }
           }
         } catch (error) {
@@ -155,7 +153,6 @@ const Step3 = () => {
             </div>
           )}
         </div>
-        
       </div>
     </div>
   );

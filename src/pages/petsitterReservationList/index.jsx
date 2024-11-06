@@ -12,6 +12,7 @@ import Spinner from '../../components/Spinner';
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isPetsitter, setIsPetSitter] = useState(false);
   const [reservationList, setReservationList] = useState([]);
   const [showItems, setShowItems] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,10 +24,16 @@ const Index = () => {
     price: '',
   });
   const { id, name } = useUserStore();
-  const isPetsitter = location.state.type;
   const [sitterInfo, setSitterInfo] = useState({});
 
   const fetchSitterInfo = async (sitterId) => {
+    try {
+      const response = await API.get(`/petsitter/detail/${sitterId}`);
+      setSitterInfo(response.data.data[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
     try {
       const response = await API.get(`/petsitter/detail/${sitterId}`);
       setSitterInfo(response.data.data[0]);
@@ -43,17 +50,19 @@ const Index = () => {
         user_type: isPetsitter,
       });
 
-      const reservationList = res.data.data.map((item) => ({
-        name: item.name,
-        sitterId: item.sitter_id,
-        requestDate: item.requestDate,
-        startTime: item.startTime,
-        endTime: item.endTime,
-        status: item.status,
-        price: item.price,
-        profile_image: item.profile_image,
-        reservationId: item.reservation_id,
-      }));
+      const reservationList = res.data.data.map((item) => {
+        return {
+          name: item.name,
+          sitterId: item.sitter_id,
+          requestDate: item.requestDate,
+          startTime: item.startTime,
+          endTime: item.endTime,
+          status: item.status,
+          price: item.price,
+          profile_image: item.profile_image,
+          reservationId: item.reservation_id,
+        };
+      });
 
       setShowItems(reservationList.length > 0);
       setReservationList(reservationList);
@@ -75,11 +84,11 @@ const Index = () => {
         refundPoint();
       }
       handleReservationList();
-
       try {
         let notiType;
-        if (type === 'cancel') {
-          notiType = isPetsitter !== 'user' ? 'denied' : 'canceled';
+        if (type == 'cancel') {
+          if (isPetsitter != 'user') notiType = 'denied';
+          else notiType = 'canceled';
         } else {
           notiType = 'confirmed';
         }
@@ -92,7 +101,11 @@ const Index = () => {
           status: 'unread',
         };
 
-        await axios.post('http://localhost:3000/api/notifications/save', notiData);
+        try {
+          const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
+        } catch (error) {
+          console.error('Notification 정보 저장 실패');
+        }
       } catch (error) {
         console.error('Notification 정보 저장 실패:', error);
       }
@@ -108,6 +121,7 @@ const Index = () => {
         userId: id,
         amount: selectedReservation.price,
       });
+
       console.log('Updated points successfully:', response);
     } catch (error) {
       console.error('Error updating points:', error);
@@ -130,6 +144,7 @@ const Index = () => {
 
   useEffect(() => {
     handleReservationList();
+    setIsPetSitter(location.state?.type === 'petsitter');
   }, []);
 
   return (
@@ -185,7 +200,9 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <EmptyPage message="예약내역이 없습니다." buttonText="뒤로가기" onButtonClick={() => navigate(-1)} />
+        <div className="flex flex-col items-center justify-center h-full">
+          <EmptyPage message="예약내역이 없습니다." buttonText="뒤로가기" onButtonClick={() => navigate(-1)} />
+        </div>
       )}
     </div>
   );
