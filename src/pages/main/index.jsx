@@ -7,9 +7,17 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { app } from '../../../firebase';
 import { Link } from 'react-router-dom';
 import ItemBox from '../../components/shop/ItemBox';
+import { useUserStore } from '../../store/userStore';
 
 const Index = () => {
   const [popularProducts, setPopularProducts] = useState([]);
+
+  useEffect(() => {
+    const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
+    if (sessionData.id) {
+      useUserStore.setState(sessionData); // 세션에서 가져온 데이터를 상태에 설정
+    }
+  }, []);
 
   const fetchProducts = async () => {
     try {

@@ -15,6 +15,7 @@ import EmptyPage from '../../components/EmptyPage';
 
 function ShoppingCart() {
   const navigate = useNavigate();
+  const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
   const { id } = useUserStore((state) => state);
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
@@ -108,7 +109,6 @@ function ShoppingCart() {
   // 결제하기 btn
   const handleCheckout = async () => {
     await uploadLocalCart();
-    console.log(cartItems);
 
     const hasCheckedItems = cartItems.some((item) => item.checked);
     if (!hasCheckedItems) {

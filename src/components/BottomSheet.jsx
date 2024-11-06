@@ -10,6 +10,8 @@ const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBot
   const { id } = useUserStore((state) => state);
   const [localPoint, setLocalPoint] = useState();
   const [isAnimating, setIsAnimating] = useState(false);
+  const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
+
   const handleQuantityChange = (id, delta) => {
     setProductItem((prevItem) => {
       const newQuantity = Math.max(1, (prevItem.quantity || 1) + delta);
