@@ -7,7 +7,6 @@ import { useUserStore } from '../../store/userStore';
 import Modal from '../Modal';
 import { useIsImgLoaded } from '../../hooks/useIsImgLoaded';
 import placeholderImg from '/src/assets/images/black-curve-opacity.jpg';
-import { useProductStore } from '../../store/productsStore';
 
 const ItemBox = ({ item }) => {
   const { elementRef, isLoaded } = useIsImgLoaded(true);
@@ -42,12 +41,7 @@ const ItemBox = ({ item }) => {
   return (
     <>
       <div className="h-[354px]" ref={elementRef} key={item.id}>
-        <button
-          onClick={() => {
-            navigate(`/shoppingmall/${item.id}`);
-          }}
-          className="flex flex-col"
-        >
+        <button onClick={() => navigate(`/shoppingmall/${item.id}`)} className="flex flex-col">
           <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg">
             {isLoaded ? (
               <img src={item.image} className="h-full w-full object-cover object-center transition-opacity duration-300 hover:opacity-75" />
