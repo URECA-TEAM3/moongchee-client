@@ -62,7 +62,7 @@ const AddressSearch = ({ onComplete, errors }) => {
   });
 
   return (
-    <div>
+    <div className="mt-4">
       <label className="block text-sm font-medium mb-1">주소*</label>
       <input
         type="text"
