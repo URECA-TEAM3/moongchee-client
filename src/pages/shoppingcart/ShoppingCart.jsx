@@ -269,7 +269,7 @@ function ShoppingCart() {
               )}
             </div>
           ) : (
-            <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
+            <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall/best')} />
           )}
         </div>
       )}
