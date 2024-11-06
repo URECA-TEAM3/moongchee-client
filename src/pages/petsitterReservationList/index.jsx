@@ -11,7 +11,7 @@ import API from '../../api/axiosInstance';
 const index = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isPetsitter, setIsPetSitter] = useState(false);
+  const [userType, setUserType] = useState('');
   const [reservationList, setReservationList] = useState([]);
   const [showItems, setShowItems] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,7 +26,7 @@ const index = () => {
 
   const fetchSitterInfo = async (sitterId) => {
     try {
-      const response = await API.get(`/petsitter/detail/${sitterId}`);
+      const response = await API.get(`/petsitter/sitter/detail/${sitterId}`);
       setSitterInfo(response.data.data[0]);
     } catch (error) {
       console.error(error);
@@ -37,7 +37,7 @@ const index = () => {
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
         user_id: id,
-        user_type: isPetsitter,
+        user_type: userType,
       });
 
       const reservationList = res.data.data.map((item) => {
@@ -77,7 +77,7 @@ const index = () => {
       try {
         let notiType;
         if (type == 'cancel') {
-          if (isPetsitter != 'user') {
+          if (userType != 'user') {
             notiType = 'denied'
           }
           else {
@@ -144,7 +144,7 @@ const index = () => {
 
   useEffect(() => {
     handleReservationList();
-    setIsPetSitter(location.state?.type === 'petsitter');
+    setUserType(location.state?.type);
   }, []);
 
   return (
@@ -155,7 +155,7 @@ const index = () => {
             <button onClick={() => navigate(-1)} className="absolute left-0 ml-1">
               <ChevronLeftIcon className="h-6 w-6 ml-5" />
             </button>
-            {isPetsitter ? <h1 className="mx-auto font-bold">요청 내역</h1> : <h1 className="mx-auto font-bold">예약 / 취소 내역</h1>}
+            {userType == 'petsitter' ? <h1 className="mx-auto font-bold">요청 내역</h1> : <h1 className="mx-auto font-bold">예약 / 취소 내역</h1>}
           </div>
           <div className="px-10 pt-5 flex flex-col gap-10 ">
             {reservationList.map((item, index) => (
