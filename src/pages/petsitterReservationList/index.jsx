@@ -7,8 +7,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import EmptyPage from '../../components/EmptyPage';
 import API from '../../api/axiosInstance';
+import Spinner from '../../components/Spinner';
 
-const index = () => {
+const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isPetsitter, setIsPetSitter] = useState(false);
@@ -16,6 +17,7 @@ const index = () => {
   const [showItems, setShowItems] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedReservation, setSelectedReservation] = useState({
     name: '',
     reservationId: '',
@@ -34,6 +36,7 @@ const index = () => {
   };
 
   const handleReservationList = async () => {
+    setIsLoading(true);
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
         user_id: id,
@@ -54,12 +57,13 @@ const index = () => {
         };
       });
 
-      if (reservationList.length > 0) {
-        console.log(reservationList.length > 0);
-        setShowItems(true);
-      }
+      setShowItems(reservationList.length > 0);
       setReservationList(reservationList);
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReservationUpdate = async (type) => {
@@ -69,34 +73,30 @@ const index = () => {
       });
       console.log('response:', res.data);
       closeModal();
-      if (!type === 'confirm') {
+      if (type !== 'confirm') {
         refundPoint();
       }
       handleReservationList();
+
+      let notiType;
+      if (type === 'cancel') {
+        notiType = isPetsitter !== 'user' ? 'denied' : 'canceled';
+      } else {
+        notiType = 'confirmed';
+      }
+
+      const notiData = {
+        sending_name: name,
+        receive_id: sitterInfo.userId,
+        receive_name: selectedReservation.name,
+        type: notiType,
+        status: 'unread',
+      };
+
       try {
-        let notiType;
-        if (type == 'cancel') {
-          if (isPetsitter != 'user') notiType = 'denied';
-          else notiType = 'canceled';
-        } else {
-          notiType = 'confirmed';
-        }
-
-        const notiData = {
-          sending_name: name,
-          receive_id: sitterInfo.userId,
-          receive_name: selectedReservation.name,
-          type: notiType,
-          status: 'unread',
-        };
-
-        try {
-          const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
-        } catch (error) {
-          console.error('Notification 정보 저장 실패');
-        }
+        await axios.post('http://localhost:3000/api/notifications/save', notiData);
       } catch (error) {
-        console.error('Notification 정보 저장 실패 : ', error);
+        console.error('Notification 정보 저장 실패');
       }
     } catch (error) {
       console.error('Error cancelling reservation:', error);
@@ -110,16 +110,9 @@ const index = () => {
         userId: id,
         amount: selectedReservation.price,
       });
-
       console.log('Updated points successfully:', response);
     } catch (error) {
-      if (error.response) {
-        console.error('Error updating points:', error.response.data.message || error.message);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-      } else {
-        console.error('Error in setup:', error.message);
-      }
+      console.error('Error updating points:', error);
     }
   };
 
@@ -144,7 +137,9 @@ const index = () => {
 
   return (
     <div className="bg-white pb-10 h-full overflow-y-auto">
-      {showItems ? (
+      {isLoading ? (
+        <Spinner />
+      ) : showItems ? (
         <div>
           <div className="relative w-full flex items-center pb-4 pt-6">
             <button onClick={() => navigate(-1)} className="absolute left-0 ml-1">
@@ -201,4 +196,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;
