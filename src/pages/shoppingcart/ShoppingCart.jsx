@@ -12,6 +12,7 @@ import { IoMdClose } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
 import toast, { Toaster } from 'react-hot-toast';
 import EmptyPage from '../../components/EmptyPage';
+import Spinner from '../../components/Spinner';
 
 function ShoppingCart() {
   const navigate = useNavigate();
@@ -171,9 +172,7 @@ function ShoppingCart() {
       <div className="text-center px-10 py-6 font-bold">장바구니</div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-60">
-          <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <Spinner />
       ) : (
         // 장바구니 내용
         <div>
