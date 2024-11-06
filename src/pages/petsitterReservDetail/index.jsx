@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from '../../components/Modal';
-import { useUserStore } from '../../store/userStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const index = () => {
-  const { id } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [detailData, setDetailData] = useState({
@@ -39,11 +37,9 @@ const index = () => {
   };
 
   const fetchDetailList = async () => {
-    console.log(userInfo);
-    console.log(userType);
     try {
       const res = await axios.get(`http://localhost:3000/api/petsitter/reservation/detail/${userInfo.reservationId}`);
-      const res2 = await axios.get(`http://localhost:3000/api/pets/${id}`);
+      const res2 = await axios.get(`http://localhost:3000/api/pets/${res.data.data.user_id}`);
       const petList = res2.data;
       const petData = petList.map((pet) => (pet.name === res.data.data.pet ? pet : ''));
       const data = {
@@ -115,8 +111,8 @@ const index = () => {
           <div className="whitespace-pre-line leading-7">{detailData.request}</div>
         </div>
         <div className="mt-10">
-          {userType ? (
-            detailData.status === 'confirmed' ? (
+          {userType === 'petsitter' ? (
+            detailData.status === 'reserved' ? (
               <div className="flex gap-5 w-full">
                 <button className="text-white bg-delete px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('reject')}>
                   거절
