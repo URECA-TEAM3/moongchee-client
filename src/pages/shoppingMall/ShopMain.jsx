@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Category from '../../components/shop/Category';
 import ItemBox from '../../components/shop/ItemBox';
 import { CgSearchLoading } from 'react-icons/cg';
@@ -10,6 +10,7 @@ const ShopMain = () => {
   const { products, loadProducts, sortOption, setSortOption, loading, selectedCategory, setSelectedCategory } = useProductStore((state) => state);
   const scrollContainerRef = useRef(null);
   const location = useLocation();
+  const [back, setBack] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -28,6 +29,12 @@ const ShopMain = () => {
       sessionStorage.removeItem('scrollPosition');
     }
   }, []);
+
+  useEffect(() => {
+    console.log('뒤로가기');
+    setSelectedCategory(selectedCategory);
+    setSortOption(sortOption);
+  }, [back]);
 
   const handleItemClick = () => {
     if (scrollContainerRef.current) {
@@ -73,14 +80,15 @@ const ShopMain = () => {
         {/* 전체 상품 목룍 */}
         {loading ? (
           <div className="flex justify-center items-center">
-            상품 정보 불러오는 중 ...
-            <CgSearchLoading size={20} />
+            <div className="flex justify-center items-center h-60">
+              <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            </div>
           </div>
         ) : (
           <div ref={scrollContainerRef} className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
             {filteredItems.map((item) => (
               <div key={item.id} className="border rounded-2xl p-3" onClick={handleItemClick}>
-                <ItemBox item={item} />
+                <ItemBox item={item} back={back} setBack={setBack} />
               </div>
             ))}
           </div>
