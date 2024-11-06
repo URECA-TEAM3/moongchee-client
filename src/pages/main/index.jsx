@@ -51,7 +51,7 @@ const Index = () => {
       {/* 3 buttons */}
       <div className="p-5">
         <div className="flex justify-between items-center mx-8 mb-5">
-          <Link to="/shoppingmall">
+          <Link to="/shoppingmall/best">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
               <img src="/src/assets/icons/best.png" className="h-14 inline" />
               <p>BEST</p>

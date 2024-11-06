@@ -10,7 +10,6 @@ const ShopMain = () => {
   const { products, loadProducts, sortOption, setSortOption, loading, selectedCategory, setSelectedCategory } = useProductStore((state) => state);
   const scrollContainerRef = useRef(null);
   const location = useLocation();
-  const [back, setBack] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -18,9 +17,12 @@ const ShopMain = () => {
     if (location.pathname === '/shoppingmall/category') {
       setSelectedCategory(1);
       setSortOption('popular');
-    } else {
+    } else if (location.pathname === '/shoppingmall/best') {
       setSelectedCategory(0);
       setSortOption('popular');
+    } else {
+      setSelectedCategory(selectedCategory);
+      setSortOption(sortOption);
     }
 
     const scrollPosition = sessionStorage.getItem('scrollPosition');
@@ -29,12 +31,6 @@ const ShopMain = () => {
       sessionStorage.removeItem('scrollPosition');
     }
   }, []);
-
-  useEffect(() => {
-    console.log('뒤로가기');
-    setSelectedCategory(selectedCategory);
-    setSortOption(sortOption);
-  }, [back]);
 
   const handleItemClick = () => {
     if (scrollContainerRef.current) {
@@ -88,7 +84,7 @@ const ShopMain = () => {
           <div ref={scrollContainerRef} className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">
             {filteredItems.map((item) => (
               <div key={item.id} className="border rounded-2xl p-3" onClick={handleItemClick}>
-                <ItemBox item={item} back={back} setBack={setBack} />
+                <ItemBox item={item} />
               </div>
             ))}
           </div>

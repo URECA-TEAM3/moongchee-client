@@ -9,7 +9,7 @@ import { useIsImgLoaded } from '../../hooks/useIsImgLoaded';
 import placeholderImg from '/src/assets/images/black-curve-opacity.jpg';
 import { useProductStore } from '../../store/productsStore';
 
-const ItemBox = ({ item, setBack, back }) => {
+const ItemBox = ({ item }) => {
   const { elementRef, isLoaded } = useIsImgLoaded(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -44,7 +44,6 @@ const ItemBox = ({ item, setBack, back }) => {
       <div className="h-[354px]" ref={elementRef} key={item.id}>
         <button
           onClick={() => {
-            setBack(!back);
             navigate(`/shoppingmall/${item.id}`);
           }}
           className="flex flex-col"
