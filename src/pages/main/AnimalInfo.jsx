@@ -292,7 +292,9 @@ const AnimalInfo = () => {
 
       {uponSignup && (
         <div className="flex justify-between space-x-2 px-10 my-8 w-full">
-          <button className="py-2 h-12 w-1/2 rounded-lg bg-divider text-gray-400">스킵하기</button>
+          <button onClick={() => navigate('/main')} className="py-2 h-12 w-1/2 rounded-lg bg-divider text-gray-400">
+            스킵하기
+          </button>
           <button onClick={handleSave} className="py-2 h-12 w-1/2 bg-primary text-white rounded-lg">
             저장하고 홈으로
           </button>
