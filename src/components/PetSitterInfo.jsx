@@ -17,6 +17,8 @@ const PetSitterInfo = ({ info, isDisabled }) => {
     }
   };
 
+  console.log(info);
+
   return (
     <div
       className="card bg-white rounded-2xl p-6 hover:shadow-lg shadow-black-500/50 cursor-pointer ease-in duration-200"

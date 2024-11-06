@@ -8,6 +8,7 @@ import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import defaultPetImage from '/src/assets/images/defaultpet.png';
 import Modal from '../../components/Modal';
+import ProfileImageUpload from '../../components/login/ProfileImageUpload';
 
 const AnimalInfo = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const AnimalInfo = () => {
   const [gender, setGender] = useState('');
   const [neutered, setNeutered] = useState('');
   const [userId, setUserId] = useState(null);
-  const [profileImage, setProfileImage] = useState(registerPetProfileImage);
+  const [profileImage, setProfileImage] = useState(defaultPetImage);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const [errors, setErrors] = useState({});
