@@ -34,13 +34,6 @@ const Index = () => {
       console.error(error);
     }
   };
-    try {
-      const response = await API.get(`/petsitter/detail/${sitterId}`);
-      setSitterInfo(response.data.data[0]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleReservationList = async () => {
     setIsLoading(true);
@@ -84,30 +77,26 @@ const Index = () => {
         refundPoint();
       }
       handleReservationList();
+
+      let notiType;
+      if (type === 'cancel') {
+        notiType = isPetsitter !== 'user' ? 'denied' : 'canceled';
+      } else {
+        notiType = 'confirmed';
+      }
+
+      const notiData = {
+        sending_name: name,
+        receive_id: sitterInfo.userId,
+        receive_name: selectedReservation.name,
+        type: notiType,
+        status: 'unread',
+      };
+
       try {
-        let notiType;
-        if (type == 'cancel') {
-          if (isPetsitter != 'user') notiType = 'denied';
-          else notiType = 'canceled';
-        } else {
-          notiType = 'confirmed';
-        }
-
-        const notiData = {
-          sending_name: name,
-          receive_id: sitterInfo.userId,
-          receive_name: selectedReservation.name,
-          type: notiType,
-          status: 'unread',
-        };
-
-        try {
-          const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
-        } catch (error) {
-          console.error('Notification 정보 저장 실패');
-        }
+        await axios.post('http://localhost:3000/api/notifications/save', notiData);
       } catch (error) {
-        console.error('Notification 정보 저장 실패:', error);
+        console.error('Notification 정보 저장 실패');
       }
     } catch (error) {
       console.error('Error cancelling reservation:', error);
@@ -121,7 +110,6 @@ const Index = () => {
         userId: id,
         amount: selectedReservation.price,
       });
-
       console.log('Updated points successfully:', response);
     } catch (error) {
       console.error('Error updating points:', error);
