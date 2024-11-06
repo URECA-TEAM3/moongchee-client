@@ -402,9 +402,14 @@ const index = () => {
       if (dayList[i].target === true) str += `${dayList[i].value},`;
     }
 
-    const storageRef = ref(storage, `petsitter/${userData.id}`);
-    await uploadBytes(storageRef, selectedImageFile);
-    const downloadURL = await getDownloadURL(storageRef);
+    let downloadURL;
+    if (selectedImageFile) {
+      const storageRef = ref(storage, `petsitter/${userData.id}`);
+      await uploadBytes(storageRef, selectedImageFile);
+      downloadURL = await getDownloadURL(storageRef);
+    } else {
+      downloadURL = defaultProfileImage;
+    }
 
     const params = {
       weekdays: str.slice(0, -1),
