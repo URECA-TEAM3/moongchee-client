@@ -53,7 +53,9 @@ function ShopDetail() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center">로딩 중...</div>
+          <div className="flex justify-center items-center h-60">
+            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
         ) : (
           <div>
             <img src={product.image} alt={product.name} />

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 const index = () => {
   const { id } = useUserStore();
@@ -476,6 +477,12 @@ const index = () => {
   return (
     <div className="p-10 bg-white h-full overflow-y-auto">
       <Toaster position="top-center" reverseOrder={false} />
+      <div className="relative w-full flex items-center">
+        <button onClick={() => navigate(-1)} className="absolute left-0">
+          <ChevronLeftIcon className="h-6 w-6" stroke="black" />
+        </button>
+      </div>
+
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -486,9 +493,7 @@ const index = () => {
         }
       >
         <div className="my-10 flex justify-center">
-          <span className="text-black font-bold text-lg">
-            지원서 검토 후 승인이 되면 펫시터로 활동하실 수 있습니다. 지원서 승인까지는 평균 2~3일 정도 소요됩니다.
-          </span>
+          <span>지원서 검토 후 승인이 되면 펫시터로 활동하실 수 있습니다. 지원서 승인까지는 평균 2~3일 정도 소요됩니다.</span>
         </div>
         <div className="flex justify-center">
           <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-[100px]" onClick={closeModal}>

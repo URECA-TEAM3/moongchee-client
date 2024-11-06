@@ -11,6 +11,7 @@ import API from '../../api/axiosInstance';
 const index = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isPetsitter, setIsPetSitter] = useState(false);
   const [reservationList, setReservationList] = useState([]);
   const [showItems, setShowItems] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,7 +22,6 @@ const index = () => {
     price: '',
   });
   const { id, name } = useUserStore();
-  const isPetsitter = location.state.type;
   const [sitterInfo, setSitterInfo] = useState({});
 
   const fetchSitterInfo = async (sitterId) => {
@@ -73,7 +73,6 @@ const index = () => {
         refundPoint();
       }
       handleReservationList();
-
       try {
         let notiType;
         if (type == 'cancel') {
@@ -140,6 +139,7 @@ const index = () => {
 
   useEffect(() => {
     handleReservationList();
+    setIsPetSitter(location.state?.type === 'petsitter');
   }, []);
 
   return (
@@ -193,9 +193,9 @@ const index = () => {
           </div>
         </div>
       ) : (
-        <>
+        <div className="flex flex-col items-center justify-center h-full">
           <EmptyPage message="예약내역이 없습니다." buttonText="뒤로가기" onButtonClick={() => navigate(-1)} />
-        </>
+        </div>
       )}
     </div>
   );
