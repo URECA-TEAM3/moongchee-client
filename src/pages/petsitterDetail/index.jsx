@@ -25,7 +25,7 @@ const index = () => {
               </div>
             </div>
           </div>
-          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal cursor-pointer" onClick={handleReservationClick}>
+          <button className="text-white bg-primary px-4 py-2 rounded-lg font-normal cursor-pointer w-[50px]" onClick={handleReservationClick}>
             예약
           </button>
         </div>
