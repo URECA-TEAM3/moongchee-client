@@ -63,7 +63,8 @@ function Mypage(props) {
   const fetchPetsitter = async (userId) => {
 
     try {
-      const response = await axios.get(`http://localhost:3000/api/petsitter/detail/${userId}`);
+      const response = await axios.get(`http://localhost:3000/api/petsitter/sitter/byId/${userId}`);
+      console.log(response)
       setPetsitter(response.data.data[0]);
       // setPetsitter(response.data);
     } catch (error) {
@@ -122,6 +123,7 @@ function Mypage(props) {
             편집
           </button>
         </div>
+
 
         {/* Petsitter Profile - 펫시터일 경우에만 표시 */}
         {isPetsitter && (

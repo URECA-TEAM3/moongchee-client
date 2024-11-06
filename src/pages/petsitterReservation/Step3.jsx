@@ -25,14 +25,14 @@ const Step3 = () => {
 
   const fetchSitterInfo = async (sitterId) => {
     try {
-      const response = await API.get(`/petsitter/detail/${reservation.sitter_id}`);
+      const response = await API.get(`/petsitter/sitter/detail/${sitterId}`);
+      console.log(response.data);
       setSitterInfo(response.data.data[0]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  console.log(sitterInfo);
 
   const handleReservationClick = async () => {
     try {
