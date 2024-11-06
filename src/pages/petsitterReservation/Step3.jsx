@@ -8,6 +8,7 @@ import { useUserStore } from '../../store/userStore';
 import PayInfo from '../../components/shop/PayInfo';
 import { AiOutlineMinus } from 'react-icons/ai';
 import { GoInfo } from 'react-icons/go';
+import API from '../../api/axiosInstance';
 
 const Step3 = () => {
   const [points, setPoints] = useState(0);
@@ -15,6 +16,22 @@ const Step3 = () => {
   const { reservation } = useReservationStore();
   const navigate = useNavigate();
   const { id, name, address, getPoint } = useUserStore();
+  const [sitterInfo, setSitterInfo] = useState({});
+
+  useEffect(() => {
+
+    const sitterId = reservation.sitter_id;
+    fetchSitterInfo(sitterId);
+  }, []);
+
+  const fetchSitterInfo = async (sitterId) => {
+      try {
+        const response = await API.get(`/petsitter/detail/${reservation.sitter_id}`);
+        setSitterInfo(response.data.data[0]);
+      } catch (error) {
+        console.error(error);
+      }
+  }
 
   const handleReservationClick = async () => {
     try {
@@ -27,7 +44,21 @@ const Step3 = () => {
           const reservationResponse = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
 
           if (reservationResponse.status === 200) {
-            navigate('/petsitter/reservation/list', { state: { type: 'user' } });
+
+            const notiData = {
+              sending_name: name,
+              receive_id: sitterInfo.userId,
+              receive_name: sitterInfo.name,
+              type: 'request',
+              status: 'unread',
+            };
+            
+            try {
+              const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
+              navigate('/petsitter/reservation/list', { state: { type: 'user' } });
+            } catch (error) {
+              console.error('Notification 정보 저장 실패')
+            }
           }
         } catch (error) {
           console.error('예약 생성 실패:', error);
@@ -124,35 +155,8 @@ const Step3 = () => {
             </div>
           )}
         </div>
-        {/* <div>
-          <div>
-            <p className="mr-2">차감될</p>
-            <DogChew />
-          </div>
-          <span className="px-10 font-bold">{`${reservation.price}개`}</span>
-        </div>
-        <div className="flex w-full justify-between mt-5 px-10 items-center">
-          <div className="flex">
-            <p className="mr-2">나의 현재</p>
-            <DogChew />
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <span className="">{`${points}개`}</span>
-          </div>
-        </div>
-        <div className="flex w-full justify-between mt-5 px-10 items-center">
-          <div className="flex">
-            <p className="mr-2">결제 후</p>
-            <DogChew />
-          </div>
-          <span>{`${points - reservation.price}개`}</span>
-        </div> */}
+        
       </div>
-      {/* <div className="flex justify-center p-10">
-        <button className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg" onClick={handleReservationClick}>
-          결제하기
-        </button>
-      </div> */}
     </div>
   );
 };
