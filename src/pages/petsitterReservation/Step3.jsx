@@ -33,6 +33,8 @@ const Step3 = () => {
       }
   }
 
+  console.log(sitterInfo);
+
   const handleReservationClick = async () => {
     try {
       const pointUpdateResponse = await axios.post('http://localhost:3000/api/members/update-points', {

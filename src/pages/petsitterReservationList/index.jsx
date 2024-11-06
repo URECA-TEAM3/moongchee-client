@@ -74,12 +74,15 @@ const index = () => {
       }
       handleReservationList();
       
-      console.log(sitterInfo);
       try {
         let notiType;
         if (type == 'cancel') {
-          if (isPetsitter != 'user') notiType = 'denied'
-          else notiType = 'canceled'
+          if (isPetsitter != 'user') {
+            notiType = 'denied'
+          }
+          else {
+            notiType = 'canceled'
+          }
         } else {
           notiType = 'confirmed'
         };
