@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Category from '../../components/shop/Category';
 import ItemBox from '../../components/shop/ItemBox';
-import { CgSearchLoading } from 'react-icons/cg';
 import { useProductStore } from '../../store/productsStore';
 import ScrollToTop from '../../components/ScrollToTop';
 import { useLocation } from 'react-router-dom';

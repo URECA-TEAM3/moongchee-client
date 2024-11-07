@@ -48,7 +48,7 @@ export const getPetDetail = async (petId) => {
 
 export const signUp = async (params) => {
   try {
-    const response = await API.post('http://localhost:3000/api/members/signup', params);
+    const response = await API.post('/members/signup', params);
     return response;
   } catch (error) {
     console.log(error);
