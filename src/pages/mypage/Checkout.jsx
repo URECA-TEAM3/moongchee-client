@@ -2,6 +2,7 @@ import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { generateRandomString } from '../../utils/productHelper';
+import { requestPayments } from '../../api/payment';
 
 // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
 const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
@@ -84,7 +85,8 @@ export default function CheckoutPage() {
           disabled={!ready}
           onClick={async () => {
             try {
-              const response = requestPayments(id, amount.value);
+              const orderId = generateRandomString();
+              const response = requestPayments(orderId, id, amount.value);
 
               await widgets.requestPayment({
                 orderId: orderId,

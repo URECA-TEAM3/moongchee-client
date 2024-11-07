@@ -1,11 +1,8 @@
 import API from './axiosInstance';
-import { generateRandomString } from '../utils/productHelper';
 
-export const requestPayments = async (id, amount) => {
+export const requestPayments = async (orderId, id, amount) => {
   try {
-    const orderId = generateRandomString();
-
-    const response = await axios.post('/payments', {
+    const response = await API.post('/payments', {
       orderId,
       userId: id,
       amount: amount,
