@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from '../../components/Modal';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getReservationDetail, getPetList, updateReservations } from '../../api/petsitter';
 
 const index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,12 +39,14 @@ const index = () => {
 
   const fetchDetailList = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/petsitter/reservation/detail/${userInfo.reservationId}`);
-      const res2 = await axios.get(`http://localhost:3000/api/pets/${res.data.data.user_id}`);
+      const id = userInfo.reservationId;
+      const res = await getReservationDetail(id);
+      const res2 = await getPetList(res.data.user_id);
+
       const petList = res2.data;
-      const petData = petList.map((pet) => (pet.name === res.data.data.pet ? pet : ''));
+      const petData = petList.map((pet) => (pet.name === res.data.pet ? pet : ''));
       const data = {
-        ...res.data.data,
+        ...res.data,
         name: userInfo.name,
         profile: userInfo.profile_image,
         pet: petData[0],
@@ -55,10 +58,10 @@ const index = () => {
   };
 
   const handleReservationUpdate = async (type) => {
+    const id = userInfo.reservationId;
+    const target = type === 'confirm' ? 'confirm' : 'cancel';
     try {
-      const res = await axios.post(`http://localhost:3000/api/petsitter/reservation/${type === 'confirm' ? 'confirm' : 'cancel'}`, {
-        reservation_id: userInfo.reservationId,
-      });
+      const res = await updateReservations(target, id);
       console.log('response:', res.data);
       closeModal();
       if (!type === 'confirm') {
@@ -70,7 +73,7 @@ const index = () => {
     }
   };
 
-  const openModal = (value, info) => {
+  const openModal = (value) => {
     setIsModalOpen(true);
     setStatus(value);
   };

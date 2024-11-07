@@ -3,19 +3,19 @@ import { toast, Toaster } from 'react-hot-toast';
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import axios from 'axios';
 import Dropdown from '../../components/DropDown';
 import DogChew from '../../components/DogChew';
 import ToolTip from '../../components/ToolTip';
 import useReservationStore from '../../store/reservationStore';
 import usePetSitterStore from '../../store/petsitterStore';
 import { useUserStore } from '../../store/userStore';
+import { getPetList } from '../../api/petsitter';
+import { dropDownTime } from '../../constants/petsitter';
 
 const index = ({ handleNextStep }) => {
   const { id } = useUserStore();
   const { setReservationData } = useReservationStore();
   const { petsitter } = usePetSitterStore();
-  const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const [formData, setFormData] = useState({
     user_id: id,
     sitter_id: petsitter.id,
@@ -55,8 +55,8 @@ const index = ({ handleNextStep }) => {
 
   const handlePetList = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/pets/${id}`);
-      const petList = res.data.map((pet) => pet.name);
+      const list = await getPetList(id);
+      const petList = list.map((pet) => pet.name);
       setPetList(petList);
     } catch (error) {
       console.error(error);
