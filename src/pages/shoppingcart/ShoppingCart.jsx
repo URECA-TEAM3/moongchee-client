@@ -182,8 +182,13 @@ function ShoppingCart() {
               {cartItems.map((item) => (
                 <li key={item.cart_id} className="cart-item text-lg">
                   <div className="flex items-start w-full mx-auto py-5 px-10">
-                    <input className="block mt-2 accent-primary" type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(item.cart_id)} />
-                    <div className="flex mr-2">
+                    <input
+                      className="block mt-2 scale-125 accent-primary"
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={() => handleCheckboxChange(item.cart_id)}
+                    />
+                    <div className="flex grow mr-2">
                       <img src={item.image} alt={item.name} className="mx-7 cart-item-image w-[150px] rounded-lg" />
                       <div className="flex flex-col">
                         <span className="my-1">{item.name}</span>
@@ -268,7 +273,9 @@ function ShoppingCart() {
               )}
             </div>
           ) : (
-            <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall/best')} />
+            <div className="mt-24">
+              <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall/best')} />
+            </div>
           )}
         </div>
       )}
