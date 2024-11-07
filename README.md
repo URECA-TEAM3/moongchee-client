@@ -4,17 +4,15 @@
 </div><br/>
 <img src='public/assets/images/readme/titleImg.png'>
 
-##
+<hr/>
 
 ![Version](https://img.shields.io/github/v/release/URECA-TEAM3/moongchee-client)
 ![Last Commit](https://img.shields.io/github/last-commit/URECA-TEAM3/moongchee-client)
 
 **Server Repo**: [Moongchee Server](https://github.com/URECA-TEAM3/moongchee-server)
 
-## 목차
+<h2>목차</h2>
 
-- [](#)
-- [목차](#목차)
 - [📄 개요](#-개요)
 - [✏️ 프로젝트 설명](#️-프로젝트-설명)
 - [👥 팀원 소개](#-팀원-소개)
