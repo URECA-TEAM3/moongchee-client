@@ -43,7 +43,5 @@ export const getProductDetail = async (id) => {
     return response;
   } catch (err) {
     console.error('상품 정보를 불러오는 데 실패했습니다.');
-  } finally {
-    setLoading(false);
   }
 };
