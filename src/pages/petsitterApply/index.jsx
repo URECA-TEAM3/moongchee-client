@@ -350,7 +350,7 @@ const index = () => {
       ) : (
         <div className="flex justify-center mt-10">
           <button className="text-white bg-primary px-4 py-2 rounded-lg w-full h-12" onClick={handleUpdateSitter}>
-            수정하기
+            저장하기
           </button>
         </div>
       )}
