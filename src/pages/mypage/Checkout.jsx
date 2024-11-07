@@ -1,7 +1,8 @@
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { generateRandomString } from '../../utils/productHelper';
+import { requestPayments } from '../../api/payment';
 
 // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
 const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
@@ -84,15 +85,8 @@ export default function CheckoutPage() {
           disabled={!ready}
           onClick={async () => {
             try {
-              // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
-              // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
               const orderId = generateRandomString();
-
-              const response = await axios.post('http://localhost:3000/api/payments', {
-                orderId,
-                userId: id,
-                amount: amount.value,
-              });
+              const response = requestPayments(orderId, id, amount.value);
 
               await widgets.requestPayment({
                 orderId: orderId,
@@ -113,8 +107,4 @@ export default function CheckoutPage() {
       </div>
     </div>
   );
-}
-
-function generateRandomString() {
-  return window.btoa(Math.random().toString()).slice(0, 20);
 }

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import petProfileImage from '/src/assets/images/defaultpet.png';
-import axios from 'axios';
 import { useUserStore } from '../../store/userStore';
 import { useProductStore } from '../../store/productsStore';
 import usePetSitterStore from '../../store/petsitterStore';
+import { getPetList, getPetsitterbyId } from '../../api/petsitter';
+import { getPoint } from '../../api/purchase';
 
 function Mypage(props) {
   const { setType } = usePetSitterStore();
@@ -42,8 +43,8 @@ function Mypage(props) {
   // 반려동물 데이터 가져오기
   const fetchPets = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/pets/${userId}`);
-      setPets(response.data);
+      const response = await getPetList(userId);
+      setPets(response);
     } catch (error) {
       console.error(error);
     }
@@ -52,7 +53,7 @@ function Mypage(props) {
   // 포인트 조회
   const fetchPoints = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/members/point/${userId}`);
+      const response = await getPoint(userId);
       setPoint(response.data.data.point);
     } catch (error) {
       console.error(error);
@@ -61,8 +62,8 @@ function Mypage(props) {
 
   const fetchPetsitter = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/petsitter/sitter/byId/${userId}`);
-      setPetsitter(response.data.data[0]);
+      const response = await getPetsitterbyId(userId);
+      setPetsitter(response);
     } catch (error) {
       console.log(error);
     }

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import successImage from '../../assets/images/white-curve.png';
-import axios from 'axios';
-import { useUserStore } from '../../store/userStore';
+import { confirmPayments, approvePayments } from '../../api/payment';
+import { updatePoint } from '../../api/purchase';
 
 export default function SuccessPage() {
-  const { getPoint } = useUserStore((state) => state);
   const userData = sessionStorage.getItem('userData');
   const parsedData = userData ? JSON.parse(userData) : null;
   const [id, setId] = useState(parsedData.id);
@@ -22,7 +21,7 @@ export default function SuccessPage() {
 
   async function confirm() {
     try {
-      const response = await axios.post('http://localhost:3000/api/payments/confirm', requestData);
+      const response = await confirmPayments(requestData);
 
       if (response.status !== 200) {
         navigate(`/fail?message=${response.data.message}&code=${response.data.code}`);
@@ -42,13 +41,16 @@ export default function SuccessPage() {
   async function approve() {
     //결제 성공 로직 - 포인트 추가 & add to payment-approved table
     try {
-      const response = await axios.post('http://localhost:3000/api/members/update-points', {
-        userId: id,
-        amount: requestData.amount,
-      });
+      const userId = id;
+      const orderId = requestData.orderId;
+      const amount = requestData.amount;
+      const paymentKey = requestData.paymentKey;
+
+      const response = await updatePoint(userId, amount);
 
       console.log('Updated points successfully:', response);
-      addToPaymentApprovedTable(requestData.orderId, requestData.amount, requestData.paymentKey);
+
+      await approvePayments(orderId, amount, paymentKey);
     } catch (error) {
       if (error.response) {
         console.error('Error updating points:', error.response.data.message || error.message);
@@ -59,19 +61,6 @@ export default function SuccessPage() {
       }
     }
   }
-
-  const addToPaymentApprovedTable = (orderId, amount, paymentKey) => {
-    try {
-      const response = axios.post('http://localhost:3000/api/payments/approve', {
-        orderId,
-        amount,
-        paymentKey,
-      });
-      console.log('Payment completed / approved:', response);
-    } catch (error) {
-      console.log('Error handling payment_approved table:', error.message);
-    }
-  };
 
   useEffect(() => {
     confirm();

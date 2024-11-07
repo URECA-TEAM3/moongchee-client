@@ -16,7 +16,6 @@ import Spinner from '../../components/Spinner';
 
 function ShoppingCart() {
   const navigate = useNavigate();
-  const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
   const { id } = useUserStore((state) => state);
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
@@ -145,6 +144,8 @@ function ShoppingCart() {
   const uploadLocalCart = async () => {
     const cartToSend = JSON.parse(localStorage.getItem('cart')) || [];
     const user_id = id;
+
+    console.log(cartToSend);
 
     await API.post(
       '/cart/save',

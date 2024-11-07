@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { IoIosArrowBack } from 'react-icons/io';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import PayInfo from '../../components/shop/PayInfo';
 import DogChew from '../../components/DogChew';
 import API from '../../api/axiosInstance';
 import Modal from '../../components/Modal';
 import { useUserStore } from '../../store/userStore';
+import { confirmOrder } from '../../api/payment';
 
 const Pay = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +28,7 @@ const Pay = () => {
     status: 'paid',
   });
 
-  const confirmOrder = async () => {
+  const confirmOrders = async () => {
     try {
       const currentDate = new Date().toISOString().split('T')[0];
       const updatedOrderData = {
@@ -36,7 +36,7 @@ const Pay = () => {
         date: currentDate,
       };
 
-      const response = await API.post('/cart/pay', updatedOrderData);
+      const response = await confirmOrder(updatedOrderData);
       navigate(`/mypage/shophistory/${id}`, { state: { pay: 'done', payId: id } });
     } catch (error) {
       console.error();
@@ -56,7 +56,6 @@ const Pay = () => {
   }, []);
 
   useEffect(() => {
-    // selectedItems가 변경될 때마다 orderData 업데이트
     setOrderData((prev) => ({
       ...prev,
       total: selectedItems.reduce((acc, item) => acc + item.quantity * item.price, 0),
@@ -149,7 +148,7 @@ const Pay = () => {
             <button className="text-white bg-gray-300 px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
               취소
             </button>
-            <button onClick={confirmOrder} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+            <button onClick={confirmOrders} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
               확인
             </button>
           </div>

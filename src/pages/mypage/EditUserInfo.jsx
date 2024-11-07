@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import axios from 'axios';
+import { updateProfile, checkNickname } from '../../api/login';
 
 const EditUserInfo = () => {
   const navigate = useNavigate();
@@ -100,8 +101,7 @@ const EditUserInfo = () => {
         profile_image_url: profileImageUrl,
       };
 
-      const response = await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
-      // Session Storage update
+      const response = await updateProfile(updatedData);
       sessionStorage.setItem('userData', JSON.stringify(updatedData));
 
       if (response.status === 200) {
@@ -109,7 +109,7 @@ const EditUserInfo = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error('프로필 수정에 실패하였습니다.')
+      toast.error('프로필 수정에 실패하였습니다.');
     }
   };
 
@@ -156,7 +156,7 @@ const EditUserInfo = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
+      const response = await checkNickname(nickname);
       if (response.data.available) {
         toast.success('사용 가능한 닉네임입니다.');
         setIsNicknameChecked(true);
@@ -185,15 +185,14 @@ const EditUserInfo = () => {
         setRoadAddress(event.data.roadAddress);
       }
     };
-  
+
     window.addEventListener('message', handlePostMessage);
-  
+
     return () => {
       // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
       window.removeEventListener('message', handlePostMessage);
     };
   }, []);
-  
 
   const openPostcodePopup = () => {
     const popupWidth = 500;

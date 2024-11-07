@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import backButtonIcon from '/src/assets/icons/backbtn.svg';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
-import axios from 'axios';
+import { getPoint } from '../../api/purchase';
 
 const ChargePage = () => {
   const userData = sessionStorage.getItem('userData');
@@ -21,9 +21,9 @@ const ChargePage = () => {
     10: 100,
   };
 
-  const getPoint = async () => {
+  const getPoints = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/members/point/${id}`);
+      const response = await getPoint(id);
 
       if (response.status !== 200) {
         console.error('Error retrieving point', response);
@@ -36,7 +36,7 @@ const ChargePage = () => {
   };
 
   useEffect(() => {
-    getPoint();
+    getPoints();
   }, []);
 
   const getButtonClass = (amount) => {
@@ -46,7 +46,7 @@ const ChargePage = () => {
   };
 
   return (
-    <div className="p-5 text-center h-full overflow-y-auto flex flex-col justify-between bg-white">
+    <div className="p-5 text-center h-full overflow-y-auto flex flex-col justify-between bg-white pb-10">
       <div className="flex items-center">
         <img src={backButtonIcon} alt="Back Button" className="w-6 h-6 cursor-pointer" onClick={() => window.history.back()} />
         <h1 className="flex-grow text-lg text-center">개껌 충전하기</h1>

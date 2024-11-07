@@ -48,7 +48,25 @@ export const getPetDetail = async (petId) => {
 
 export const signUp = async (params) => {
   try {
-    const response = await API.post('http://localhost:3000/api/members/signup', params);
+    const response = await API.post('/members/signup', params);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const emailVerification = async (email) => {
+  try {
+    const response = await API.post('/members/send-email-verification', { email });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const checkNickname = async (nickname) => {
+  try {
+    const response = await API.post('/members/check-nickname', { nickname });
     return response;
   } catch (error) {
     console.log(error);

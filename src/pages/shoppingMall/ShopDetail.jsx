@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack } from 'react-icons/io';
 import { useParams, useNavigate } from 'react-router-dom';
-import API from '../../api/axiosInstance';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import DetailBottom from '../../components/shop/DetailBottom';
+import { getProductDetail } from '../../api/product';
 
 function ShopDetail() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ function ShopDetail() {
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        const response = await API.get(`/products/${id}`);
+        const response = await getProductDetail(id);
         setProduct(response.data.data);
         const productData = response.data.data;
 
