@@ -62,7 +62,7 @@ function Mypage(props) {
 
   const fetchPetsitter = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/petsitter/detail/${userId}`);
+      const response = await axios.get(`http://localhost:3000/api/petsitter/sitter/byId/${userId}`);
       setPetsitter(response.data.data[0]);
       // setPetsitter(response.data);
     } catch (error) {
