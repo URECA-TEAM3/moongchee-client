@@ -1,7 +1,8 @@
 <h1 align=center> 🐶 Moongchee Client 🐶 </h1>
 <div align=center>
 🐶뭉치🐶는 반려동물 용품 쇼핑과 펫시터 예약 서비스를 한 곳에서 제공하는 스마트 종합 케어 플랫폼입니다. <br/>바쁜 반려인을 위한 편리한 반려동물 라이프를 제안합니다.
-</div>
+</div><br/>
+<img src='public/assets/images/readme/titleImg.png'>
 
 ##
 
@@ -25,7 +26,7 @@
 ## 📄 개요
 
 - 프로젝트 이름: Moongchee 🏠
-- 프로젝트 개발기간: 2024.10.00-2024.11.08
+- 프로젝트 개발 기간: 2024.10.21-2024.11.08
 - 멤버: 팀 강서진, 김예원, 김의진, 김주영, 노승희, 박주광
 
 ## ✏️ 프로젝트 설명
@@ -63,7 +64,7 @@
 
 ## ⚙️ Project Architecture
 
-<img src='public/assets/images/readme/Architecture.png'>
+<img src='public/assets/images/readme/architecture.png'>
 
 ## 🔨 Tech Stack
 
