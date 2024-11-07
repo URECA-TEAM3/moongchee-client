@@ -322,9 +322,6 @@ const AnimalInfo = () => {
 
       <Modal isOpen={isModalOpen} title={<div className="font-bold mb-6">반려동물이 저장되었습니다.</div>}>
         <div className="flex mt-3">
-          {/* <button onClick={() => navigate('/mypage')} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
-            확인
-          </button> */}
           <button onClick={() => setIsModalOpen(false)} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
             확인
           </button>
