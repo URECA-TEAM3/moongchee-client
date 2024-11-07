@@ -122,7 +122,7 @@ export const getPetsitter = async (id) => {
 
 export const applyPetsitter = async (params) => {
   try {
-    const response = await API.post('/petsitter/sitter/apply', params);
+    const response = await API.post('/petsitter/apply', params);
     return response;
   } catch (error) {
     console.log(error);
