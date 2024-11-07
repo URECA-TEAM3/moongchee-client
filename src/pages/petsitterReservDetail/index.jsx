@@ -122,9 +122,7 @@ const index = () => {
                 </button>
               </div>
             ) : (
-              <button className="text-white bg-primary px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('cancel')}>
-                예약 취소하기
-              </button>
+              ''
             )
           ) : (
             <button className="text-white bg-primary px-4 py-2 rounded-lg h-12 w-full" onClick={() => openModal('cancel')}>

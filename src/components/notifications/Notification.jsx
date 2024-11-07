@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import API from '../../api/axiosInstance';
 
 const Notification = () => {
+  const toggleRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userId, setUserId] = useState(0);
@@ -15,7 +16,17 @@ const Notification = () => {
       fetchNotifications(parsedData.id);
       setUserId(parsedData.id);
     }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
+
+  const handleClickOutside = (event) => {
+    if (toggleRef.current && !toggleRef.current.contains(event.target)) {
+      setIsDropdownOpen(false);
+    }
+  };
 
   const fetchNotifications = async (userId) => {
     try {
@@ -78,7 +89,7 @@ const Notification = () => {
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white border rounded-lg shadow-lg p-2">
+        <div className="absolute right-0 mt-2 w-96 bg-white border rounded-lg shadow-lg p-2" ref={toggleRef}>
           <div className="p-4 flex justify-between items-center">
             <h3 className="text-lg">알림 {notifications.length}</h3>
           </div>
