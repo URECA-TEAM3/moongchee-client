@@ -134,7 +134,7 @@ const EditUserInfo = () => {
 
   const handleSaveModal = () => {
     setSaveModal(false);
-    navigate('/mypage');
+    // navigate('/mypage');
   };
 
   const handleNicknameCheck = async () => {
@@ -342,7 +342,7 @@ const EditUserInfo = () => {
           className="block w-full p-2 border border-divider rounded-lg mb-6"
         />
         <button type="button" onClick={handleSaveVerified} className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
-          저장
+          저장하기
         </button>
       </form>
 

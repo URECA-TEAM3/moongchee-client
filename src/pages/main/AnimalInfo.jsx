@@ -304,7 +304,7 @@ const AnimalInfo = () => {
       {newPet && (
         <div className="flex justify-between space-x-2 px-10 my-8 w-full">
           <button type="button" onClick={handleSave} className="w-full h-12 py-2 h-12 bg-primary text-white rounded-lg">
-            저장
+            저장하기
           </button>
         </div>
       )}
@@ -315,14 +315,17 @@ const AnimalInfo = () => {
             삭제하기
           </button>
           <button onClick={handleEdit} className="py-2 h-12 w-1/2 bg-primary text-white rounded-lg">
-            수정 내용 저장
+            저장하기
           </button>
         </div>
       )}
 
       <Modal isOpen={isModalOpen} title={<div className="font-bold mb-6">반려동물이 저장되었습니다.</div>}>
         <div className="flex mt-3">
-          <button onClick={() => navigate('/mypage')} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
+          {/* <button onClick={() => navigate('/mypage')} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
+            확인
+          </button> */}
+          <button onClick={() => setIsModalOpen(false)} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
             확인
           </button>
         </div>
