@@ -208,12 +208,12 @@ const AnimalInfo = () => {
         <h1 className="mx-auto font-bold">반려동물 정보</h1>
       </div>
 
-      <div className="mb-2">
+      <div className="mb-6">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
-          {profileImage ? (
+          {profileImage !== registerPetProfileImage ? (
             <img src={profileImage} alt="반려동물 프로필 이미지" className="w-full h-full object-cover rounded-full" />
           ) : (
-            <img src={defaultPetImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
+            <img src={profileImage} alt="반려동물 기본 프로필 이미지" className="w-full h-full object-contain" />
           )}
         </div>
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
