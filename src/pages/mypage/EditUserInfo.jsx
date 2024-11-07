@@ -100,14 +100,16 @@ const EditUserInfo = () => {
         profile_image_url: profileImageUrl,
       };
 
-      await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
+      const response = await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
       // Session Storage update
       sessionStorage.setItem('userData', JSON.stringify(updatedData));
 
-      setSaveModal(true);
+      if (response.status === 200) {
+        toast.success('프로필이 성공적으로 수정되었습니다.');
+      }
     } catch (error) {
       console.error(error);
-      alert('프로필 수정 실패');
+      toast.error('프로필 수정에 실패하였습니다.')
     }
   };
 
@@ -130,11 +132,6 @@ const EditUserInfo = () => {
       return;
     }
     handleSave();
-  };
-
-  const handleSaveModal = () => {
-    setSaveModal(false);
-    navigate('/mypage');
   };
 
   const handleNicknameCheck = async () => {
@@ -342,7 +339,7 @@ const EditUserInfo = () => {
           className="block w-full p-2 border border-divider rounded-lg mb-6"
         />
         <button type="button" onClick={handleSaveVerified} className="w-full h-12 mb-5 py-2 bg-primary text-white rounded-lg">
-          저장
+          저장하기
         </button>
       </form>
 
@@ -359,18 +356,6 @@ const EditUserInfo = () => {
             </button>
             <button onClick={() => setShowModal(false)} className="w-full py-2 mt-5 text-white bg-delete rounded-lg">
               취소
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Save Success Modal */}
-      {saveModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
-            <h2 className="text-base font-bold mb-6">프로필이 수정되었습니다.</h2>
-            <button onClick={handleSaveModal} className="px-12 py-2 bg-primary text-white rounded-lg">
-              확인
             </button>
           </div>
         </div>

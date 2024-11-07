@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRightIcon, ChevronLeftIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { app } from '../../../firebase';
+import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import ItemBox from '../../components/shop/ItemBox';
+import { getNewProducts } from '../../api/product';
 
 const ProductCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,30 +9,10 @@ const ProductCarousel = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/products/new-products');
-      const productsWithImages = await Promise.all(
-        response.data.data.map(async (product) => {
-          const imageUrl = await fetchImgFromFireStorage(product.image);
-          return {
-            ...product,
-            image: imageUrl,
-          };
-        })
-      );
-      setnewProducts(productsWithImages);
+      const response = await getNewProducts();
+      setnewProducts(response);
     } catch (error) {
       console.error('새로운 상품 조회 실패:', error);
-    }
-  };
-
-  const fetchImgFromFireStorage = async (img) => {
-    const storage = getStorage(app);
-    try {
-      const url = await getDownloadURL(ref(storage, img));
-      return url;
-    } catch (error) {
-      console.error('Error loading image:', error);
-      throw new Error('이미지 로드 중 오류가 발생했습니다.');
     }
   };
 

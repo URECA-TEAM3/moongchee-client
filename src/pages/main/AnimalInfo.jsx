@@ -6,7 +6,7 @@ import { storage } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
-import defaultPetImage from '/src/assets/images/defaultpet.png';
+import { registerPet, deletePet, updateProfile, getPetDetail } from '../../api/login';
 import Modal from '../../components/Modal';
 
 const AnimalInfo = () => {
@@ -52,7 +52,7 @@ const AnimalInfo = () => {
 
   const fetchPet = async (petId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/pets/detail/${petId}`);
+      const response = await getPetDetail(petId);
       setName(response.data[0].name);
       setAge(response.data[0].age);
       setSpecies(response.data[0].species);
@@ -133,16 +133,7 @@ const AnimalInfo = () => {
         animalImageUrl = await getDownloadURL(storageRef);
       }
 
-      await axios.post('http://localhost:3000/api/pets/animal-register', {
-        userId,
-        name,
-        age,
-        weight,
-        species,
-        gender,
-        surgery,
-        animalImageUrl,
-      });
+      await registerPet(userId, name, age, weight, species, gender, surgery, animalImageUrl);
       toast.dismiss(toastId);
 
       uponSignup && navigate('/animalRegisterSuccess');
@@ -156,7 +147,7 @@ const AnimalInfo = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/api/pets/${petId}`);
+      await deletePet(petId);
 
       setDeleteModalOpen(false);
       setConfirmDeletedOpen(true);
@@ -186,9 +177,11 @@ const AnimalInfo = () => {
         animal_image_url: profileImageUrl,
       };
 
-      const response = await axios.put('http://localhost:3000/api/pets/update-profile', updatedData);
+      const response = await updateProfile(updatedData);
 
-      setIsModalOpen(true);
+      if (response.status === 200) {
+        toast.success('반려동물 정보가 성공적으로 수정되었습니다.');
+      }
     } catch (error) {
       console.error(error);
       toast.dismiss(toastId);
@@ -304,7 +297,7 @@ const AnimalInfo = () => {
       {newPet && (
         <div className="flex justify-between space-x-2 px-10 my-8 w-full">
           <button type="button" onClick={handleSave} className="w-full h-12 py-2 h-12 bg-primary text-white rounded-lg">
-            저장
+            저장하기
           </button>
         </div>
       )}
@@ -315,14 +308,20 @@ const AnimalInfo = () => {
             삭제하기
           </button>
           <button onClick={handleEdit} className="py-2 h-12 w-1/2 bg-primary text-white rounded-lg">
-            수정 내용 저장
+            저장하기
           </button>
         </div>
       )}
 
       <Modal isOpen={isModalOpen} title={<div className="font-bold mb-6">반려동물이 저장되었습니다.</div>}>
         <div className="flex mt-3">
-          <button onClick={() => navigate('/mypage')} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
+          <button
+            onClick={() => {
+              setIsModalOpen(false);
+              navigate('/mypage');
+            }}
+            className="px-10 py-2 w-full bg-primary text-white rounded-lg"
+          >
             확인
           </button>
         </div>
