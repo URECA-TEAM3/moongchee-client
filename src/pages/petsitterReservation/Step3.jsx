@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import DogChew from '../../components/DogChew';
 import { toast, Toaster } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,7 +7,8 @@ import { useUserStore } from '../../store/userStore';
 import PayInfo from '../../components/shop/PayInfo';
 import { AiOutlineMinus } from 'react-icons/ai';
 import { GoInfo } from 'react-icons/go';
-import API from '../../api/axiosInstance';
+import { updatePoint } from '../../api/purchase';
+import { getSitterDetailWithSitterId, applyReservation, saveNotifications } from '../../api/petsitter';
 
 const Step3 = () => {
   const [points, setPoints] = useState(0);
@@ -24,22 +24,21 @@ const Step3 = () => {
 
   const fetchSitterInfo = async () => {
     try {
-      const response = await API.get(`/petsitter/sitter/detail/${reservation.sitter_id}`);
-      setSitterInfo(response.data.data[0]);
+      const response = await getSitterDetailWithSitterId(reservation.sitter_id);
+      setSitterInfo(response);
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleReservationClick = async () => {
+    const p_id = id;
+    const amount = -reservation.price;
     try {
-      const pointUpdateResponse = await axios.post('http://localhost:3000/api/members/update-points', {
-        userId: id,
-        amount: -reservation.price,
-      });
+      const pointUpdateResponse = await updatePoint(p_id, amount);
       if (pointUpdateResponse.status === 200) {
         try {
-          const reservationResponse = await axios.post('http://localhost:3000/api/petsitter/reservation/add', reservation);
+          const reservationResponse = await applyReservation(reservation);
 
           if (reservationResponse.status === 200) {
             const notiData = {
@@ -51,7 +50,8 @@ const Step3 = () => {
             };
 
             try {
-              const requestNotification = await axios.post('http://localhost:3000/api/notifications/save', notiData);
+              console.log(notiData);
+              const requestNotification = await saveNotifications(notiData);
               navigate('/petsitter/reservation/list', { state: { type: 'user' } });
             } catch (error) {
               console.error('Notification 정보 저장 실패');

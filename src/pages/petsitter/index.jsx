@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
 import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
-import ToolTip from '../../components/ToolTip';
-
+import { getSitterList, getPetList } from '../../api/petsitter';
+import { dropDownTime } from '../../constants/petsitter';
 const index = () => {
   const { setType } = usePetSitterStore();
   const [sitterList, setSitterList] = useState([]);
@@ -51,7 +50,7 @@ const index = () => {
       target: false,
     },
   ]);
-  const dropDownTime = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+
   const { id, petsitter, address } = useUserStore();
   const navigate = useNavigate();
 
@@ -81,8 +80,8 @@ const index = () => {
 
   const handlePetList = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/pets/${id}`);
-      if (res.data.length === 0) {
+      const petList = await getPetList(id);
+      if (petList === 0) {
         setIsDisbaled(true);
       }
     } catch (error) {
@@ -91,33 +90,22 @@ const index = () => {
   };
 
   const handleSearchClick = async () => {
-    let str = '';
-    for (let i = 0; i < dayList.length; i++) {
-      if (dayList[i].target === true) str += `${dayList[i].value},`;
-    }
-    const addr = address.split(' ');
-    const params = {
-      userId: id,
-      weekdays: str.slice(0, -1),
-      startTime: startTime,
-      endTime: endTime,
-      region: `${addr[0]} ${addr[1]}`,
-    };
-
     try {
-      const res = await axios.get('http://localhost:3000/api/petsitter/list', { params });
-      const sitterList = res.data.data.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-          imageUrl: item.image,
-          weekdays: item.weekdays,
-          startTime: item.startTime,
-          endTime: item.endTime,
-          description: item.description,
-          experience: item.experience,
-        };
-      });
+      let str = '';
+
+      for (let i = 0; i < dayList.length; i++) {
+        if (dayList[i].target === true) str += `${dayList[i].value},`;
+      }
+
+      const addr = address.split(' ');
+      const p_id = id;
+      const weekdays = str.slice(0, -1);
+      const p_startTime = startTime;
+      const p_endTime = endTime;
+      const region = `${addr[0]} ${addr[1]}`;
+
+      const sitterList = await getSitterList(p_id, weekdays, p_startTime, p_endTime, region);
+
       setSitterList(sitterList);
     } catch (error) {
       console.log(error);
