@@ -168,7 +168,7 @@ const SignUpForm = () => {
       } else {
         downloadURL = defaultProfileImage;
       }
-
+      console.log('1');
       const response = await signUp({
         name,
         phone,

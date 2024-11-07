@@ -30,7 +30,7 @@ export const deletePet = async (petId) => {
 
 export const updateProfile = async (params) => {
   try {
-    const response = await axios.put('/pets/update-profile', params);
+    const response = await API.put('/pets/update-profile', params);
     return response;
   } catch (error) {
     console.error(error);
@@ -48,7 +48,7 @@ export const getPetDetail = async (petId) => {
 
 export const signUp = async (params) => {
   try {
-    const response = await axios.post('http://localhost:3000/api/members/signup', params);
+    const response = await API.post('http://localhost:3000/api/members/signup', params);
     return response;
   } catch (error) {
     console.log(error);
