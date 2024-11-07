@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import toast, { Toaster } from 'react-hot-toast';
 import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
 import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
 import { getSitterList, getPetList } from '../../api/petsitter';
 import { dropDownTime } from '../../constants/petsitter';
+import ToggleSwitch from '../../components/ToggleSwitch';
 const index = () => {
   const { setType } = usePetSitterStore();
   const [sitterList, setSitterList] = useState([]);
@@ -13,46 +16,41 @@ const index = () => {
   const [isDisabled, setIsDisbaled] = useState(false);
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('18:00');
+  const [isToggleOn, setIsToggleOn] = useState(false);
   const [dayList, setDayList] = useState([
-    {
-      name: '월',
-      value: 'MON',
-      target: false,
-    },
-    {
-      name: '화',
-      value: 'TUE',
-      target: false,
-    },
-    {
-      name: '수',
-      value: 'WED',
-      target: false,
-    },
-    {
-      name: '목',
-      value: 'THU',
-      target: false,
-    },
-    {
-      name: '금',
-      value: 'FRI',
-      target: false,
-    },
-    {
-      name: '토',
-      value: 'SAT',
-      target: false,
-    },
-    {
-      name: '일',
-      value: 'SUN',
-      target: false,
-    },
+    { name: '월', value: 'MON', target: false },
+    { name: '화', value: 'TUE', target: false },
+    { name: '수', value: 'WED', target: false },
+    { name: '목', value: 'THU', target: false },
+    { name: '금', value: 'FRI', target: false },
+    { name: '토', value: 'SAT', target: false },
+    { name: '일', value: 'SUN', target: false },
   ]);
 
   const { id, petsitter, address } = useUserStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedToggleState = localStorage.getItem('isToggleOn');
+    if (savedToggleState !== null) {
+      setIsToggleOn(JSON.parse(savedToggleState));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('isToggleOn', JSON.stringify(isToggleOn));
+  }, [isToggleOn]);
+
+  const handleToggleChange = () => {
+    const newToggleState = !isToggleOn;
+    setIsToggleOn(newToggleState);
+
+    if (newToggleState) {
+      toast.success('펫시터 모드입니다.');
+    } else {
+      toast('펫시터 모드를 종료하였습니다.');
+    }
+  };
 
   const handleApplyClick = () => {
     setType('apply');
@@ -60,7 +58,6 @@ const index = () => {
   };
 
   const handleReservationClick = (type) => {
-    console.log(type);
     navigate('/petsitter/reservation/list', { state: { type: type } });
   };
 
@@ -127,47 +124,43 @@ const index = () => {
 
   return (
     <div className="flex flex-col gap-y-5 p-10 justify-center w-full">
-      {isPetSitter ? (
-        <div className="flex items-center container gap-5 w-full">
-          <button
-            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleReservationClick('user')}
-          >
-            예약 / 취소 내역
+      <Toaster />
+      {petsitter === 1 && (
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-300">펫시터모드</span>
+          <ToggleSwitch checked={isToggleOn} onChange={handleToggleChange} />
+        </div>
+      )}
+      <div className="flex items-center container gap-5 w-full">
+        {petsitter === 0 && (
+          <button className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white" onClick={handleApplyClick}>
+            펫시터 지원하기
           </button>
-          {isPetSitter && (
+        )}
+        {isToggleOn ? (
+          <>
             <button
               className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={() => handleReservationClick('petsitter')}
+              onClick={() => handleReservationClick('user')}
             >
-              요청 목록
+              예약 현황
             </button>
-          )}
-          {isPetSitter && (
             <button
               className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={() => handleProfileClick()}
+              onClick={handleProfileClick}
             >
               나의 펫시터 프로필
             </button>
-          )}
-        </div>
-      ) : (
-        <div className="flex items-center container gap-5 w-full">
-          <button
-            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleApplyClick('apply')}
-          >
-            펫시터 지원하기
-          </button>
+          </>
+        ) : (
           <button
             className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
             onClick={() => handleReservationClick('user')}
           >
             예약 / 취소 내역
           </button>
-        </div>
-      )}
+        )}
+      </div>
       <div className="w-full">
         <div className="search">
           <span className="text-text text-sm">펫시터가 필요한 요일과 시간을 선택해보세요</span>
