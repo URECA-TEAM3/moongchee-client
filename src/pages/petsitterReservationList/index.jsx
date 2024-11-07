@@ -80,7 +80,7 @@ const Index = () => {
       if (type !== 'confirm') {
         refundPoint();
       }
-      handleReservationList();
+      handleReservationList(isPetsitter);
 
       let notiType;
       if (type === 'cancel') {
@@ -121,7 +121,6 @@ const Index = () => {
   };
 
   const openModal = (value, info) => {
-    console.log(info);
     setIsModalOpen(true);
     setSelectedReservation({
       name: info.name,

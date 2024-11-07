@@ -19,13 +19,12 @@ const Step3 = () => {
   const [sitterInfo, setSitterInfo] = useState({});
 
   useEffect(() => {
-    const sitterId = reservation.sitter_id;
-    fetchSitterInfo(sitterId);
+    fetchSitterInfo();
   }, []);
 
-  const fetchSitterInfo = async (sitterId) => {
+  const fetchSitterInfo = async () => {
     try {
-      const response = await API.get(`/petsitter/detail/${reservation.sitter_id}`);
+      const response = await API.get(`/petsitter/sitter/detail/${reservation.sitter_id}`);
       setSitterInfo(response.data.data[0]);
     } catch (error) {
       console.error(error);
