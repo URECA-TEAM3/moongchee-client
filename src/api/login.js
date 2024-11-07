@@ -1,6 +1,6 @@
 import API from './axiosInstance';
 
-export const registerPet = async (userId, name, age, weight, species, gender, surgery, image) => {
+export const registerPet = async (userId, name, age, weight, species, gender, surgery, animalImageUrl) => {
   try {
     const response = await API.post('/pets/animal-register', {
       userId,
