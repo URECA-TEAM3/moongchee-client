@@ -55,6 +55,24 @@ export const signUp = async (params) => {
   }
 };
 
+export const emailVerification = async (email) => {
+  try {
+    const response = await API.post('/members/send-email-verification', { email });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const checkNickname = async (nickname) => {
+  try {
+    const response = await API.post('/members/check-nickname', { nickname });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const refreshAccessToken = async () => {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) {

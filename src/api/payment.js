@@ -1,4 +1,21 @@
 import API from './axiosInstance';
+import { generateRandomString } from '../utils/productHelper';
+
+export const requestPayments = async (id, amount) => {
+  try {
+    const orderId = generateRandomString();
+
+    const response = await axios.post('/payments', {
+      orderId,
+      userId: id,
+      amount: amount,
+    });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const confirmOrder = async (params) => {
   try {

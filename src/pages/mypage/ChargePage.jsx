@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import backButtonIcon from '/src/assets/icons/backbtn.svg';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
-import axios from 'axios';
+import { getPoint } from '../../api/purchase';
 
 const ChargePage = () => {
   const userData = sessionStorage.getItem('userData');
@@ -21,9 +21,9 @@ const ChargePage = () => {
     10: 100,
   };
 
-  const getPoint = async () => {
+  const getPoints = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/members/point/${id}`);
+      const response = await getPoint(id);
 
       if (response.status !== 200) {
         console.error('Error retrieving point', response);
@@ -36,7 +36,7 @@ const ChargePage = () => {
   };
 
   useEffect(() => {
-    getPoint();
+    getPoints();
   }, []);
 
   const getButtonClass = (amount) => {

@@ -97,6 +97,15 @@ export const getSitterDetailWithSitterId = async (sitterId) => {
   }
 };
 
+export const getPetsitterbyId = async (userId) => {
+  try {
+    const response = await API.get(`/petsitter/sitter/byId/${userId}`);
+    return response.data.data[0];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getPetsitter = async (id) => {
   try {
     const res = await API.get('/petsitter/sitter/detail', { params: { id } });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { emailVerification } from '../../api/login';
 
 const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErrors }) => {
   const [verificationCode, setVerificationCode] = useState('');
@@ -39,7 +39,7 @@ const EmailVerification = ({ email, setEmail, setIsEmailVerified, errors, setErr
     const toastId = toast.loading('인증 번호 보내는 중...');
 
     try {
-      const response = await axios.post('http://localhost:3000/api/members/send-email-verification', { email });
+      const response = await emailVerification(email);
       setEmailVerificationCode(response.data.code);
       setShowVerificationInput(true);
       setTimer(180);

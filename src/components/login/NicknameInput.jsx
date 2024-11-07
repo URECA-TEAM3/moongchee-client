@@ -1,7 +1,7 @@
 // NicknameInput.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { checkNickname } from '../../api/login';
 
 const NicknameInput = ({ nickname, setNickname, setIsNicknameChecked, errors, setErrors }) => {
   const [isChecking, setIsChecking] = useState(false);
@@ -41,7 +41,7 @@ const NicknameInput = ({ nickname, setNickname, setIsNicknameChecked, errors, se
 
     setIsChecking(true);
     try {
-      const response = await axios.post('http://localhost:3000/api/members/check-nickname', { nickname });
+      const response = await checkNickname(nickname);
       if (response.data.available) {
         toast.success('사용 가능한 닉네임입니다.');
         setIsNicknameChecked(true);

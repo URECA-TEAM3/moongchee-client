@@ -11,3 +11,7 @@ export const fetchImgFromFireStorage = async (img) => {
     throw new Error('이미지 로드 중 오류가 발생했습니다.');
   }
 };
+
+export const generateRandomString = () => {
+  return window.btoa(Math.random().toString()).slice(0, 20);
+};
