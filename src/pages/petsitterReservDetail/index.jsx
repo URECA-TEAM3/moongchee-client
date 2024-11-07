@@ -44,13 +44,12 @@ const index = () => {
       const res2 = await getPetList(res.data.user_id);
 
       const petList = res2;
-      console.log(petList);
-      const petData = petList.map((pet) => (pet.name === res.data.pet ? pet : ''));
+      const petData = petList.find((pet) => pet.name === res.data.pet);
       const data = {
         ...res.data,
         name: userInfo.name,
         profile: userInfo.profile_image,
-        pet: petData[0],
+        pet: petData,
       };
       setDetailData(data);
     } catch (error) {
