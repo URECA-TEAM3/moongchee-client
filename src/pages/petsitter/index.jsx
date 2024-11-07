@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import toast, { Toaster } from 'react-hot-toast';
 import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
 import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
 import { getSitterList, getPetList } from '../../api/petsitter';
 import { dropDownTime } from '../../constants/petsitter';
+import ToggleSwitch from '../../components/ToggleSwitch';
 const index = () => {
   const { setType } = usePetSitterStore();
   const [sitterList, setSitterList] = useState([]);
@@ -13,46 +16,35 @@ const index = () => {
   const [isDisabled, setIsDisbaled] = useState(false);
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('18:00');
+  const [isToggleOn, setIsToggleOn] = useState(false);
   const [dayList, setDayList] = useState([
-    {
-      name: '월',
-      value: 'MON',
-      target: false,
-    },
-    {
-      name: '화',
-      value: 'TUE',
-      target: false,
-    },
-    {
-      name: '수',
-      value: 'WED',
-      target: false,
-    },
-    {
-      name: '목',
-      value: 'THU',
-      target: false,
-    },
-    {
-      name: '금',
-      value: 'FRI',
-      target: false,
-    },
-    {
-      name: '토',
-      value: 'SAT',
-      target: false,
-    },
-    {
-      name: '일',
-      value: 'SUN',
-      target: false,
-    },
+    { name: '월', value: 'MON', target: false },
+    { name: '화', value: 'TUE', target: false },
+    { name: '수', value: 'WED', target: false },
+    { name: '목', value: 'THU', target: false },
+    { name: '금', value: 'FRI', target: false },
+    { name: '토', value: 'SAT', target: false },
+    { name: '일', value: 'SUN', target: false },
   ]);
 
   const { id, petsitter, address } = useUserStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedToggleState = localStorage.getItem('isToggleOn');
+    if (savedToggleState !== null) {
+      setIsToggleOn(JSON.parse(savedToggleState));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('isToggleOn', JSON.stringify(isToggleOn));
+  }, [isToggleOn]);
+
+  const handleToggleChange = () => {
+    const newToggleState = !isToggleOn;
+    setIsToggleOn(newToggleState);
+  };
 
   const handleApplyClick = () => {
     setType('apply');
@@ -60,7 +52,6 @@ const index = () => {
   };
 
   const handleReservationClick = (type) => {
-    console.log(type);
     navigate('/petsitter/reservation/list', { state: { type: type } });
   };
 
@@ -127,47 +118,43 @@ const index = () => {
 
   return (
     <div className="flex flex-col gap-y-5 p-10 justify-center w-full">
-      {isPetSitter ? (
-        <div className="flex items-center container gap-5 w-full">
-          <button
-            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleReservationClick('user')}
-          >
-            예약 / 취소 내역
-          </button>
-          {isPetSitter && (
-            <button
-              className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={() => handleReservationClick('petsitter')}
-            >
-              요청 목록
+      <Toaster />
+      <div className="flex items-center container w-full">
+        {petsitter === 1 && (
+          <div className="flex w-44 gap-2 items-center">
+            <span className="text-sm font-medium">펫시터모드</span>
+            <ToggleSwitch checked={isToggleOn} onChange={handleToggleChange} />
+          </div>
+        )}
+        <div className="flex items-center container gap-3 w-full">
+          {petsitter === 0 && (
+            <button className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white" onClick={handleApplyClick}>
+              펫시터 지원하기
             </button>
           )}
-          {isPetSitter && (
+          {isToggleOn ? (
+            <>
+              <button
+                className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white"
+                onClick={() => handleReservationClick('petsitter')}
+              >
+                예약 현황
+              </button>
+              <button className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white" onClick={handleProfileClick}>
+                나의 펫시터 프로필
+              </button>
+            </>
+          ) : (
             <button
-              className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={() => handleProfileClick()}
+              className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white"
+              onClick={() => handleReservationClick('user')}
             >
-              나의 펫시터 프로필
+              예약 / 취소 내역
             </button>
           )}
         </div>
-      ) : (
-        <div className="flex items-center container gap-5 w-full">
-          <button
-            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleApplyClick('apply')}
-          >
-            펫시터 지원하기
-          </button>
-          <button
-            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleReservationClick('user')}
-          >
-            예약 / 취소 내역
-          </button>
-        </div>
-      )}
+      </div>
+
       <div className="w-full">
         <div className="search">
           <span className="text-text text-sm">펫시터가 필요한 요일과 시간을 선택해보세요</span>
@@ -183,7 +170,7 @@ const index = () => {
               </div>
             ))}
           </div>
-          <div className="flex justify-center items-center gap-5 mt-5">
+          <div className="flex justify-center items-center gap-5 mt-3">
             <div className="flex items-center flex-col w-[50%]">
               <span className="text-text text-sm mb-1">시작 시간</span>
               <Dropdown
@@ -196,7 +183,7 @@ const index = () => {
                 }}
               />
             </div>
-            <p className="">~</p>
+            <p className="mt-4">~</p>
             <div className="flex items-center flex-col w-[50%]">
               <span className="text-text text-sm mb-1">종료 시간</span>
               <Dropdown
