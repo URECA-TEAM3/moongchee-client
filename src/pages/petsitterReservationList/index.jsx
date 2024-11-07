@@ -12,7 +12,7 @@ import Spinner from '../../components/Spinner';
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isPetsitter, setIsPetSitter] = useState(false);
+  const [isPetsitter, setIsPetSitter] = useState('user');
   const [reservationList, setReservationList] = useState([]);
   const [showItems, setShowItems] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,12 +35,12 @@ const Index = () => {
     }
   };
 
-  const handleReservationList = async () => {
+  const handleReservationList = async (target) => {
     setIsLoading(true);
     try {
       const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
         user_id: id,
-        user_type: isPetsitter,
+        user_type: target,
       });
 
       const reservationList = res.data.data.map((item) => {
@@ -57,6 +57,9 @@ const Index = () => {
         };
       });
 
+      if (reservationList.length > 0) {
+        setShowItems(true);
+      }
       setShowItems(reservationList.length > 0);
       setReservationList(reservationList);
     } catch (error) {
@@ -131,8 +134,13 @@ const Index = () => {
   const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    handleReservationList();
-    setIsPetSitter(location.state?.type === 'petsitter');
+    if (location.state.type === 'petsitter') {
+      setIsPetSitter('petsitter');
+      handleReservationList('petsitter');
+    } else {
+      setIsPetSitter('user');
+      handleReservationList('user');
+    }
   }, []);
 
   return (
@@ -145,7 +153,7 @@ const Index = () => {
             <button onClick={() => navigate(-1)} className="absolute left-0 ml-1">
               <ChevronLeftIcon className="h-6 w-6 ml-5" />
             </button>
-            {isPetsitter ? <h1 className="mx-auto font-bold">요청 내역</h1> : <h1 className="mx-auto font-bold">예약 / 취소 내역</h1>}
+            {isPetsitter === 'petsitter' ? <h1 className="mx-auto font-bold">요청 내역</h1> : <h1 className="mx-auto font-bold">예약 / 취소 내역</h1>}
           </div>
           <div className="px-10 pt-5 flex flex-col gap-10 ">
             {reservationList.map((item, index) => (

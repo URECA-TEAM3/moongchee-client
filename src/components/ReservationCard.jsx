@@ -46,7 +46,7 @@ const ReservationCard = ({ info, openModal, userType }) => {
       </div>
       {info.status !== 'cancelled' && (
         <div className="flex gap-5 mt-3">
-          {userType === 'petsitter' ? (
+          {userType !== 'petsitter' ? (
             info.status === 'reserved' ? (
               <div className="flex gap-5 mt-3 w-full">
                 <button className="text-white bg-delete px-4 py-2 rounded-lg w-full" onClick={() => openModalAction('reject')}>
