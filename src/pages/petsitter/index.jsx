@@ -183,7 +183,7 @@ const index = () => {
                 }}
               />
             </div>
-            <p className="">~</p>
+            <p className="mt-4">~</p>
             <div className="flex items-center flex-col w-[50%]">
               <span className="text-text text-sm mb-1">종료 시간</span>
               <Dropdown
