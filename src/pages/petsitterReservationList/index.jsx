@@ -28,7 +28,7 @@ const Index = () => {
 
   const fetchSitterInfo = async (sitterId) => {
     try {
-      const response = await API.get(`/petsitter/detail/${sitterId}`);
+      const response = await API.get(`/petsitter/sitter/detail/${sitterId}`);
       setSitterInfo(response.data.data[0]);
     } catch (error) {
       console.error(error);
@@ -46,6 +46,7 @@ const Index = () => {
       const reservationList = res.data.data.map((item) => {
         return {
           name: item.name,
+          userId: item.user_id,
           sitterId: item.sitter_id,
           requestDate: item.requestDate,
           startTime: item.startTime,
@@ -79,7 +80,7 @@ const Index = () => {
       if (type !== 'confirm') {
         refundPoint();
       }
-      handleReservationList();
+      handleReservationList(isPetsitter);
 
       let notiType;
       if (type === 'cancel') {
@@ -90,7 +91,7 @@ const Index = () => {
 
       const notiData = {
         sending_name: name,
-        receive_id: sitterInfo.userId,
+        receive_id: isPetsitter === 'petsitter' ? selectedReservation.userId : sitterInfo.userId,
         receive_name: selectedReservation.name,
         type: notiType,
         status: 'unread',
@@ -125,6 +126,7 @@ const Index = () => {
       name: info.name,
       reservationId: info.reservationId,
       price: info.price,
+      userId: info.userId,
       sitterId: info.sitterId,
     });
     fetchSitterInfo(info.sitterId);

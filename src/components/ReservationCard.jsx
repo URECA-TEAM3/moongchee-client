@@ -46,7 +46,7 @@ const ReservationCard = ({ info, openModal, userType }) => {
       </div>
       {info.status !== 'cancelled' && (
         <div className="flex gap-5 mt-3">
-          {userType !== 'petsitter' ? (
+          {userType === 'petsitter' ? (
             info.status === 'reserved' ? (
               <div className="flex gap-5 mt-3 w-full">
                 <button className="text-white bg-delete px-4 py-2 rounded-lg w-full" onClick={() => openModalAction('reject')}>
@@ -57,12 +57,7 @@ const ReservationCard = ({ info, openModal, userType }) => {
                 </button>
               </div>
             ) : (
-              <button
-                className="text-primary border border-primary px-4 py-2 rounded-lg w-full hover:bg-primary hover:text-white"
-                onClick={() => openModalAction('cancel')}
-              >
-                예약 취소하기
-              </button>
+              ''
             )
           ) : (
             info.status === 'reserved' && (
