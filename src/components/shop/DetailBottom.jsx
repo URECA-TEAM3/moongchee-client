@@ -4,6 +4,7 @@ import BottomSheet from '../BottomSheet';
 import API from '../../api/axiosInstance';
 import { useUserStore } from '../../store/userStore';
 import Modal from '../../components/Modal';
+import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 
 const DetailBottom = ({ product }) => {
   const navigate = useNavigate();
@@ -113,8 +114,8 @@ const DetailBottom = ({ product }) => {
       {/* 기본 바텀바 */}
       <div className="fixed bottom-0 flex items-center justify-between w-[600px] bg-white z-20">
         <Link to="/shoppingcart">
-          <div className="p-3 flex flex-col justify-center items-center">
-            <img className="w-8 mb-1" src="/src/assets/images/shoppingCart_gray.svg" alt="" />
+          <div className="py-5 px-3 flex flex-col justify-center items-center">
+            <ShoppingCartIcon className="size-8" color={'#D9D9D9'} />
             <span className="text-xs">장바구니</span>
           </div>
         </Link>

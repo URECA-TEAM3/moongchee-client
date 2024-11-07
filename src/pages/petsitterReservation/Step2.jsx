@@ -64,7 +64,7 @@ const Step2 = ({ handleNextStep }) => {
       </div>
       <div className="flex flex-col items-center justify-center mt-12">
         <label>
-          <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+          <input type="checkbox" className="size-4 accent-primary" checked={isChecked} onChange={handleCheckboxChange} />
           <span className="ml-4">모두 확인, 동의하였습니다.</span>
         </label>
         <button

@@ -11,7 +11,7 @@ const Tooltip = ({ text, style, children }) => {
         <div
           className="absolute bottom-full mb-2 w-max px-3 py-1 text-sm font-semibold text-white bg-gray-800 rounded shadow-lg
                      transform -translate-x-1/2 left-1/2 transition-opacity duration-200"
-          style={{ opacity: isVisible ? 1 : 0, left: style.left, width: style.width }}
+          style={{ opacity: isVisible ? 1 : 0, left: style.left, width: style.width, top: style.top }}
         >
           {text.map((line, index) => (
             <p key={index} className="my-1">

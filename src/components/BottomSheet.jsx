@@ -76,7 +76,7 @@ const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBot
       <div
         className={`
           ${isAnimating ? 'translate-y-0' : 'translate-y-full'} transform transition-transform duration-300
-        absolute bottom-[60px] bg-white w-full shadow-inner pb-4 rounded-t-3xl`}
+        absolute bottom-[80px] bg-white w-full shadow-inner pb-4 rounded-t-3xl`}
       >
         <div className="flex justify-end pt-3 pr-5">
           <button onClick={handleClose}>

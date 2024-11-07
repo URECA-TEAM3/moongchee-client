@@ -67,7 +67,7 @@ const Notification = () => {
   return (
     <div className="mt-2 relative z-10">
       <button onClick={toggleDropdown} className="relative">
-        <BellIcon className="size-7" />
+        <BellIcon className="size-8" />
         {notiLength > 0 ? (
           <span className="absolute top-0 right-0 bg-alert text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
             {notifications.length}
@@ -78,7 +78,7 @@ const Notification = () => {
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white/90 border border-lightblue/50 rounded-lg shadow-lg p-2">
+        <div className="absolute right-0 mt-2 w-96 bg-white border rounded-lg shadow-lg p-2">
           <div className="p-4 flex justify-between items-center">
             <h3 className="text-lg">알림 {notifications.length}</h3>
           </div>

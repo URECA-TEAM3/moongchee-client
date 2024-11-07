@@ -5,6 +5,7 @@ import PetSitterInfo from '../../components/PetSitterInfo';
 import Dropdown from '../../components/DropDown';
 import { useUserStore } from '../../store/userStore';
 import usePetSitterStore from '../../store/petsitterStore';
+import ToolTip from '../../components/ToolTip';
 
 const index = () => {
   const { setType } = usePetSitterStore();
@@ -182,12 +183,12 @@ const index = () => {
       <div className="w-full">
         <div className="search">
           <span className="text-text text-sm">펫시터가 필요한 요일과 시간을 선택해보세요</span>
-          <div className="days container flex items-center justify-center mt-3">
+          <div className="days w-full flex items-center justify-between mt-3">
             {dayList.map((day, index) => (
-              <div className="flex-1 flex items-center justify-center" key={day.name + index}>
+              <div key={day.name + index}>
                 <div
                   onClick={() => handleDayClick(day.name)}
-                  className={`day rounded-full w-10 h-10 text-center leading-10 cursor-pointer ${!day.target ? 'bg-divider' : 'bg-primary text-white'}`}
+                  className={`day rounded-full w-10 h-10 text-center leading-10 cursor-pointer hover:bg-primary hover:text-white ${!day.target ? 'bg-gray-100' : 'bg-primary text-white'}`}
                 >
                   {day.name}
                 </div>
@@ -195,8 +196,8 @@ const index = () => {
             ))}
           </div>
           <div className="flex justify-center items-center gap-5 mt-5">
-            <div className="flex items-center flex-col w-[150px]">
-              <span className="text-sm">근무 시작 시간</span>
+            <div className="flex items-center flex-col w-[50%]">
+              <span className="text-text text-sm mb-1">시작 시간</span>
               <Dropdown
                 width={'150'}
                 label={startTime}
@@ -207,9 +208,9 @@ const index = () => {
                 }}
               />
             </div>
-            ~
-            <div className="flex items-center flex-col w-[150px]">
-              <span className="text-sm">근무 종료 시간</span>
+            <p className="">~</p>
+            <div className="flex items-center flex-col w-[50%]">
+              <span className="text-text text-sm mb-1">종료 시간</span>
               <Dropdown
                 width={'150'}
                 label={endTime}

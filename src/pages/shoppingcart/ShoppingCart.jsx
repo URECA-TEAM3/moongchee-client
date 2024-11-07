@@ -182,16 +182,16 @@ function ShoppingCart() {
               {cartItems.map((item) => (
                 <li key={item.cart_id} className="cart-item text-lg">
                   <div className="flex items-start w-full mx-auto py-5 px-10">
-                    <input className="block mt-2 scale-125" type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(item.cart_id)} />
-                    <div className="flex grow mr-2">
-                      <img src={item.image} alt={item.name} className="mx-7 cart-item-image w-[150px]" />
+                    <input className="block mt-2 accent-primary" type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(item.cart_id)} />
+                    <div className="flex mr-2">
+                      <img src={item.image} alt={item.name} className="mx-7 cart-item-image w-[150px] rounded-lg" />
                       <div className="flex flex-col">
                         <span className="my-1">{item.name}</span>
-                        <span className="flex items-center mb-1">
+                        <span className="flex items-center my-1">
                           <DogChew />
                           <div className="ml-2 font-bold">{item.price.toLocaleString()}개</div>
                         </span>
-                        <div className="flex items-center">
+                        <div className="flex items-center mt-1">
                           <button onClick={() => handleQuantityChange(item.cart_id, -1)}>
                             <CiCircleMinus size={25} color={'#2589E7'} />
                           </button>
