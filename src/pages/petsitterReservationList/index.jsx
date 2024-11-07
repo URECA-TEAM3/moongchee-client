@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ReservationCard from '../../components/ReservationCard';
 import Modal from '../../components/Modal';
-import axios from 'axios';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import EmptyPage from '../../components/EmptyPage';
-import API from '../../api/axiosInstance';
 import Spinner from '../../components/Spinner';
+import { getSitterDetailWithSitterId, saveNotifications, updateReservations, getReservationList } from '../../api/petsitter';
+import { refundPoint } from '../../api/purchase';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -27,36 +27,15 @@ const Index = () => {
   const [sitterInfo, setSitterInfo] = useState({});
 
   const fetchSitterInfo = async (sitterId) => {
-    try {
-      const response = await API.get(`/petsitter/sitter/detail/${sitterId}`);
-      setSitterInfo(response.data.data[0]);
-    } catch (error) {
-      console.error(error);
-    }
+    setSitterInfo(getSitterDetailWithSitterId(sitterId));
   };
 
   const handleReservationList = async (target) => {
     setIsLoading(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/petsitter/reservation/list', {
-        user_id: id,
-        user_type: target,
-      });
-
-      const reservationList = res.data.data.map((item) => {
-        return {
-          name: item.name,
-          userId: item.user_id,
-          sitterId: item.sitter_id,
-          requestDate: item.requestDate,
-          startTime: item.startTime,
-          endTime: item.endTime,
-          status: item.status,
-          price: item.price,
-          profile_image: item.profile_image,
-          reservationId: item.reservation_id,
-        };
-      });
+      const p_id = id;
+      const userType = target;
+      const reservationList = await getReservationList(p_id, userType);
 
       if (reservationList.length > 0) {
         setShowItems(true);
@@ -72,13 +51,15 @@ const Index = () => {
 
   const handleReservationUpdate = async (type) => {
     try {
-      const res = await axios.post(`http://localhost:3000/api/petsitter/reservation/${type === 'confirm' ? 'confirm' : 'cancel'}`, {
-        reservation_id: selectedReservation.reservationId,
-      });
-      console.log('response:', res.data);
+      const target = type === 'confirm' ? 'confirm' : 'cancel';
+      const id = selectedReservation.reservationId;
+
+      await updateReservations(target, id);
+
       closeModal();
+
       if (type !== 'confirm') {
-        refundPoint();
+        handleRefundPoint();
       }
       handleReservationList(isPetsitter);
 
@@ -97,27 +78,17 @@ const Index = () => {
         status: 'unread',
       };
 
-      try {
-        await axios.post('http://localhost:3000/api/notifications/save', notiData);
-      } catch (error) {
-        console.error('Notification 정보 저장 실패');
-      }
+      await saveNotifications(notiData);
     } catch (error) {
       console.error('Error cancelling reservation:', error);
       closeModal();
     }
   };
 
-  const refundPoint = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/api/members/update-points', {
-        userId: id,
-        amount: selectedReservation.price,
-      });
-      console.log('Updated points successfully:', response);
-    } catch (error) {
-      console.error('Error updating points:', error);
-    }
+  const handleRefundPoint = async () => {
+    const p_id = id;
+    const amount = selectedReservation.price;
+    await refundPoint(p_id, amount);
   };
 
   const openModal = (value, info) => {
