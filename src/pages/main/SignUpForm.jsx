@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import { ko } from 'date-fns/locale';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import defaultProfileImage from '/src/assets/images/user.svg';
@@ -22,7 +19,7 @@ const SignUpForm = () => {
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [roadAddress, setRoadAddress] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
-  const [birthDate, setBirthDate] = useState(null);
+  const [birthDate, setBirthDate] = useState('');
   const [errors, setErrors] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [nickname, setNickname] = useState('');
@@ -86,8 +83,16 @@ const SignUpForm = () => {
     if (field === 'birthDate') setBirthDate(value);
   };
 
-  const handleDateChange = (date) => {
-    setBirthDate(date);
+  const handleBirthDateChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+
+    if (value.length > 4 && value.length <= 6) {
+      value = `${value.slice(0, 4)}/${value.slice(4)}`;
+    } else if (value.length > 6) {
+      value = `${value.slice(0, 4)}/${value.slice(4, 6)}/${value.slice(6, 8)}`;
+    }
+
+    setBirthDate(value);
     setErrors((prevErrors) => ({ ...prevErrors, birthDate: '' }));
   };
 
@@ -119,9 +124,9 @@ const SignUpForm = () => {
       toast.error('주소를 입력해주세요.');
     }
 
-    if (!birthDate) {
-      newErrors.birthDate = '생년월일을 선택해주세요.';
-      toast.error('생년월일을 선택해주세요.');
+    if (!birthDate || birthDate.length !== 10) {
+      newErrors.birthDate = '생년월일을 올바르게 입력해주세요 (YYYY.MM.DD).';
+      toast.error('생년월일을 올바르게 입력해주세요.');
     }
 
     if (!nickname) {
@@ -150,9 +155,7 @@ const SignUpForm = () => {
       return;
     }
 
-    const formattedBirthDate = birthDate
-      ? `${birthDate.getFullYear()}-${(birthDate.getMonth() + 1).toString().padStart(2, '0')}-${birthDate.getDate().toString().padStart(2, '0')}`
-      : null;
+    const formattedBirthDate = birthDate.replace(/\./g, '-');
 
     try {
       toast.loading('회원가입 진행 중...');
@@ -191,7 +194,7 @@ const SignUpForm = () => {
           phone,
           email,
           address: roadAddress,
-          detailaddress: detailedAddress, // 세션 데이터에 추가
+          detailaddress: detailedAddress,
           birthDate: formattedBirthDate,
           provider,
           petsitter: 0,
@@ -251,25 +254,17 @@ const SignUpForm = () => {
         />
         {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone}</span>}
 
-        <label className="block text-sm font-medium my-1 mt-4">생년월일*</label>
-        <div className="flex items-center space-x-2 mb-1">
-          <DatePicker
-            selected={birthDate}
-            onChange={handleDateChange}
-            dateFormat="yyyy/MM/dd"
-            placeholderText="YYYY/MM/DD"
-            className={`block w-full p-2 border ${errors.birthDate ? 'border-red-500' : 'border-divider'} rounded-lg`}
-            showYearDropdown
-            showMonthDropdown
-            dropdownMode="select"
-            maxDate={new Date()}
-            yearDropdownItemNumber={100}
-            locale={ko}
-          />
-        </div>
+        <label className="block text-sm font-medium my-1 mt-4">생년월일 (8자리)*</label>
+        <input
+          type="text"
+          placeholder="YYYYMMDD"
+          value={birthDate}
+          onChange={handleBirthDateChange}
+          maxLength="10"
+          className={`block w-full p-2 border ${errors.birthDate ? 'border-red-500' : 'border-divider'} rounded-lg`}
+        />
         {errors.birthDate && <span className="text-red-500 text-xs mt-1">{errors.birthDate}</span>}
 
-        {/* <label className="block text-sm font-medium mb-1">주소*</label> */}
         <AddressSearch errors={errors} onComplete={handleCompleteAddress} />
         {errors.address && <span className="text-red-500 text-xs mt-1">{errors.address}</span>}
 
