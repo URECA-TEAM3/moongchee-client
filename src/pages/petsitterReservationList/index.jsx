@@ -28,7 +28,7 @@ const Index = () => {
 
   const fetchSitterInfo = async (sitterId) => {
     try {
-      const response = await API.get(`/petsitter/detail/${sitterId}`);
+      const response = await API.get(`/petsitter/sitter/detail/${sitterId}`);
       setSitterInfo(response.data.data[0]);
     } catch (error) {
       console.error(error);
@@ -121,6 +121,7 @@ const Index = () => {
   };
 
   const openModal = (value, info) => {
+    console.log(info);
     setIsModalOpen(true);
     setSelectedReservation({
       name: info.name,
