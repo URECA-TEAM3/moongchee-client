@@ -124,7 +124,7 @@ const DetailBottom = ({ product }) => {
           <>
             {disabledBtn ? (
               <div className="flex grow">
-                <button className="grow" onClick={() => navigate('/ChargePage')}>
+                <button className="grow" onClick={() => navigate('/chargePage')}>
                   <div className="bg-divider text-[gray] p-3 mx-2 rounded-xl text-center">포인트 충전하러 가기</div>
                 </button>
               </div>

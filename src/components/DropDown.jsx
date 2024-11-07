@@ -41,7 +41,7 @@ const Dropdown = ({ label, options, onSelect }) => {
 
         {isOpen && (
           <div className="origin-top-right absolute right-0 mt-2 w-full z-10 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            <div className={`py-1 overflow-y-scroll ${options.length !== 0 ? 'h-[300px]' : ''}`}>
+            <div className={`py-1 overflow-y-scroll ${options.length !== 0 ? 'max-h-[300px]' : ''}`}>
               {options.map((option, index) => (
                 <a
                   key={index}
