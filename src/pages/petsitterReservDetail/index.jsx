@@ -43,7 +43,8 @@ const index = () => {
       const res = await getReservationDetail(id);
       const res2 = await getPetList(res.data.user_id);
 
-      const petList = res2.data;
+      const petList = res2;
+      console.log(petList);
       const petData = petList.map((pet) => (pet.name === res.data.pet ? pet : ''));
       const data = {
         ...res.data,
