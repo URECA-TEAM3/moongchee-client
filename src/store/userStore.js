@@ -14,7 +14,9 @@ export const useUserStore = create(
       logout: () => {
         set({ ...initialUserState });
         localStorage.removeItem('user-storage');
+        sessionStorage.removeItem('userData'); // 세션 스토리지 데이터도 삭제
       },
+
       // 포인트 얻어오는 함수
       getPoint: async (id) => {
         try {

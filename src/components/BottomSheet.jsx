@@ -4,9 +4,14 @@ import { CiCirclePlus } from 'react-icons/ci';
 import { IoCloseOutline } from 'react-icons/io5';
 import DogChew from './DogChew';
 import { useUserStore } from '../store/userStore';
+import API from '../api/axiosInstance';
 
-const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
+const BottomSheet = ({ setBuyNowData, price, setPrice, setDisabledBtn, toggleBottomSheet, productItem, setIsVisible, setProductItem }) => {
+  const { id } = useUserStore((state) => state);
+  const [localPoint, setLocalPoint] = useState();
   const [isAnimating, setIsAnimating] = useState(false);
+  const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
+
   const handleQuantityChange = (id, delta) => {
     setProductItem((prevItem) => {
       const newQuantity = Math.max(1, (prevItem.quantity || 1) + delta);
@@ -15,7 +20,7 @@ const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, t
       // 상품 전체 가격과 유저의 최종 금액 업데이트
       setPrice({
         ProductTotal: ProductTotalPrice,
-        UserTotal: points - ProductTotalPrice,
+        UserTotal: localPoint - ProductTotalPrice,
       });
 
       // buyNowData 업데이트
@@ -26,7 +31,7 @@ const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, t
       }));
 
       // 버튼 활성화 상태 업데이트
-      const newUserTotal = points - ProductTotalPrice;
+      const newUserTotal = localPoint - ProductTotalPrice;
       setDisabledBtn(newUserTotal < 0); // 유저 총액이 0보다 작으면 버튼 비활성화
 
       return {
@@ -39,13 +44,24 @@ const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, t
   useEffect(() => {
     setIsAnimating(true);
     const ProductTotalPrice = productItem.price * 1;
-    const UserTotalPrice = points - ProductTotalPrice;
+    const UserTotalPrice = localPoint - ProductTotalPrice;
 
     setPrice({
       ProductTotal: ProductTotalPrice,
       UserTotal: UserTotalPrice,
     });
+
+    getPoints();
   }, []);
+
+  const getPoints = async () => {
+    try {
+      const response = await API.get(`/members/point/${id}`);
+      setLocalPoint(response.data.data.point);
+    } catch (error) {
+      console.error('포인트 요청 실패:', error);
+    }
+  };
 
   const handleClose = () => {
     setIsAnimating(false);
@@ -104,9 +120,9 @@ const BottomSheet = ({ points, setBuyNowData, price, setPrice, setDisabledBtn, t
               <DogChew />
             </div>
             <span className={`font-bold`}>
-              : {points} - {productItem.quantity * productItem.price} =
-              <span className={`ml-1 ${points - productItem.quantity * productItem.price > 0 ? 'text-primary' : 'text-red-500'}`}>
-                {points - productItem.quantity * productItem.price}개
+              : {localPoint} - {productItem.quantity * productItem.price} =
+              <span className={`ml-1 ${localPoint - productItem.quantity * productItem.price > 0 ? 'text-primary' : 'text-red-500'}`}>
+                {localPoint - productItem.quantity * productItem.price}개
               </span>
             </span>
           </div>

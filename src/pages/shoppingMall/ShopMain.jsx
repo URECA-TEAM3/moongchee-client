@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Category from '../../components/shop/Category';
 import ItemBox from '../../components/shop/ItemBox';
 import { CgSearchLoading } from 'react-icons/cg';
@@ -17,9 +17,12 @@ const ShopMain = () => {
     if (location.pathname === '/shoppingmall/category') {
       setSelectedCategory(1);
       setSortOption('popular');
-    } else {
+    } else if (location.pathname === '/shoppingmall/best') {
       setSelectedCategory(0);
       setSortOption('popular');
+    } else {
+      setSelectedCategory(selectedCategory);
+      setSortOption(sortOption);
     }
 
     const scrollPosition = sessionStorage.getItem('scrollPosition');
@@ -73,8 +76,9 @@ const ShopMain = () => {
         {/* 전체 상품 목룍 */}
         {loading ? (
           <div className="flex justify-center items-center">
-            상품 정보 불러오는 중 ...
-            <CgSearchLoading size={20} />
+            <div className="flex justify-center items-center h-60">
+              <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            </div>
           </div>
         ) : (
           <div ref={scrollContainerRef} className="grid grid-cols-2 gap-x-5 gap-y-5 mx-10 max-h-[73vh] overflow-y-scroll">

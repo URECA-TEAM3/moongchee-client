@@ -7,9 +7,17 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { app } from '../../../firebase';
 import { Link } from 'react-router-dom';
 import ItemBox from '../../components/shop/ItemBox';
+import { useUserStore } from '../../store/userStore';
 
 const Index = () => {
   const [popularProducts, setPopularProducts] = useState([]);
+
+  useEffect(() => {
+    const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
+    if (sessionData.id) {
+      useUserStore.setState(sessionData); // 세션에서 가져온 데이터를 상태에 설정
+    }
+  }, []);
 
   const fetchProducts = async () => {
     try {
@@ -51,7 +59,7 @@ const Index = () => {
       {/* 3 buttons */}
       <div className="p-5">
         <div className="flex justify-between items-center mx-8 mb-5">
-          <Link to="/shoppingmall">
+          <Link to="/shoppingmall/best">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
               <img src="/src/assets/icons/best.png" className="h-14 inline" />
               <p>BEST</p>

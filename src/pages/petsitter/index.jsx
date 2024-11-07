@@ -61,6 +61,7 @@ const index = () => {
   };
 
   const handleReservationClick = (type) => {
+    console.log(type);
     navigate('/petsitter/reservation/list', { state: { type: type } });
   };
 
@@ -95,7 +96,6 @@ const index = () => {
       if (dayList[i].target === true) str += `${dayList[i].value},`;
     }
     const addr = address.split(' ');
-    console.log(`${addr[0]} ${addr[1]}`);
     const params = {
       userId: id,
       weekdays: str.slice(0, -1),

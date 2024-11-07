@@ -12,10 +12,12 @@ import { IoMdClose } from 'react-icons/io';
 import { useUserStore } from '../../store/userStore';
 import toast, { Toaster } from 'react-hot-toast';
 import EmptyPage from '../../components/EmptyPage';
+import Spinner from '../../components/Spinner';
 
 function ShoppingCart() {
   const navigate = useNavigate();
-  const { id, getPoint } = useUserStore((state) => state);
+  const sessionData = JSON.parse(sessionStorage.getItem('userData')) || {};
+  const { id } = useUserStore((state) => state);
   const [totalPrice, setTotalPrice] = useState();
   const [afterPayment, setAfterPayment] = useState();
   const [payment, setPayment] = useState(true);
@@ -53,18 +55,18 @@ function ShoppingCart() {
   };
 
   useEffect(() => {
-    const fetchPoints = async () => {
-      try {
-        const userPoints = await getPoint(id);
-        setPoints(userPoints);
-      } catch (error) {
-        console.error('Error fetching points:', error);
-      }
-    };
-
-    fetchPoints();
+    getPoint();
     getCartItemsList();
-  }, [id]);
+  }, []);
+
+  const getPoint = async () => {
+    try {
+      const response = await API.get(`/members/point/${id}`);
+      setPoints(response.data.data.point);
+    } catch (error) {
+      console.error('포인트 요청 실패:', error);
+    }
+  };
 
   // 최종 결제 금액 계산
   const calculateTotal = () => {
@@ -108,7 +110,6 @@ function ShoppingCart() {
   // 결제하기 btn
   const handleCheckout = async () => {
     await uploadLocalCart();
-    console.log(cartItems);
 
     const hasCheckedItems = cartItems.some((item) => item.checked);
     if (!hasCheckedItems) {
@@ -171,9 +172,7 @@ function ShoppingCart() {
       <div className="text-center px-10 py-6 font-bold">장바구니</div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-60">
-          <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <Spinner />
       ) : (
         // 장바구니 내용
         <div>
@@ -269,7 +268,7 @@ function ShoppingCart() {
               )}
             </div>
           ) : (
-            <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall')} />
+            <EmptyPage message="장바구니가 비었습니다." buttonText="상품 구경하러가기" onButtonClick={() => navigate('/shoppingmall/best')} />
           )}
         </div>
       )}

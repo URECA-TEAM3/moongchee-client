@@ -45,7 +45,7 @@ function ShopDetail() {
     <>
       <div className="bg-white relative">
         <div className="flex items-center justify-between p-5">
-          <button onClick={() => navigate(-1)}>
+          <button onClick={() => navigate('/shoppingmall')}>
             <IoIosArrowBack />
           </button>
           <div>상품정보</div>
