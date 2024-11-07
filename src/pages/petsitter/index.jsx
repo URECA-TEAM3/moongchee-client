@@ -44,12 +44,6 @@ const index = () => {
   const handleToggleChange = () => {
     const newToggleState = !isToggleOn;
     setIsToggleOn(newToggleState);
-
-    if (newToggleState) {
-      toast.success('펫시터 모드입니다.');
-    } else {
-      toast('펫시터 모드를 종료하였습니다.');
-    }
   };
 
   const handleApplyClick = () => {
@@ -125,42 +119,42 @@ const index = () => {
   return (
     <div className="flex flex-col gap-y-5 p-10 justify-center w-full">
       <Toaster />
-      {petsitter === 1 && (
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-300">펫시터모드</span>
-          <ToggleSwitch checked={isToggleOn} onChange={handleToggleChange} />
-        </div>
-      )}
-      <div className="flex items-center container gap-5 w-full">
-        {petsitter === 0 && (
-          <button className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white" onClick={handleApplyClick}>
-            펫시터 지원하기
-          </button>
+      <div className="flex items-center container w-full">
+        {petsitter === 1 && (
+          <div className="flex w-44 gap-2 items-center">
+            <span className="text-sm font-medium">펫시터모드</span>
+            <ToggleSwitch checked={isToggleOn} onChange={handleToggleChange} />
+          </div>
         )}
-        {isToggleOn ? (
-          <>
+        <div className="flex items-center container gap-3 w-full">
+          {petsitter === 0 && (
+            <button className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white" onClick={handleApplyClick}>
+              펫시터 지원하기
+            </button>
+          )}
+          {isToggleOn ? (
+            <>
+              <button
+                className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white"
+                onClick={() => handleReservationClick('petsitter')}
+              >
+                예약 현황
+              </button>
+              <button className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white" onClick={handleProfileClick}>
+                나의 펫시터 프로필
+              </button>
+            </>
+          ) : (
             <button
-              className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
+              className="border border-primary text-primary text-sm rounded-lg px-2 h-7 hover:bg-primary hover:text-white"
               onClick={() => handleReservationClick('user')}
             >
-              예약 현황
+              예약 / 취소 내역
             </button>
-            <button
-              className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-              onClick={handleProfileClick}
-            >
-              나의 펫시터 프로필
-            </button>
-          </>
-        ) : (
-          <button
-            className="text-primary border border-primary px-4 py-2 rounded-lg font-normal hover:bg-primary hover:text-white"
-            onClick={() => handleReservationClick('user')}
-          >
-            예약 / 취소 내역
-          </button>
-        )}
+          )}
+        </div>
       </div>
+
       <div className="w-full">
         <div className="search">
           <span className="text-text text-sm">펫시터가 필요한 요일과 시간을 선택해보세요</span>
@@ -176,7 +170,7 @@ const index = () => {
               </div>
             ))}
           </div>
-          <div className="flex justify-center items-center gap-5 mt-5">
+          <div className="flex justify-center items-center gap-5 mt-3">
             <div className="flex items-center flex-col w-[50%]">
               <span className="text-text text-sm mb-1">시작 시간</span>
               <Dropdown

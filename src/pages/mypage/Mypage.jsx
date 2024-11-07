@@ -31,7 +31,6 @@ function Mypage(props) {
       setProfileImageUrl(parsedData.profile_image_url);
       setNickname(parsedData.nickname);
       setUserId(parsedData.id);
-      // setIsPetsitter(parsedData.petsitter); -> 펫시터 등록 기능 구현되면 주석 해제
       // 반려동물 리스트 출력 함수 호출
       fetchPets(parsedData.id);
       fetchPoints(parsedData.id);
@@ -64,7 +63,6 @@ function Mypage(props) {
     try {
       const response = await axios.get(`http://localhost:3000/api/petsitter/sitter/byId/${userId}`);
       setPetsitter(response.data.data[0]);
-      // setPetsitter(response.data);
     } catch (error) {
       console.log(error);
     }
