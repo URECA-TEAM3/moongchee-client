@@ -21,7 +21,7 @@ export const getPopularProducts = async () => {
 
 export const getNewProducts = async () => {
   try {
-    const response = await API.get('/api/products/new-products');
+    const response = await API.get('/products/new-products');
     const productsWithImages = await Promise.all(
       response.data.data.map(async (product) => {
         const imageUrl = await fetchImgFromFireStorage(product.image);
