@@ -28,7 +28,7 @@ const Pay = () => {
     status: 'paid',
   });
 
-  const confirmOrder = async () => {
+  const confirmOrders = async () => {
     try {
       const currentDate = new Date().toISOString().split('T')[0];
       const updatedOrderData = {
@@ -148,7 +148,7 @@ const Pay = () => {
             <button className="text-white bg-gray-300 px-4 py-2 rounded-lg font-normal w-full" onClick={closeModal}>
               취소
             </button>
-            <button onClick={confirmOrder} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
+            <button onClick={confirmOrders} className="text-white bg-primary px-4 py-2 rounded-lg font-normal w-full">
               확인
             </button>
           </div>
