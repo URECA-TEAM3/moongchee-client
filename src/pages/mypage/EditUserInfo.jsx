@@ -134,11 +134,6 @@ const EditUserInfo = () => {
     handleSave();
   };
 
-  // const handleSaveModal = () => {
-  //   setSaveModal(false);
-  //   // navigate('/mypage');
-  // };
-
   const handleNicknameCheck = async () => {
     if (nickname == currentNickname) {
       toast.error('현재와 동일한 닉네임입니다.');
@@ -365,18 +360,6 @@ const EditUserInfo = () => {
           </div>
         </div>
       )}
-
-      {/* Save Success Modal
-      {saveModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
-            <h2 className="text-base font-bold mb-6">프로필이 수정되었습니다.</h2>
-            <button onClick={handleSaveModal} className="px-12 py-2 bg-primary text-white rounded-lg">
-              확인
-            </button>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

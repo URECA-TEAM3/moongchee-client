@@ -188,8 +188,6 @@ const AnimalInfo = () => {
 
       const response = await axios.put('http://localhost:3000/api/pets/update-profile', updatedData);
 
-      // setIsModalOpen(true);
-
       if (response.status === 200) {
         toast.success('반려동물 정보가 성공적으로 수정되었습니다.');
       }
