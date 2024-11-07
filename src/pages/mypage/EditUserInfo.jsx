@@ -100,14 +100,16 @@ const EditUserInfo = () => {
         profile_image_url: profileImageUrl,
       };
 
-      await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
+      const response = await axios.put('http://localhost:3000/api/members/update-profile', updatedData);
       // Session Storage update
       sessionStorage.setItem('userData', JSON.stringify(updatedData));
 
-      setSaveModal(true);
+      if (response.status === 200) {
+        toast.success('프로필이 성공적으로 수정되었습니다.');
+      }
     } catch (error) {
       console.error(error);
-      alert('프로필 수정 실패');
+      toast.error('프로필 수정에 실패하였습니다.')
     }
   };
 
@@ -132,10 +134,10 @@ const EditUserInfo = () => {
     handleSave();
   };
 
-  const handleSaveModal = () => {
-    setSaveModal(false);
-    // navigate('/mypage');
-  };
+  // const handleSaveModal = () => {
+  //   setSaveModal(false);
+  //   // navigate('/mypage');
+  // };
 
   const handleNicknameCheck = async () => {
     if (nickname == currentNickname) {
@@ -364,7 +366,7 @@ const EditUserInfo = () => {
         </div>
       )}
 
-      {/* Save Success Modal */}
+      {/* Save Success Modal
       {saveModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg text-center w-80 h-auto p-6">
@@ -374,7 +376,7 @@ const EditUserInfo = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

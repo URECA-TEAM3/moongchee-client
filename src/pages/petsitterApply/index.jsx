@@ -477,10 +477,11 @@ const index = () => {
   return (
     <div className="p-10 bg-white h-full overflow-y-auto">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="relative w-full flex items-center">
+      <div className="relative w-full flex items-center mb-3">
         <button onClick={() => navigate(-1)} className="absolute left-0">
           <ChevronLeftIcon className="h-6 w-6" stroke="black" />
         </button>
+        <h1 className="mx-auto font-bold">펫시터 프로필 수정</h1>
       </div>
 
       <Modal
@@ -501,7 +502,7 @@ const index = () => {
           </button>
         </div>
       </Modal>
-      <div className="mt-3 flex justify-center items-center flex-col">
+      <div className="mt-4 flex justify-center items-center flex-col">
         <div className="relative w-20 h-20 overflow-hidden cursor-pointer" onClick={handleProfileClick}>
           {formData.selectedImage !== defaultProfileImage ? (
             <img src={formData.selectedImage} alt="프로필 이미지" className="w-full h-full object-cover rounded-full" />
@@ -512,7 +513,7 @@ const index = () => {
         <input type="file" id="profileImageUpload" accept="image/*" className="hidden" onChange={handleImageChange} />
         <span className="mt-5 text-alert text-sm">펫시터는 실명으로 활동하게 됩니다.</span>
       </div>
-      <div className="mt-5">
+      <div className="mt-3">
         <span className="text-text text-sm">근무 요일 *</span>
         <div className="days container flex items-center justify-center mt-3">
           {dayList.map((day, index) => (

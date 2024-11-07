@@ -188,7 +188,12 @@ const AnimalInfo = () => {
 
       const response = await axios.put('http://localhost:3000/api/pets/update-profile', updatedData);
 
-      setIsModalOpen(true);
+      // setIsModalOpen(true);
+
+      if (response.status === 200) {
+        toast.success('반려동물 정보가 성공적으로 수정되었습니다.');
+      }
+
     } catch (error) {
       console.error(error);
       toast.dismiss(toastId);
@@ -322,7 +327,10 @@ const AnimalInfo = () => {
 
       <Modal isOpen={isModalOpen} title={<div className="font-bold mb-6">반려동물이 저장되었습니다.</div>}>
         <div className="flex mt-3">
-          <button onClick={() => setIsModalOpen(false)} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
+          <button onClick={() => {
+            setIsModalOpen(false);
+            navigate('/mypage')
+          }} className="px-10 py-2 w-full bg-primary text-white rounded-lg">
             확인
           </button>
         </div>
