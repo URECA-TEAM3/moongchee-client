@@ -1,40 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { refreshAccessToken } from '../../api/login';
 import KakaoLoginBtn from '../../components/login/KakaoLoginBtn';
 import GoogleLoginBtn from '../../components/login/GoogleLoginBtn';
-import axios from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-
-  const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      return null;
-    }
-
-    try {
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/refresh-token',
-        {},
-        {
-          headers: { Authorization: `Bearer ${refreshToken}` },
-        }
-      );
-
-      const newAccessToken = response.data.accessToken;
-      if (newAccessToken) {
-        sessionStorage.setItem('accessToken', newAccessToken);
-        return newAccessToken;
-      } else {
-        console.error('서버로부터 유효한 액세스 토큰을 받지 못했습니다.');
-        return null;
-      }
-    } catch (error) {
-      console.error('액세스 토큰 갱신 오류:', error);
-      return null;
-    }
-  };
 
   const isTokenExpired = (token) => {
     if (!token) return true;

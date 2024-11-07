@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import defaultProfileImage from '/src/assets/images/user.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import toast, { Toaster } from 'react-hot-toast';
@@ -9,6 +8,7 @@ import AddressSearch from '../../components/login/AddressSearch';
 import EmailVerification from '../../components/login/EmailVerification';
 import NicknameInput from '../../components/login/NicknameInput';
 import ProfileImageUpload from '../../components/login/ProfileImageUpload';
+import { signUp } from '../../api/login';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -168,8 +168,8 @@ const SignUpForm = () => {
       } else {
         downloadURL = defaultProfileImage;
       }
-
-      const response = await axios.post('http://localhost:3000/api/members/signup', {
+      console.log('1');
+      const response = await signUp({
         name,
         phone,
         email,
