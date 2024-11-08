@@ -29,7 +29,7 @@ export const useUserStore = create(
         }
       },
       // 프로필 업데이트 함수
-      updateProfile: (newUserInfo) =>
+      updateProfileToStorage: (newUserInfo) =>
         set((state) => ({
           ...state,
           ...newUserInfo, // 새로운 정보로 필드 업데이트

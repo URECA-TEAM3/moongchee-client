@@ -8,7 +8,7 @@ import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 const ChangeAddress = () => {
   const navigate = useNavigate();
-  const { id, name, phone, address, detailaddress, updateProfile } = useUserStore((state) => state);
+  const { id, name, phone, address, detailaddress, updateProfileToStorage } = useUserStore((state) => state);
   const nameRef = useRef(null);
   const phoneRef = useRef(null);
   const addressRef = useRef(null);
@@ -129,7 +129,7 @@ const ChangeAddress = () => {
 
     try {
       const response = await API.put('/members/update-profile-in-cart', changeInfo);
-      updateProfile(response.data);
+      updateProfileToStorage(response.data);
       setIsModalOpen(true);
     } catch (error) {
       console.error();
