@@ -1,29 +1,30 @@
 import React from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../store/userStore';
+import axiosInstance from '../../api/axiosInstance';
 
 const GoogleLoginBtn = () => {
+  const { login } = useUserStore((state) => state);
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const navigate = useNavigate();
 
   const handleLoginSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
 
-    console.log('로그인 성공, 받은 토큰:', token);
-
     try {
-      const response = await axios.post('http://localhost:3000/api/google-login', {
-        token,
-      });
+      const response = await axiosInstance.post('/auth/google-login', { token });
+      const { accessToken, refreshToken, exists, userData } = response.data;
 
-      console.log('서버 응답:', response.data);
-
-      if (response.data.exists) {
+      if (exists) {
+        sessionStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        console.log('유저 데이터:', userData);
+        login(userData);
         navigate('/main');
       } else {
-        const userId = response.data.userId;
-        navigate('/signup', { state: { provider: 'google', token, userId } });
+        navigate('/signup', { state: { provider: 'google', userId: response.data.userId, accessToken } });
       }
     } catch (error) {
       console.error('로그인 오류:', error);
@@ -35,7 +36,6 @@ const GoogleLoginBtn = () => {
       client_id: googleClientId,
       callback: handleLoginSuccess,
     });
-
     window.google.accounts.id.prompt();
   };
 
@@ -43,13 +43,9 @@ const GoogleLoginBtn = () => {
     <GoogleOAuthProvider clientId={googleClientId}>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <img
-          src="/src/assets/images/googlebtn.svg"
+          src="/assets/images/googlebtn.svg"
           alt="Google 로그인"
-          style={{
-            cursor: 'pointer',
-            width: '300px',
-            height: '50px',
-          }}
+          style={{ cursor: 'pointer', width: '300px', height: '50px' }}
           onClick={handleGoogleLogin}
         />
       </div>
