@@ -30,6 +30,15 @@ export const deletePet = async (petId) => {
 
 export const updateProfile = async (params) => {
   try {
+    const response = await API.put('/members/update-profile', params);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updatePetProfile = async (params) => {
+  try {
     const response = await API.put('/pets/update-profile', params);
     return response;
   } catch (error) {

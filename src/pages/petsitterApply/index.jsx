@@ -70,10 +70,6 @@ const index = () => {
     setDayList((prevDayList) => prevDayList.map((day) => (day.name === dayName ? { ...day, target: !day.target } : day)));
   };
 
-  const handleDecodeDayList = (dayName) => {
-    setDayList((prevDayList) => prevDayList.map((day) => (day.value === dayName ? { ...day, target: !day.target } : day)));
-  };
-
   const validateFields = () => {
     const newErrors = {};
     Object.entries(formData).map((item) => {
@@ -197,13 +193,15 @@ const index = () => {
     if (type === 'update') {
       try {
         const info = await getPetsitter(id);
-
         setFormData(info);
 
         const days = info.weekdays.split(',');
-        for (let i = 0; i < days.length; i++) {
-          handleDecodeDayList(days[i]);
-        }
+        setDayList((prevDayList) =>
+          prevDayList.map((day) => ({
+            ...day,
+            target: days.includes(day.value),
+          }))
+        );
       } catch (error) {
         console.log(error);
       }

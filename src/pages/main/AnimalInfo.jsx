@@ -6,7 +6,7 @@ import { storage } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
 import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
-import { registerPet, deletePet, updateProfile, getPetDetail } from '../../api/login';
+import { registerPet, deletePet, updatePetProfile, getPetDetail } from '../../api/login';
 import Modal from '../../components/Modal';
 
 const AnimalInfo = () => {
@@ -177,7 +177,7 @@ const AnimalInfo = () => {
         animal_image_url: profileImageUrl,
       };
 
-      const response = await updateProfile(updatedData);
+      const response = await updatePetProfile(updatedData);
 
       if (response.status === 200) {
         toast.success('반려동물 정보가 성공적으로 수정되었습니다.');
