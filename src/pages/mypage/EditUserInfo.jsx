@@ -7,7 +7,6 @@ import { storage } from '../../../firebase';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
-import axios from 'axios';
 import { updateProfile, checkNickname } from '../../api/login';
 
 const EditUserInfo = () => {
