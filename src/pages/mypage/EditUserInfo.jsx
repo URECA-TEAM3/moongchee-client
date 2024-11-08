@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import { updateProfile, checkNickname } from '../../api/login';
+import { useUserStore } from '../../store/userStore';
 
 const EditUserInfo = () => {
+  const { updateProfile } = useUserStore((state) => state);
   const navigate = useNavigate();
   const [id, setId] = useState(0);
   const [uniqueId, setUniqueId] = useState('');
@@ -102,6 +104,7 @@ const EditUserInfo = () => {
 
       const response = await updateProfile(updatedData);
       sessionStorage.setItem('userData', JSON.stringify(updatedData));
+      updateProfile(updatedData);
 
       if (response.status === 200) {
         toast.success('프로필이 성공적으로 수정되었습니다.');
