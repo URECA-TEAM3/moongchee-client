@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import backButtonIcon from '/src/assets/icons/backbtn.svg';
+import backButtonIcon from '/assets/icons/backbtn.svg';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
 import { getPoint } from '../../api/purchase';

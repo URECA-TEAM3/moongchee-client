@@ -62,7 +62,7 @@ function ShopDetail() {
             <div className="p-7">
               <h1 className="text-xl break-keep">{product.name}</h1>
               <p className="flex items-center mt-3">
-                <img className="w-8 mr-1" src="/src/assets/images/dogChew.svg" alt="" />
+                <img className="w-8 mr-1" src="/assets/images/dogChew.svg" alt="" />
                 <span className="font-bold">{product.price}개</span>
               </p>
             </div>

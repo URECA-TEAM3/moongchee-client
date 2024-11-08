@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { toast, Toaster } from 'react-hot-toast';
-import registerPetProfileImage from '/src/assets/images/registerpetprofile.svg';
+import registerPetProfileImage from '/assets/images/registerpetprofile.svg';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { registerPet, deletePet, updatePetProfile, getPetDetail } from '../../api/login';
 import Modal from '../../components/Modal';

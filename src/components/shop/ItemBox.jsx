@@ -6,7 +6,7 @@ import API from '../../api/axiosInstance';
 import { useUserStore } from '../../store/userStore';
 import Modal from '../Modal';
 import { useIsImgLoaded } from '../../hooks/useIsImgLoaded';
-import placeholderImg from '/src/assets/images/black-curve-opacity.jpg';
+import placeholderImg from '/assets/images/black-curve-opacity.jpg';
 
 const ItemBox = ({ item }) => {
   const { elementRef, isLoaded } = useIsImgLoaded(true);

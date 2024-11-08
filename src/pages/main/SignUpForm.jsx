@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import defaultProfileImage from '/src/assets/images/user.svg';
+import defaultProfileImage from '/assets/images/user.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import toast, { Toaster } from 'react-hot-toast';
 import { storage } from '../../../firebase';

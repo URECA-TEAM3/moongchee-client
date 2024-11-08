@@ -38,19 +38,19 @@ const Index = () => {
         <div className="flex justify-between items-center mx-8 mb-5">
           <Link to="/shoppingmall/best">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-              <img src="/src/assets/icons/best.png" className="h-14 inline" />
+              <img src="/assets/icons/best.png" className="h-14 inline" />
               <p>BEST</p>
             </button>
           </Link>
           <Link to="/shoppingmall/category">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-              <img src="/src/assets/icons/category.png" className="h-14 inline" />
+              <img src="/assets/icons/category.png" className="h-14 inline" />
               <p>카테고리</p>
             </button>
           </Link>
           <Link to="/petsitter">
             <button className="bg-white shadow-md hover:shadow-inner py-2 px-4 w-28 h-28 rounded-full">
-              <img src="/src/assets/icons/petsitting.png" className="h-14 inline" />
+              <img src="/assets/icons/petsitting.png" className="h-14 inline" />
               <p>펫시팅</p>
             </button>
           </Link>
@@ -80,7 +80,7 @@ const Index = () => {
 
         {/* footer */}
         <div className="mt-5">
-          <img src="/src/assets/images/letter-only.png" className="w-28 opacity-50" />
+          <img src="/assets/images/letter-only.png" className="w-28 opacity-50" />
           <p>
             평일 09:00~18:00 | 점심시간 13:00~14:00 <br />
             <br />

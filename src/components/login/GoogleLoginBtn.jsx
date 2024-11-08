@@ -43,7 +43,7 @@ const GoogleLoginBtn = () => {
     <GoogleOAuthProvider clientId={googleClientId}>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <img
-          src="/src/assets/images/googlebtn.svg"
+          src="/assets/images/googlebtn.svg"
           alt="Google 로그인"
           style={{ cursor: 'pointer', width: '300px', height: '50px' }}
           onClick={handleGoogleLogin}

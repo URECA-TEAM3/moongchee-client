@@ -1,15 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import eslintPlugin from 'vite-plugin-eslint';
-import { babel } from '@rollup/plugin-babel'; // <--이것도
+import { babel } from '@rollup/plugin-babel';
 
 export default defineConfig({
   plugins: [
     react(),
     eslintPlugin(),
     babel({
-      // 콘솔 보고 싶으면 윗줄부터
-
       babelHelpers: 'bundled',
       plugins: ['babel-plugin-transform-remove-console'],
       exclude: 'node_modules/**',
@@ -21,6 +19,14 @@ export default defineConfig({
     hmr: true,
     watch: {
       usePolling: true,
+    },
+    proxy: {
+      '/api': {
+        target: 'https://moongchee-server-p4ag7thd6-suhjin-kangs-projects.vercel.app/api',
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
 });

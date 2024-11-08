@@ -3,7 +3,7 @@ import Dropdown from '../../components/DropDown';
 import Modal from '../../components/Modal';
 import { storage } from '../../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import defaultProfileImage from '/src/assets/images/registerprofile.svg';
+import defaultProfileImage from '/assets/images/registerprofile.svg';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import { useUserStore } from '../../store/userStore';
