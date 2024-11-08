@@ -2,7 +2,7 @@ import axios from 'axios';
 import { refreshAccessToken } from './login';
 
 const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://moongchee-server-p4ag7thd6-suhjin-kangs-projects.vercel.app/api',
   withCredentials: true,
 });
 
