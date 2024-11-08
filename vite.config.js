@@ -20,13 +20,13 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    proxy: {
-      '/api': {
-        target: 'https://moongchee-server-p4ag7thd6-suhjin-kangs-projects.vercel.app/api',
-        rewrite: (path) => path.replace(/^\/api/, ''),
-        changeOrigin: true,
-        secure: true,
-      },
-    },
+    // proxy: {
+    //   '/api': {
+    //     target: 'https://moongchee-server-p4ag7thd6-suhjin-kangs-projects.vercel.app/api',
+    //     rewrite: (path) => path.replace(/^\/api/, ''),
+    //     changeOrigin: true,
+    //     secure: true,
+    //   },
+    // },
   },
 });
