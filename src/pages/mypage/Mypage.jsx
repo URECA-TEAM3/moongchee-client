@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DogChew from '../../components/DogChew';
-import petProfileImage from '/src/assets/images/defaultpet.png';
+import petProfileImage from '/assets/images/defaultpet.png';
 import { useUserStore } from '../../store/userStore';
 import { useProductStore } from '../../store/productsStore';
 import usePetSitterStore from '../../store/petsitterStore';

@@ -1,7 +1,7 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import defaultProfileImage from '/src/assets/images/user.svg';
+import defaultProfileImage from '/assets/images/user.svg';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { useNavigate } from 'react-router-dom';

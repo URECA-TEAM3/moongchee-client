@@ -4,15 +4,15 @@ import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 const slides = [
   {
     link: '/main',
-    url: '/src/assets/images/header1.png',
+    url: '/assets/images/header1.png',
   },
   {
     link: '/main',
-    url: '/src/assets/images/header2.png',
+    url: '/assets/images/header2.png',
   },
   {
     link: '/main',
-    url: '/src/assets/images/header3.png',
+    url: '/assets/images/header3.png',
   },
 ];
 

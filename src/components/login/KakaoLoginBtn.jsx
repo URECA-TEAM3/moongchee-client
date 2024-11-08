@@ -63,7 +63,7 @@ const KakaoLoginBtn = () => {
   return (
     <button onClick={handleKakaoLogin} style={{ border: 'none', background: 'transparent' }} className="mb-3">
       <img
-        src="/src/assets/images/kakaobtnimg.svg"
+        src="/assets/images/kakaobtnimg.svg"
         alt="카카오 로그인"
         style={{
           cursor: 'pointer',

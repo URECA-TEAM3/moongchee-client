@@ -1,5 +1,5 @@
 import React from 'react';
-import defaultProfileImage from '/src/assets/images/user.svg';
+import defaultProfileImage from '/assets/images/user.svg';
 
 const ProfileImageUpload = ({ selectedImage, setSelectedImage, setSelectedImageFile }) => {
   const handleImageChange = (e) => {
